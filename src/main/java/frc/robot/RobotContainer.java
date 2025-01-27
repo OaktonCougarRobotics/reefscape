@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -34,7 +35,7 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick m_joystick = new Joystick(1);
-  Trigger navxReset = new Trigger(() -> m_joystick.getRawButton(3));
+  Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -61,6 +62,8 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(0),
         () -> m_joystick.getRawAxis(1),
         () -> m_joystick.getRawAxis(2)));
+
+    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro)); 
   }
 
   /**

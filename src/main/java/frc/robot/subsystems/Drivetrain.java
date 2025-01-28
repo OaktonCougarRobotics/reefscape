@@ -21,6 +21,7 @@ import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.OperatorConstants;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
@@ -106,19 +107,22 @@ public class Drivetrain extends SubsystemBase {
       DoubleSupplier angularRotation) {
     return run(() -> {
       // Make the robot move
-      swerveDrive.drive(new Translation2d(deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
-                                          deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity()),
-                        deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity(),
+      swerveDrive.drive(new Translation2d(
+          deadzone(translationX.getAsDouble(), OperatorConstants.X_DEADBAND) * swerveDrive.getMaximumChassisVelocity(),
+          deadzone(translationY.getAsDouble(), OperatorConstants.Y_DEADBAND) * swerveDrive.getMaximumChassisVelocity()),
+          deadzone(angularRotation.getAsDouble(), OperatorConstants.Z_DEADBAND)
+              * swerveDrive.getMaximumChassisAngularVelocity(),
           true,
-             false);
+          false);
     });
   }
-  public void zeroGyro(){
+
+  public void zeroGyro() {
     swerveDrive.zeroGyro();
   }
 
-  public static double deadzone(double num, double deadband){
-    if(num < deadband)
+  public static double deadzone(double num, double deadband) {
+    if (Math.abs(num) < deadband)
       return 0.0;
     return num;
   }

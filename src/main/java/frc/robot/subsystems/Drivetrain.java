@@ -13,7 +13,6 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MutDistance;
@@ -107,15 +106,21 @@ public class Drivetrain extends SubsystemBase {
       DoubleSupplier angularRotation) {
     return run(() -> {
       // Make the robot move
-      swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
-          translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
-          angularRotation.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity(),
+      swerveDrive.drive(new Translation2d(deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
+                                          deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity()),
+                        deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity(),
           true,
-          false);
+             false);
     });
   }
   public void zeroGyro(){
     swerveDrive.zeroGyro();
+  }
+
+  public static double deadzone(double num, double deadband){
+    if(num < deadband)
+      return 0.0;
+    return num;
   }
 
   @Override

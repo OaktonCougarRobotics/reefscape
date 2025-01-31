@@ -4,13 +4,13 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Meter;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,10 +18,16 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
+import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 
@@ -44,6 +50,72 @@ public class Drivetrain extends SubsystemBase {
   // Mutable holder for unit-safe linear velocity values, persisted to avoid
   // reallocation.
   private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
+
+  // Limelight stuff, NOT YAGSL, VISION MADE THIS IT MAY BE BROKEN
+  public final Translation2d m_frontLeftLocation = new Translation2d(Inches.of(12.125), Inches.of(12.125));
+  public final Translation2d m_frontRightLocation = new Translation2d(Inches.of(12.125), Inches.of(0).minus(Inches.of(12.125)));
+  public final Translation2d m_backLeftLocation = new Translation2d(Inches.of(0).minus(Inches.of(12.125)), Inches.of(12.125));
+  public final Translation2d m_backRightLocation = new Translation2d(Inches.of(0).minus(Inches.of(12.125)), Inches.of(0).minus(Inches.of(12.125)));
+
+  public final AnalogGyro m_gyro = new AnalogGyro(0); //CHANGE THIS TO THE CORRECT PORT
+  
+  public SwerveModule m_frontLeft;
+  public SwerveModule m_frontRight;
+  public SwerveModule m_backLeft;
+  public SwerveModule m_backRight;
+  
+  public final SwerveDriveKinematics m_kinematics = 
+    new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+
+  private final SwerveDrivePoseEstimator m_poseEstimator =
+      new SwerveDrivePoseEstimator(
+          m_kinematics,
+          m_gyro.getRotation2d(),
+          new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+          },
+          new Pose2d(),
+          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+          VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+
+  public void updateOdometry() {
+    m_poseEstimator.update(
+        m_gyro.getRotation2d(),
+        new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_backLeft.getPosition(),
+          m_backRight.getPosition()
+        });
+
+    boolean doRejectUpdate = false;
+    
+    LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    if(Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+    {
+      doRejectUpdate = true;
+    }
+    if(mt2.tagCount == 0)
+    {
+      doRejectUpdate = true;
+    }
+    if(!doRejectUpdate)
+    {
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+      m_poseEstimator.addVisionMeasurement(
+          mt2.pose,
+          mt2.timestampSeconds);
+    }
+    else if (doRejectUpdate)
+    {
+      //update odometry using m_kinematics
+    }
+  }
+
 
   /** Creates a new ExampleSubsystem. */
   public Drivetrain(File directory) {
@@ -91,6 +163,11 @@ public class Drivetrain extends SubsystemBase {
             // periodically when they are not moving.
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the
                                          // offsets onto it. Throws warning if not possible
+    //VISION, NOT YAGSL(NO CLUE IF THESE INDEXES ARE RIGHT)
+    m_frontLeft = swerveDrive.getModules()[0];
+    m_frontRight = swerveDrive.getModules()[1];
+    m_backLeft = swerveDrive.getModules()[2];
+    m_backRight = swerveDrive.getModules()[3];
   }
 
   /**

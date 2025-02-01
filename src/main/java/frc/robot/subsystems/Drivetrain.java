@@ -200,8 +200,15 @@ public class Drivetrain extends SubsystemBase {
     return num;
   }
 
+  public void printOdometry() {
+    Pose2d pose = m_poseEstimator.getEstimatedPosition();
+    System.out.println("x=" + pose.getX() +", y=" + pose.getY() + pose.getRotation().getDegrees());
+  }
+
   @Override
   public void periodic() {
+    updateOdometry();
+    printOdometry();
     // This method will be called once per scheduler run
   }
 

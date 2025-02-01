@@ -67,6 +67,8 @@ public class Drivetrain extends SubsystemBase {
   public final SwerveDriveKinematics m_kinematics = 
     new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
 
+
+    //do all the consturction in init, remove the final, only declare local variables here
   private final SwerveDrivePoseEstimator m_poseEstimator =
       new SwerveDrivePoseEstimator(
           m_kinematics,

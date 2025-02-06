@@ -67,6 +67,10 @@ public class RobotContainer {
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
   }
 
+  public Drivetrain getDrivetrain() {
+    return m_drivetrain;
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -74,8 +78,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new Command() {
-      // nothing
-    };
+    return m_drivetrain.getAutonomousCommand("straight");
+  }
+
+  public void setMotorBrake(boolean brake) {
+    m_drivetrain.setMotorBrake(brake);
   }
 }

@@ -9,7 +9,13 @@ import static edu.wpi.first.units.Units.*;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,12 +30,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.Trajectory;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import java.util.List;
 
 public class Drivetrain extends SubsystemBase {
   /**
@@ -50,6 +60,11 @@ public class Drivetrain extends SubsystemBase {
   // Mutable holder for unit-safe linear velocity values, persisted to avoid
   // reallocation.
   private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
+
+  //limiting linear and angular velocity
+  // private static final double MAX_LINEAR_VELOCITY = 3.0; //max speed in meters/second
+  // private static final double MAX_ANGULAR_VELOCITY = 2.0; //max speed in radians/second
+
 
   // Limelight stuff, NOT YAGSL, VISION MADE THIS IT MAY BE BROKEN
   public final Translation2d m_frontLeftLocation = new Translation2d(Inches.of(12.125), Inches.of(12.125));
@@ -207,6 +222,72 @@ public class Drivetrain extends SubsystemBase {
   public void printOdometry() {
     Pose2d pose = m_poseEstimator.getEstimatedPosition();
     System.out.println("x=" + pose.getX() +", y=" + pose.getY() + pose.getRotation().getDegrees());
+  }
+
+  // private void setDrivetrainVelocity(double linearVelocity, double angularVelocity) {
+  //   linearVelocity = limitVelocity(linearVelocity);
+  //   angularVelocity = limitAngularVelocity(angularVelocity);
+  // }
+
+  // private double limitVelocity(double velocity) {
+  //   return Math.min(Math.max(velocity, -MAX_LINEAR_VELOCITY), MAX_LINEAR_VELOCITY);
+  // }
+
+  // private double limitAngularVelocity(double angularVelocity) {
+  //   return Math.min(Math.max(angularVelocity, -MAX_ANGULAR_VELOCITY), MAX_ANGULAR_VELOCITY);
+  // }
+
+  // private Trajectory generateTrajectory(Pose2d startPose, Pose2d endPose, TrajectoryConfig config) {
+  //   return TrajectoryGenerator.generateTrajectory(
+  //       startPose,
+  //       List.of(),
+  //       endPose,
+  //       config
+  //   );
+  // }
+
+  // Follow the generated trajectory
+// private void followTrajectory(Trajectory trajectory) {
+//     // Simple path-following using a PIDController for both x and theta (angular)
+//     try (PIDController xController = new PIDController(1.0, 0, 0);
+//          PIDController thetaController = new PIDController(1.0, 0, 0)) {
+
+//         for (Trajectory.State state : trajectory.getStates()) {
+//             // Update the robot’s velocity to follow the trajectory
+//             double xError = state.poseMeters.getX() - m_poseEstimator.getEstimatedPosition().getX();
+//             double yError = state.poseMeters.getY() - m_poseEstimator.getEstimatedPosition().getY();
+//             double thetaError = state.poseMeters.getRotation().getDegrees() - m_poseEstimator.getEstimatedPosition().getRotation().getDegrees();
+
+//             double linearVelocity = xController.calculate(xError) + yError;  // Using both x and y errors
+//             double angularVelocity = thetaController.calculate(thetaError);
+
+//             setDrivetrainVelocity(linearVelocity, angularVelocity);
+//         }
+//     }
+// }
+
+  public void toPose(Pose2d targetPose) {
+    Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
+    // Create a list of waypoints from poses. Each pose represents one waypoint.
+    // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+      new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()), // waypoints will always have at minimum two pose2ds (current and target)
+      new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation())
+    );
+
+    PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+    // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
+
+    // Create the path using the waypoints created above
+    PathPlannerPath path = new PathPlannerPath(
+            waypoints,
+            constraints,
+            null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
+            new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+    );
+
+    // Prevent the path from being flipped if the coordinates are already correct
+    path.preventFlipping = true;
   }
 
   @Override

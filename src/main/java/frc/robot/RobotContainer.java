@@ -78,7 +78,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return m_drivetrain.getAutonomousCommand("testForward");
+    return m_drivetrain.getAutonomousCommand("straight");
   }
 
   public void setMotorBrake(boolean brake) {

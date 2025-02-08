@@ -221,7 +221,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void printOdometry() {
     Pose2d pose = m_poseEstimator.getEstimatedPosition();
-    System.out.println("x=" + pose.getX() +", y=" + pose.getY() + pose.getRotation().getDegrees());
+    System.out.println("x=" + pose.getX() + ", y=" + pose.getY() + ", theta=" + pose.getRotation().getDegrees());
   }
 
   // private void setDrivetrainVelocity(double linearVelocity, double angularVelocity) {

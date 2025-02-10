@@ -36,7 +36,6 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick m_joystick = new Joystick(1);
   Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
-
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -60,11 +59,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1),
-        () -> m_joystick.getRawAxis(0),
+    m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(0),
+        () -> m_joystick.getRawAxis(1),
         () -> m_joystick.getRawAxis(2)));
 
-    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
+    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro)); 
   }
 
   public Drivetrain getDrivetrain() {

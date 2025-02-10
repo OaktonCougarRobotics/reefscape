@@ -105,10 +105,10 @@ public class Drivetrain extends SubsystemBase {
             // periodically when they are not moving.
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the
                                          // offsets onto it. Throws warning if not possible
-    System.out.println(swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
-    System.out.println(swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
-    System.out.println(swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
-    System.out.println(swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
+    System.out.println("front left: "+swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
+    System.out.println("fron right: "+swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
+    System.out.println("back left: "+swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
+    System.out.println("backright: "+swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
   }
 
   /**

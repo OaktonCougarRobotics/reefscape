@@ -59,8 +59,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(0),
-        () -> m_joystick.getRawAxis(1),
+    m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1),
+        () -> m_joystick.getRawAxis(0),
         () -> m_joystick.getRawAxis(2)));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro)); 

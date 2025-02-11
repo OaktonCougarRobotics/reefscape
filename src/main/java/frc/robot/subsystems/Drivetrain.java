@@ -74,6 +74,9 @@ public class Drivetrain extends SubsystemBase {
     // The encoder resolution per motor revolution is 1 per motor revolution.
     double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
 
+    
+
+
     System.out.println("\"conversionFactors\": {");
     System.out.println("\t\"angle\": {\"factor\": " + angleConversionFactor + " },");
     System.out.println("\t\"drive\": {\"factor\": " + driveConversionFactor + " }");
@@ -124,13 +127,24 @@ public class Drivetrain extends SubsystemBase {
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
     return run(() -> {
-      // Make the robot move
-      swerveDrive.drive(new Translation2d(deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
-                                          deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity()),
-                        deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity(),
-          true,
-             false);
+
+      swerveDrive.driveFieldOriented(new ChassisSpeeds(
+        deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
+        deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
+        deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity()));
     });
+      // Make the robot move
+      // swerveDrive.drive(
+      //   new Translation2d(deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
+      //                                     deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity()),
+                                          
+      //                   deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity(),
+      //     true,
+      //        false);
+
+    //   swerveDrive.driveFieldOriented(
+    //     )
+    // });
   }
 
   public Pose2d getPose() {

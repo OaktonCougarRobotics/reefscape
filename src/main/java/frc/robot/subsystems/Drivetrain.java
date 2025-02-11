@@ -41,6 +41,7 @@ import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
+import swervelib.imu.*;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import java.util.List;
 
@@ -87,7 +88,8 @@ public class Drivetrain extends SubsystemBase {
   public final Translation2d m_backLeftLocation = new Translation2d(Inches.of(0).minus(Inches.of(12.125)), Inches.of(12.125));
   public final Translation2d m_backRightLocation = new Translation2d(Inches.of(0).minus(Inches.of(12.125)), Inches.of(0).minus(Inches.of(12.125)));
 
-  public final AnalogGyro m_gyro = new AnalogGyro(0); //CHANGE THIS TO THE CORRECT PORT
+  public final SwerveIMU m_gyro;
+  //new AnalogGyro(0); //CHANGE THIS TO THE CORRECT PORT
   
   public SwerveModule m_frontLeft;
   public SwerveModule m_frontRight;
@@ -153,9 +155,11 @@ public class Drivetrain extends SubsystemBase {
     m_backLeft = swerveDrive.getModules()[2];
     m_backRight = swerveDrive.getModules()[3];
 
+    m_gyro = swerveDrive.getGyro();
+
     m_poseEstimator = new SwerveDrivePoseEstimator(
       m_kinematics,
-      m_gyro.getRotation2d(),
+      m_gyro.getRotation3d().toRotation2d(),
       new SwerveModulePosition[] {
         m_frontLeft.getPosition(),
         m_frontRight.getPosition(),
@@ -197,7 +201,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void updateOdometry() {
     m_poseEstimator.update(
-        m_gyro.getRotation2d(),
+        m_gyro.getRotation3d().toRotation2d(),
         new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -209,7 +213,7 @@ public class Drivetrain extends SubsystemBase {
     
     LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    if(Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+    if(Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
     {
       doRejectUpdate = true;
     }

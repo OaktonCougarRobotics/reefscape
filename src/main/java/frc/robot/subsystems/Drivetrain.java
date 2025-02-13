@@ -109,7 +109,6 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("fron right: "+swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
     System.out.println("back left: "+swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
     System.out.println("backright: "+swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
-    setupPathPlanner();
   }
 
   /**
@@ -231,9 +230,6 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println("x: " + swerveDrive.getPose().getX());
-    System.out.println("y: " + swerveDrive.getPose().getY());
-    System.out.println("theta: " + swerveDrive.getPose().getRotation());
     // This method will be called once per scheduler run
   }
 

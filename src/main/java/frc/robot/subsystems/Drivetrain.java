@@ -27,6 +27,7 @@ import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -47,6 +48,7 @@ import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -217,7 +219,16 @@ public class Drivetrain extends SubsystemBase {
     {
       doRejectUpdate = true;
     }
-    if(mt2.tagCount == 0)
+    if(mt2 == null)
+    {
+      SmartDashboard.putBoolean("mt2Null?", true);
+      doRejectUpdate = true;
+    }
+    else
+    {
+      SmartDashboard.putBoolean("mt2Null?", false);
+    }
+    if (mt2.tagCount == 0)
     {
       doRejectUpdate = true;
     }
@@ -230,7 +241,14 @@ public class Drivetrain extends SubsystemBase {
     }
     else if (doRejectUpdate)
     {
-      //update odometry using m_kinematics
+      m_poseEstimator.update(
+        m_gyro.getRotation3d().toRotation2d(),
+        new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_backLeft.getPosition(),
+          m_backRight.getPosition()
+        });
     }
   }
 

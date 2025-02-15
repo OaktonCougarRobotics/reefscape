@@ -11,6 +11,14 @@ import static edu.wpi.first.units.Units.Volts;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.swerve.SwerveModule;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -26,18 +34,6 @@ import frc.robot.Constants;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.DriveFeedforwards;
-import com.pathplanner.lib.util.swerve.SwerveSetpoint;
-import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 public class Drivetrain extends SubsystemBase {
   /**
@@ -59,7 +55,9 @@ public class Drivetrain extends SubsystemBase {
   // reallocation.
   private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
-  /** Creates a new ExampleSubsystem. */
+/**
+   * @param directory folder with the swerve json files     
+ */  
   public Drivetrain(File directory) {
 
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
@@ -73,9 +71,6 @@ public class Drivetrain extends SubsystemBase {
     // The gear ratio is 6.75 motor revolutions per wheel rotation.
     // The encoder resolution per motor revolution is 1 per motor revolution.
     double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
-
-    
-
 
     System.out.println("\"conversionFactors\": {");
     System.out.println("\t\"angle\": {\"factor\": " + angleConversionFactor + " },");
@@ -94,27 +89,35 @@ public class Drivetrain extends SubsystemBase {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+    // SwerveDrive.invertOdometry();
     swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via
                                             // angle.
     // swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation);
     // // Disables cosine compensation for simulations since it causes discrepancies
     // not seen in real life.
-
-    // swerveDrive.
     
-    swerveDrive.setAngularVelocityCompensation(true,
-        true,
-        -0.05); // Correct for skew that gets worse as angular velocity increases. Start with a
+      // swerveDrive.chassisVelocityCorrection = true;
+      // swerveDrive.autonomousChassisVelocityCorrection = true;
+
+    // swerveDrive.setAngularVelocityCompensation(true,
+    //     true,
+    //     -0.05); // Correct for skew that gets worse as angular velocity increases. Start with a
               // coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,
         1); // Enable if you want to resynchronize your absolute encoders and motor encoders
             // periodically when they are not moving.
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the
                                          // offsets onto it. Throws warning if not possible
+
+    swerveDrive.setCosineCompensator(true);
+
     System.out.println("front left: "+swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
     System.out.println("front right: "+swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
     System.out.println("back left: "+swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
     System.out.println("back right: "+swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
+
+
+
     setupPathPlanner();
   }
 
@@ -130,11 +133,13 @@ public class Drivetrain extends SubsystemBase {
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
     return run(() -> {
-      // swerveDrive.drive(new ChassisSpeeds(translationX.getAsDouble() * Constants.MAX_SPEED, translationY.getAsDouble() * Constants.MAX_SPEED, Math.PI+(Math.PI*angularRotation.getAsDouble())));;
+
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
         deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
         deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
-        deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity()));
+        deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity()),
+        new Translation2d()); 
+
     });
       // Make the robot move
       // swerveDrive.drive(
@@ -249,9 +254,9 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
-    System.out.println("x:" + swerveDrive.getPose().getX());
-    System.out.println("y:" + swerveDrive.getPose().getY());
+    // System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
+    // System.out.println("x:" + swerveDrive.getPose().getX());
+    // System.out.println("y:" + swerveDrive.getPose().getY());
   }
 
   @Override

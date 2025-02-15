@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.Drivebase;
 import frc.robot.subsystems.Drivetrain;
 
 import java.io.File;
@@ -36,6 +36,7 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick m_joystick = new Joystick(1);
   Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -63,7 +64,7 @@ public class RobotContainer {
         () -> m_joystick.getRawAxis(0) * -1,
         () -> m_joystick.getRawAxis(2) * -1));
 
-    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro)); 
+    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
   }
 
   public Drivetrain getDrivetrain() {

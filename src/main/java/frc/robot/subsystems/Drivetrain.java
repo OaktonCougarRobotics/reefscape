@@ -55,9 +55,9 @@ public class Drivetrain extends SubsystemBase {
   // reallocation.
   private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
-/**
-   * @param directory folder with the swerve json files     
- */  
+  /**
+   * @param directory folder with the swerve json files
+   */
   public Drivetrain(File directory) {
 
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
@@ -95,14 +95,11 @@ public class Drivetrain extends SubsystemBase {
     // swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation);
     // // Disables cosine compensation for simulations since it causes discrepancies
     // not seen in real life.
-    
-      // swerveDrive.chassisVelocityCorrection = true;
-      // swerveDrive.autonomousChassisVelocityCorrection = true;
 
-    // swerveDrive.setAngularVelocityCompensation(true,
-    //     true,
-    //     -0.05); // Correct for skew that gets worse as angular velocity increases. Start with a
-              // coefficient of 0.1.
+    swerveDrive.setAngularVelocityCompensation(true,
+        true,
+        -0.05); // Correct for skew that gets worse as angular velocity increases.
+
     swerveDrive.setModuleEncoderAutoSynchronize(false,
         1); // Enable if you want to resynchronize your absolute encoders and motor encoders
             // periodically when they are not moving.
@@ -111,12 +108,10 @@ public class Drivetrain extends SubsystemBase {
 
     swerveDrive.setCosineCompensator(true);
 
-    System.out.println("front left: "+swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
-    System.out.println("front right: "+swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
-    System.out.println("back left: "+swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
-    System.out.println("back right: "+swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
-
-
+    System.out.println("front left: " + swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
+    System.out.println("front right: " + swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
+    System.out.println("back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
+    System.out.println("back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
 
     setupPathPlanner();
   }
@@ -133,25 +128,29 @@ public class Drivetrain extends SubsystemBase {
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
     return run(() -> {
-
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
-        deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
-        deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
-        deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity()),
-        new Translation2d()); 
-
+          deadzone(translationX.getAsDouble(), Constants.Drivebase.X_DEADBAND)
+              * swerveDrive.getMaximumChassisVelocity(),
+          deadzone(translationY.getAsDouble(), Constants.Drivebase.Y_DEADBAND)
+              * swerveDrive.getMaximumChassisVelocity(),
+          deadzone(angularRotation.getAsDouble(), Constants.Drivebase.Z_DEADBAND)
+              * swerveDrive.getMaximumChassisAngularVelocity()),
+          new Translation2d());
     });
-      // Make the robot move
-      // swerveDrive.drive(
-      //   new Translation2d(deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
-      //                                     deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity()),
-                                          
-      //                   deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity(),
-      //     true,
-      //        false);
+    // Make the robot move
+    // swerveDrive.drive(
+    // new Translation2d(deadzone(translationX.getAsDouble(), 0.05) *
+    // swerveDrive.getMaximumChassisVelocity(),
+    // deadzone(translationY.getAsDouble(), 0.05) *
+    // swerveDrive.getMaximumChassisVelocity()),
 
-    //   swerveDrive.driveFieldOriented(
-    //     )
+    // deadzone(angularRotation.getAsDouble(), 0.05) *
+    // swerveDrive.getMaximumChassisAngularVelocity(),
+    // true,
+    // false);
+
+    // swerveDrive.driveFieldOriented(
+    // )
     // });
   }
 
@@ -254,9 +253,9 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
-    // System.out.println("x:" + swerveDrive.getPose().getX());
-    // System.out.println("y:" + swerveDrive.getPose().getY());
+    System.out.println("x:" + swerveDrive.getPose().getX());
+    System.out.println("y:" + swerveDrive.getPose().getY());
+    System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
   }
 
   @Override

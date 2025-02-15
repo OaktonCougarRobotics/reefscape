@@ -99,9 +99,12 @@ public class Drivetrain extends SubsystemBase {
     // swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation);
     // // Disables cosine compensation for simulations since it causes discrepancies
     // not seen in real life.
+
+    // swerveDrive.
+    
     swerveDrive.setAngularVelocityCompensation(true,
         true,
-        0.1); // Correct for skew that gets worse as angular velocity increases. Start with a
+        -0.05); // Correct for skew that gets worse as angular velocity increases. Start with a
               // coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,
         1); // Enable if you want to resynchronize your absolute encoders and motor encoders
@@ -109,9 +112,10 @@ public class Drivetrain extends SubsystemBase {
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the
                                          // offsets onto it. Throws warning if not possible
     System.out.println("front left: "+swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
-    System.out.println("fron right: "+swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
+    System.out.println("front right: "+swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
     System.out.println("back left: "+swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
-    System.out.println("backright: "+swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
+    System.out.println("back right: "+swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
+    setupPathPlanner();
   }
 
   /**
@@ -126,7 +130,7 @@ public class Drivetrain extends SubsystemBase {
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
     return run(() -> {
-
+      // swerveDrive.drive(new ChassisSpeeds(translationX.getAsDouble() * Constants.MAX_SPEED, translationY.getAsDouble() * Constants.MAX_SPEED, Math.PI+(Math.PI*angularRotation.getAsDouble())));;
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
         deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
         deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
@@ -245,6 +249,9 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
+    System.out.println("x:" + swerveDrive.getPose().getX());
+    System.out.println("y:" + swerveDrive.getPose().getY());
   }
 
   @Override

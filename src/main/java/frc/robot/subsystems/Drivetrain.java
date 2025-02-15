@@ -279,6 +279,7 @@ public class Drivetrain extends SubsystemBase {
     return swerveDrive.getFieldVelocity();
   }
 
+  
   public void setupPathPlanner() {
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
@@ -348,6 +349,7 @@ public class Drivetrain extends SubsystemBase {
     // event markers.
     return new PathPlannerAuto(pathName);
   }
+  
 
   public static double deadzone(double num, double deadband) {
     if (Math.abs(num) < deadband)
@@ -410,6 +412,7 @@ public class Drivetrain extends SubsystemBase {
   // }
   // }
 
+  
   public void toPose(Pose2d targetPose) {
     Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
     // Create a list of waypoints from poses. Each pose represents one waypoint.
@@ -441,6 +444,7 @@ public class Drivetrain extends SubsystemBase {
     // Prevent the path from being flipped if the coordinates are already correct
     path.preventFlipping = true;
   }
+  
 
   public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);

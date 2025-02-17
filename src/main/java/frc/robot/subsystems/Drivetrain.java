@@ -416,17 +416,21 @@ public class Drivetrain extends SubsystemBase {
     boolean autoWorks = false;
     if (!autoWorks)// Work in progress - Horatio
     {
+      while(!m_poseEstimator.getEstimatedPosition().equals(targetPose))
+      {
       PIDController xController = new PIDController(1, 0, 0);
       PIDController yController = new PIDController(1, 0, 0);
       PIDController thetaController = new PIDController(1, 0, 0);
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
       double xSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getX(), targetPose.getX());
-      double ySpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getY(), targetPose.getY());
+      double ySpeed = yController.calculate(m_poseEstimator.getEstimatedPosition().getY(), targetPose.getY());
       double thetaSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
           targetPose.getRotation().getRadians());
 
       swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
+      updateOdometry();
+      }
 
     }
 

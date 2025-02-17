@@ -10,7 +10,9 @@ import frc.robot.subsystems.Drivetrain;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +38,7 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick m_joystick = new Joystick(1);
   Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
+  Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -65,6 +68,8 @@ public class RobotContainer {
         () -> m_joystick.getRawAxis(2) * -1));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
+    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(11, 0, new Rotation2d(0, 0)))));
+
   }
 
   public Drivetrain getDrivetrain() {

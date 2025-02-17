@@ -4,9 +4,7 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Meter;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
@@ -27,13 +25,38 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.Trajectory;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
+import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
+import swervelib.imu.*;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import java.util.List;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.swerve.SwerveSetpoint;
+import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 public class Drivetrain extends SubsystemBase {
   /**
@@ -55,9 +78,37 @@ public class Drivetrain extends SubsystemBase {
   // reallocation.
   private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
-  /**
-   * @param directory folder with the swerve json files
-   */
+  // limiting linear and angular velocity
+  // private static final double MAX_LINEAR_VELOCITY = 3.0; //max speed in
+  // meters/second
+  // private static final double MAX_ANGULAR_VELOCITY = 2.0; //max speed in
+  // radians/second
+
+  // Limelight stuff, NOT YAGSL, VISION MADE THIS IT MAY BE BROKEN
+  public final Translation2d m_frontLeftLocation = new Translation2d(Inches.of(12.125), Inches.of(12.125));
+  public final Translation2d m_frontRightLocation = new Translation2d(Inches.of(12.125),
+      Inches.of(0).minus(Inches.of(12.125)));
+  public final Translation2d m_backLeftLocation = new Translation2d(Inches.of(0).minus(Inches.of(12.125)),
+      Inches.of(12.125));
+  public final Translation2d m_backRightLocation = new Translation2d(Inches.of(0).minus(Inches.of(12.125)),
+      Inches.of(0).minus(Inches.of(12.125)));
+
+  public final SwerveIMU m_gyro;
+  // new AnalogGyro(0); //CHANGE THIS TO THE CORRECT PORT
+
+  public SwerveModule m_frontLeft;
+  public SwerveModule m_frontRight;
+  public SwerveModule m_backLeft;
+  public SwerveModule m_backRight;
+
+  public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation,
+      m_backLeftLocation, m_backRightLocation);
+
+  // do all the consturction in init, remove the final, only declare local
+  // variables here
+  public final SwerveDrivePoseEstimator m_poseEstimator;
+
+  /** Creates a new ExampleSubsystem. */
   public Drivetrain(File directory) {
 
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
@@ -96,24 +147,42 @@ public class Drivetrain extends SubsystemBase {
     // // Disables cosine compensation for simulations since it causes discrepancies
     // not seen in real life.
 
+    // swerveDrive.
+
     swerveDrive.setAngularVelocityCompensation(true,
         true,
-        -0.05); // Correct for skew that gets worse as angular velocity increases.
-
+        -0.05); // Correct for skew that gets worse as angular velocity increases. Start with a
+    // coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,
         1); // Enable if you want to resynchronize your absolute encoders and motor encoders
             // periodically when they are not moving.
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the
                                          // offsets onto it. Throws warning if not possible
+    // VISION, NOT YAGSL(NO CLUE IF THESE INDEXES ARE RIGHT)
+    m_frontLeft = swerveDrive.getModules()[0];
+    m_frontRight = swerveDrive.getModules()[1];
+    m_backLeft = swerveDrive.getModules()[2];
+    m_backRight = swerveDrive.getModules()[3];
 
-    swerveDrive.setCosineCompensator(true);
+    m_gyro = swerveDrive.getGyro();
 
-    System.out.println("front left: " + swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
-    System.out.println("front right: " + swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
-    System.out.println("back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
-    System.out.println("back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
+    m_poseEstimator = new SwerveDrivePoseEstimator(
+        m_kinematics,
+        m_gyro.getRotation3d().toRotation2d(),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        },
+        new Pose2d(),
+        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+        VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
 
-    setupPathPlanner();
+    System.out.println("Front left: " + swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
+    System.out.println("Front right: " + swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
+    System.out.println("Back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
+    System.out.println("Back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
   }
 
   /**
@@ -152,6 +221,52 @@ public class Drivetrain extends SubsystemBase {
     // swerveDrive.driveFieldOriented(
     // )
     // });
+  }
+
+  public void updateOdometry() {
+    m_poseEstimator.update(
+        m_gyro.getRotation3d().toRotation2d(),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        });
+
+    boolean doRejectUpdate = false;
+
+    LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+        0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our angular velocity is greater than 720
+                                                                    // degrees per second, ignore vision updates
+    {
+      doRejectUpdate = true;
+    }
+    if (mt2 == null) {
+      SmartDashboard.putBoolean("mt2Null?", true);
+      doRejectUpdate = true;
+    } else {
+      SmartDashboard.putBoolean("mt2Null?", false);
+    }
+    if (mt2.tagCount == 0) {
+      doRejectUpdate = true;
+    }
+    if (!doRejectUpdate) {
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+      m_poseEstimator.addVisionMeasurement(
+          mt2.pose,
+          mt2.timestampSeconds);
+    } else if (doRejectUpdate) {
+      m_poseEstimator.update(
+          m_gyro.getRotation3d().toRotation2d(),
+          new SwerveModulePosition[] {
+              m_frontLeft.getPosition(),
+              m_frontRight.getPosition(),
+              m_backLeft.getPosition(),
+              m_backRight.getPosition()
+          });
+    }
   }
 
   public Pose2d getPose() {
@@ -246,12 +361,121 @@ public class Drivetrain extends SubsystemBase {
     return num;
   }
 
+  public void printOdometry() {
+    Pose2d pose = m_poseEstimator.getEstimatedPosition();
+    System.out.println("x=" + pose.getX() + ", y=" + pose.getY() + ", theta=" + pose.getRotation().getDegrees());
+  }
+
+  // private void setDrivetrainVelocity(double linearVelocity, double
+  // angularVelocity) {
+  // linearVelocity = limitVelocity(linearVelocity);
+  // angularVelocity = limitAngularVelocity(angularVelocity);
+  // }
+
+  // private double limitVelocity(double velocity) {
+  // return Math.min(Math.max(velocity, -MAX_LINEAR_VELOCITY),
+  // MAX_LINEAR_VELOCITY);
+  // }
+
+  // private double limitAngularVelocity(double angularVelocity) {
+  // return Math.min(Math.max(angularVelocity, -MAX_ANGULAR_VELOCITY),
+  // MAX_ANGULAR_VELOCITY);
+  // }
+
+  // private Trajectory generateTrajectory(Pose2d startPose, Pose2d endPose,
+  // TrajectoryConfig config) {
+  // return TrajectoryGenerator.generateTrajectory(
+  // startPose,
+  // List.of(),
+  // endPose,
+  // config
+  // );
+  // }
+
+  // Follow the generated trajectory
+  // private void followTrajectory(Trajectory trajectory) {
+  // // Simple path-following using a PIDController for both x and theta (angular)
+  // try (PIDController xController = new PIDController(1.0, 0, 0);
+  // PIDController thetaController = new PIDController(1.0, 0, 0)) {
+
+  // for (Trajectory.State state : trajectory.getStates()) {
+  // // Update the robot’s velocity to follow the trajectory
+  // double xError = state.poseMeters.getX() -
+  // m_poseEstimator.getEstimatedPosition().getX();
+  // double yError = state.poseMeters.getY() -
+  // m_poseEstimator.getEstimatedPosition().getY();
+  // double thetaError = state.poseMeters.getRotation().getDegrees() -
+  // m_poseEstimator.getEstimatedPosition().getRotation().getDegrees();
+
+  // double linearVelocity = xController.calculate(xError) + yError; // Using both
+  // x and y errors
+  // double angularVelocity = thetaController.calculate(thetaError);
+
+  // setDrivetrainVelocity(linearVelocity, angularVelocity);
+  // }
+  // }
+  // }
+
+  public void toPose(Pose2d targetPose) {
+    boolean autoWorks = false;
+    if (!autoWorks)// Work in progress - Horatio
+    {
+      PIDController xController = new PIDController(1, 0, 0);
+      PIDController yController = new PIDController(1, 0, 0);
+      PIDController thetaController = new PIDController(1, 0, 0);
+      thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+      double xSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getX(), targetPose.getX());
+      double ySpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getY(), targetPose.getY());
+      double thetaSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
+          targetPose.getRotation().getRadians());
+
+      swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
+
+    }
+
+    if (autoWorks) {
+      Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
+      // Create a list of waypoints from poses. Each pose represents one waypoint.
+      // The rotation component of the pose should be the direction of travel. Do not
+      // use holonomic rotation.
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+          new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()), // waypoints will always have
+                                                                                         // at
+                                                                                         // minimum two pose2ds (current
+                                                                                         // and target)
+          new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
+
+      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this
+                                                                                             // path.
+      // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
+      // You can also use unlimited constraints, only limited by motor torque and
+      // nominal battery voltage
+
+      // Create the path using the waypoints created above
+      PathPlannerPath path = new PathPlannerPath(
+          waypoints,
+          constraints,
+          null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+                // be null for on-the-fly paths.
+          new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If
+                                                          // using a differential drivetrain, the rotation will have no
+                                                          // effect.
+      );
+
+      // Prevent the path from being flipped if the coordinates are already correct
+      path.preventFlipping = true;
+    }
+  }
+
   public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);
   }
 
   @Override
   public void periodic() {
+    updateOdometry();
+    printOdometry();
     // This method will be called once per scheduler run
     System.out.println("x:" + swerveDrive.getPose().getX());
     System.out.println("y:" + swerveDrive.getPose().getY());

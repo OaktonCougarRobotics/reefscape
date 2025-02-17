@@ -39,7 +39,7 @@ public class RobotContainer {
   private final Joystick m_joystick = new Joystick(1);
   Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
   Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
-
+  Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -69,7 +69,7 @@ public class RobotContainer {
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
     toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(11, 0, new Rotation2d(0, 0)))));
-
+    zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
   }
 
   public Drivetrain getDrivetrain() {
@@ -83,10 +83,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return m_drivetrain.getAutonomousCommand("circle");
+    return m_drivetrain.getAutonomousCommand("straight");
   }
 
   public void setMotorBrake(boolean brake) {
     m_drivetrain.setMotorBrake(brake);
   }
+
 }

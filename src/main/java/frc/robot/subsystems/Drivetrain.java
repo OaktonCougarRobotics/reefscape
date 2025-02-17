@@ -4,59 +4,51 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.Trajectory;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
+import swervelib.imu.SwerveIMU;
+// import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
-import swervelib.imu.*;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import java.util.List;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.DriveFeedforwards;
-import com.pathplanner.lib.util.swerve.SwerveSetpoint;
-import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 public class Drivetrain extends SubsystemBase {
   /**
@@ -141,8 +133,9 @@ public class Drivetrain extends SubsystemBase {
       throw new RuntimeException(e);
     }
     // SwerveDrive.invertOdometry();
-    swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via
-                                            // angle.
+    swerveDrive.setMotorIdleMode(true);
+    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via
+                                            // 
     // swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation);
     // // Disables cosine compensation for simulations since it causes discrepancies
     // not seen in real life.
@@ -159,6 +152,7 @@ public class Drivetrain extends SubsystemBase {
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the
                                          // offsets onto it. Throws warning if not possible
     // VISION, NOT YAGSL(NO CLUE IF THESE INDEXES ARE RIGHT)
+
     m_frontLeft = swerveDrive.getModules()[0];
     m_frontRight = swerveDrive.getModules()[1];
     m_backLeft = swerveDrive.getModules()[2];
@@ -183,6 +177,7 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("Front right: " + swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
     System.out.println("Back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
     System.out.println("Back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
+    setupPathPlanner();
   }
 
   /**
@@ -196,6 +191,12 @@ public class Drivetrain extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
+        if (translationX.equals(0) && translationY.equals(0) && angularRotation.equals(0)) {
+          return run(()->{
+            for(String key:swerveDrive.getModuleMap().keySet())
+              swerveDrive.getModuleMap().get(key).getDriveMotor().setVoltage(0);
+          });
+        }
     return run(() -> {
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
           deadzone(translationX.getAsDouble(), Constants.Drivebase.X_DEADBAND)
@@ -475,8 +476,10 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-    printOdometry();
+    // printOdometry();
     // This method will be called once per scheduler run
+    // for(String key:swerveDrive.getModuleMap().keySet())
+    //   System.out.println(key+": "+swerveDrive.getModuleMap().get(key).getAbsolutePosition());
     System.out.println("x:" + swerveDrive.getPose().getX());
     System.out.println("y:" + swerveDrive.getPose().getY());
     System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
@@ -485,5 +488,10 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+  public void zeroWheels() {
+    for(String key:swerveDrive.getModuleMap().keySet())
+      swerveDrive.getModuleMap().get(key).setAngle(0);
   }
 }

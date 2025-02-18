@@ -12,7 +12,10 @@ import java.util.function.DoubleSupplier;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
 import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.path.*;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -29,6 +32,8 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -57,8 +62,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import java.lang.*;
 
 public class Drivetrain extends SubsystemBase {
   /**
@@ -184,6 +189,8 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("Front right: " + swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
     System.out.println("Back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
     System.out.println("Back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
+  
+    setupPathPlanner();
   }
 
   /**
@@ -362,98 +369,108 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("x=" + pose.getX() + ", y=" + pose.getY() + ", theta=" + pose.getRotation().getDegrees());
   }
 
-  // private void setDrivetrainVelocity(double linearVelocity, double
-  // angularVelocity) {
-  // linearVelocity = limitVelocity(linearVelocity);
-  // angularVelocity = limitAngularVelocity(angularVelocity);
+  // private void setDrivetrainVelocity(double linearVelocity, double angularVelocity) {
+  //   linearVelocity = limitVelocity(linearVelocity);
+  //   angularVelocity = limitAngularVelocity(angularVelocity);
   // }
 
   // private double limitVelocity(double velocity) {
-  // return Math.min(Math.max(velocity, -MAX_LINEAR_VELOCITY),
-  // MAX_LINEAR_VELOCITY);
+  //   return Math.min(Math.max(velocity, -MAX_LINEAR_VELOCITY), MAX_LINEAR_VELOCITY);
   // }
 
   // private double limitAngularVelocity(double angularVelocity) {
-  // return Math.min(Math.max(angularVelocity, -MAX_ANGULAR_VELOCITY),
-  // MAX_ANGULAR_VELOCITY);
+  //   return Math.min(Math.max(angularVelocity, -MAX_ANGULAR_VELOCITY), MAX_ANGULAR_VELOCITY);
   // }
 
-  // private Trajectory generateTrajectory(Pose2d startPose, Pose2d endPose,
-  // TrajectoryConfig config) {
-  // return TrajectoryGenerator.generateTrajectory(
-  // startPose,
-  // List.of(),
-  // endPose,
-  // config
-  // );
+  // private Trajectory generateTrajectory(Pose2d startPose, Pose2d endPose, TrajectoryConfig config) {
+  //   return TrajectoryGenerator.generateTrajectory(
+  //   startPose,
+  //   List.of(),
+  //   endPose,
+  //   config
+  //   );
   // }
 
   // Follow the generated trajectory
   // private void followTrajectory(Trajectory trajectory) {
-  // // Simple path-following using a PIDController for both x and theta (angular)
-  // try (PIDController xController = new PIDController(1.0, 0, 0);
-  // PIDController thetaController = new PIDController(1.0, 0, 0)) {
+  //   // Simple path-following using a PIDController for both x and theta (angular)
+  //   try (PIDController xController = new PIDController(1.0, 0, 0);
+  //   PIDController thetaController = new PIDController(1.0, 0, 0)) {
 
-  // for (Trajectory.State state : trajectory.getStates()) {
-  // // Update the robot’s velocity to follow the trajectory
-  // double xError = state.poseMeters.getX() -
-  // m_poseEstimator.getEstimatedPosition().getX();
-  // double yError = state.poseMeters.getY() -
-  // m_poseEstimator.getEstimatedPosition().getY();
-  // double thetaError = state.poseMeters.getRotation().getDegrees() -
-  // m_poseEstimator.getEstimatedPosition().getRotation().getDegrees();
+  //   for (Trajectory.State state : trajectory.getStates()) {
+  //     // Update the robot’s velocity to follow the trajectory
+  //     double xError = state.poseMeters.getX() - m_poseEstimator.getEstimatedPosition().getX();
+  //     double yError = state.poseMeters.getY() - m_poseEstimator.getEstimatedPosition().getY();
+  //     double thetaError = state.poseMeters.getRotation().getDegrees() - m_poseEstimator.getEstimatedPosition().getRotation().getDegrees();
 
-  // double linearVelocity = xController.calculate(xError) + yError; // Using both
-  // x and y errors
-  // double angularVelocity = thetaController.calculate(thetaError);
+  //     double linearVelocity = xController.calculate(xError) + yError; // Using both x and y errors
+  //     double angularVelocity = thetaController.calculate(thetaError);
 
-  // setDrivetrainVelocity(linearVelocity, angularVelocity);
-  // }
+  //     setDrivetrainVelocity(linearVelocity, angularVelocity);
+  //   }
   // }
   // }
 
-  public void toPose(Pose2d targetPose) {
-    boolean autoWorks = false;
+  public PathPlannerPath toPose(Pose2d targetPose) {
+    Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
+    boolean autoWorks = true;
+    PathPlannerPath path = new PathPlannerPath(PathPlannerPath.waypointsFromPoses(new Pose2d(), new Pose2d()), 
+                           new PathConstraints(1.0, 1.0, 2 * Math.PI, 4 * Math.PI),
+                           null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+                                                    // be null for on-the-fly paths.
+                           new GoalEndState(0.0, new Rotation2d(0.0)) // Goal end state. You can set a holonomic rotation here. If
+                                                      // using a differential drivetrain, the rotation will have no
+                                                      // effect.
+    );
+
+    // generateTrajectory(currentPose, targetPose, TrajectoryConfig config)
+
+    // followTrajectory(null);
+
     if (!autoWorks)// Work in progress - Horatio
     {
+      PIDController xController = new PIDController(10, 0, 0);
+      PIDController yController = new PIDController(10, 0, 0);
+      PIDController thetaController = new PIDController(0, 0, 0);
+      thetaController.enableContinuousInput(-Math.PI, Math.PI);
       while(!m_poseEstimator.getEstimatedPosition().equals(targetPose))
       {
-      PIDController xController = new PIDController(1, 0, 0);
-      PIDController yController = new PIDController(1, 0, 0);
-      PIDController thetaController = new PIDController(1, 0, 0);
-      thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
       double xSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getX(), targetPose.getX());
       double ySpeed = yController.calculate(m_poseEstimator.getEstimatedPosition().getY(), targetPose.getY());
       double thetaSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
           targetPose.getRotation().getRadians());
 
       swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
+      System.out.println("Estimated Position = " + currentPose.getX() + "\n" + currentPose.getY() + "\n"
+          + currentPose.getRotation().getDegrees());
+      System.out.println("Target Position = " + targetPose.getX() + "\n" + targetPose.getY() + "\n"
+          + targetPose.getRotation().getDegrees());
       updateOdometry();
       }
-
     }
 
+    Pose2d testPose2d = new Pose2d(currentPose.getX() + 1, currentPose.getY(), currentPose.getRotation());
+
     if (autoWorks) {
-      Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
       // Create a list of waypoints from poses. Each pose represents one waypoint.
       // The rotation component of the pose should be the direction of travel. Do not
       // use holonomic rotation.
+    
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
           new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()), // waypoints will always have
                                                                                          // at
                                                                                          // minimum two pose2ds (current
                                                                                          // and target)
-          new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
-
-      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this
+          // new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
+          testPose2d);
+      PathConstraints constraints = new PathConstraints(1.0, 1.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this
                                                                                              // path.
       // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
       // You can also use unlimited constraints, only limited by motor torque and
       // nominal battery voltage
 
       // Create the path using the waypoints created above
-      PathPlannerPath path = new PathPlannerPath(
+      path = new PathPlannerPath(
           waypoints,
           constraints,
           null, // The ideal starting state, this is only relevant for pre-planned paths, so can
@@ -462,11 +479,38 @@ public class Drivetrain extends SubsystemBase {
                                                           // using a differential drivetrain, the rotation will have no
                                                           // effect.
       );
-
+      
+      
       // Prevent the path from being flipped if the coordinates are already correct
       path.preventFlipping = true;
     }
+
+    return path;
   }
+
+// // Assuming this method is part of a drivetrain subsystem that provides the necessary methods
+//         new InstantCommand(() -> {
+//           // Reset odometry for the first path you run during auto
+//           if(isFirstPath){
+//               this.resetOdometry(traj.getInitialPose());
+//           }
+//         }),
+//         new PPSwerveControllerCommand(
+//             traj, 
+//             this::getPose, // Pose supplier
+//             m_kinematics, // SwerveDriveKinematics
+//             new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+//             new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
+//             new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+//             this::setModuleStates, // Module states consumer
+//             true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+//             this // Requires this drive subsystem
+//         )
+//             this // Requires this drive subsystem
+//         )
+//     );
+// }
+
 
   public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);

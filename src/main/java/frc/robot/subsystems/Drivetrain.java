@@ -92,17 +92,15 @@ public class Drivetrain extends SubsystemBase {
   public SwerveModule m_frontRight;
   public SwerveModule m_backLeft;
   public SwerveModule m_backRight;
-
   public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation,
       m_backLeftLocation, m_backRightLocation);
-
+  
   // do all the consturction in init, remove the final, only declare local
   // variables here
   public final SwerveDrivePoseEstimator m_poseEstimator;
 
   /** Creates a new ExampleSubsystem. */
   public Drivetrain(File directory) {
-
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     // In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     // The encoder resolution per motor revolution is 1 per motor revolution.
@@ -146,6 +144,7 @@ public class Drivetrain extends SubsystemBase {
         true,
         -0.05); // Correct for skew that gets worse as angular velocity increases. Start with a
     // coefficient of 0.1.
+    
     swerveDrive.setModuleEncoderAutoSynchronize(false,
         1); // Enable if you want to resynchronize your absolute encoders and motor encoders
             // periodically when they are not moving.
@@ -483,8 +482,16 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("x:" + swerveDrive.getPose().getX());
     System.out.println("y:" + swerveDrive.getPose().getY());
     System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
+    updateTelemetry();
   }
 
+  public void updateTelemetry() {
+    for(String key:swerveDrive.getModuleMap().keySet()){
+    SmartDashboard.putNumber(key, swerveDrive.getModuleMap().get(key).getAbsolutePosition());  
+    }
+    SmartDashboard.putString("position", "("+ swerveDrive.getPose().getX()+", "+swerveDrive.getPose().getY()+")");
+    SmartDashboard.putNumber("theta", swerveDrive.getOdometryHeading().getDegrees());
+  }
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation

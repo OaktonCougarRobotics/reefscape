@@ -440,7 +440,7 @@ public class Drivetrain extends SubsystemBase {
       double thetaSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
           targetPose.getRotation().getRadians());
 
-      swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
+      swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, 0));//thetaSpeed));
       System.out.println("Estimated Position = " + currentPose.getX() + "\n" + currentPose.getY() + "\n"
           + currentPose.getRotation().getDegrees());
       System.out.println("Target Position = " + targetPose.getX() + "\n" + targetPose.getY() + "\n"
@@ -514,6 +514,11 @@ public class Drivetrain extends SubsystemBase {
 
   public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);
+  }
+
+  public Rotation2d getRotation()
+  {
+    return m_poseEstimator.getEstimatedPosition().getRotation();
   }
 
   @Override

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
@@ -177,6 +178,7 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("Back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
     System.out.println("Back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
     setupPathPlanner();
+    
   }
 
   /**
@@ -475,13 +477,15 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
+    // System.out.println("pp has \"turn\" command: "+NamedCommands.hasCommand("turn")); 
     // printOdometry();
     // This method will be called once per scheduler run
     // for(String key:swerveDrive.getModuleMap().keySet())
+
     //   System.out.println(key+": "+swerveDrive.getModuleMap().get(key).getAbsolutePosition());
-    System.out.println("x:" + swerveDrive.getPose().getX());
-    System.out.println("y:" + swerveDrive.getPose().getY());
-    System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
+    // System.out.println("x:" + swerveDrive.getPose().getX());
+    // System.out.println("y:" + swerveDrive.getPose().getY());
+    // System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
     updateTelemetry();
   }
 

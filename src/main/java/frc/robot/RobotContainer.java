@@ -15,12 +15,16 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.pathplanner.lib.auto.NamedCommands;
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -40,16 +44,31 @@ public class RobotContainer {
   Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
   Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
   Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
+  Trigger inputSpin = new Trigger(()-> m_joystick.getRawButton(6));
+  public TalonSRX feederMotor = new TalonSRX(22);
+
+
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the trigger bindings
+    NamedCommands.registerCommand("turn", Commands.print("I FHJAKLDHFKJLADHFKJLAHDJKFLAHDJKFLASHFJKDASLHFDJKALFHSAKJL"));
+
     configureBindings();
   }
 
+  public void twist(boolean spin){
+    if(spin)
+    feederMotor.set(TalonSRXControlMode.PercentOutput,0.5);  
+    else
+    feederMotor.set(TalonSRXControlMode.PercentOutput,0.0);  
+
+  }
+
   /**
-   * Use this method to define your trigger->command mappings. Triggers can be
+   * Use this method to define your trigger->command mapping  s. Triggers can be
    * created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
    * an arbitrary
@@ -70,6 +89,12 @@ public class RobotContainer {
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
     toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(11, 0, new Rotation2d(0, 0)))));
     zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
+    inputSpin.whileTrue(Commands.runOnce(()->{
+      twist(true);
+    }));
+    inputSpin.whileFalse(Commands.runOnce(()->{
+      twist(false);
+    }));
   }
 
   public Drivetrain getDrivetrain() {
@@ -85,6 +110,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
+    System.out.println(NamedCommands.hasCommand("turn"));
     return m_drivetrain.getAutonomousCommand("New Auto");
   }
 

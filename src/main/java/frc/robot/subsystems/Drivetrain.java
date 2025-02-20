@@ -24,7 +24,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-
+                                                                                                                  
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -41,6 +41,7 @@ import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
@@ -177,7 +178,7 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("Front right: " + swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
     System.out.println("Back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
     System.out.println("Back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
-    setupPathPlanner();
+    // setupPathPlanner();
     
   }
 
@@ -193,6 +194,7 @@ public class Drivetrain extends SubsystemBase {
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
         System.out.println("Translation X Value :" + translationX.getAsDouble() + " Translation Y Value :" + translationY.getAsDouble() + " Angular Rotation Value :" + angularRotation.getAsDouble());
+
     return run(() -> {
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
           deadzone(translationX.getAsDouble(), Constants.Drivebase.X_DEADBAND)
@@ -219,7 +221,7 @@ public class Drivetrain extends SubsystemBase {
     // )
     // });
   }
-
+/* 
   public void updateOdometry() {
     m_poseEstimator.update(
         m_gyro.getRotation3d().toRotation2d(),
@@ -265,6 +267,7 @@ public class Drivetrain extends SubsystemBase {
           });
     }
   }
+    */
 
   public Pose2d getPose() {
     return swerveDrive.getPose();
@@ -471,7 +474,7 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateOdometry();
+    // updateOdometry();
     
     // 
     

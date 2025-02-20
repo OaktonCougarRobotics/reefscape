@@ -53,19 +53,25 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-  
-    // Configure the trigger bindings
-    NamedCommands.registerCommand("turn", Commands.run(()->{twist(true);}));
+    m_drivetrain.setupPathPlanner();
+    // NamedCommands.registerCommand("turn", Commands.run(()->{twist(true);}));
+    NamedCommands.registerCommand("spin", getSpinMotorCommand());
+    // NamedCommands.registerCommand("print", Commands.print("fghjfgjfghjfghjfghjfghj"));
 
     configureBindings();
   }
 
   public void twist(boolean spin){
+    System.out.println("ahfdjsaklhfjkalhfjdkaslhfjkaslhfjdkl");
     if(spin)
     feederMotor.set(TalonSRXControlMode.PercentOutput,0.5);  
     else
     feederMotor.set(TalonSRXControlMode.PercentOutput,0.0);  
 
+  }
+  public Command getSpinMotorCommand(){
+     
+    return Commands.runOnce(()->{System.out.println("SPIN COMMAND IS BEING CALLED!"); });
   }
 
   /**
@@ -111,9 +117,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    System.out.println(NamedCommands.hasCommand("turn"));
-    return m_drivetrain.getAutonomousCommand("New Auto");
-  }
+    if(NamedCommands.hasCommand("turn"))
+    System.out.println("fdhdjfhskdfhidegfisydfgsugsdfj");
+    return m_drivetrain.getAutonomousCommand("commandtesting");
+  }             
 
   public void setMotorBrake(boolean brake) {
     m_drivetrain.setMotorBrake(brake);

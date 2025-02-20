@@ -70,10 +70,10 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "turn",
+      "name": "spin",
       "waypointRelativePos": 0.5498759305210777,
-      "endWaypointRelativePos": null,
-      "command": null
+      "endWaypointRelativePos": 2.0694789081885823,
+      "command": "spin"
     }
   ],
   "globalConstraints": {

@@ -12,7 +12,10 @@ import java.util.function.DoubleSupplier;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
 import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.path.*;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -29,6 +32,8 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -57,8 +62,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
-
-import java.lang.*;
 
 public class Drivetrain extends SubsystemBase {
   /**
@@ -416,9 +419,9 @@ public class Drivetrain extends SubsystemBase {
     boolean autoWorks = false;
     if (!autoWorks)// Work in progress - Horatio
     {
-      PIDController xController = new PIDController(1, 0, 0);
-      PIDController yController = new PIDController(1, 0, 0);
-      PIDController thetaController = new PIDController(1, 0, 0);
+      PIDController xController = new PIDController(10, 0, 0);
+      PIDController yController = new PIDController(10, 0, 0);
+      PIDController thetaController = new PIDController(0, 0, 0);
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
       double xSpeed = xController.calculate(targetPose.getX(), m_poseEstimator.getEstimatedPosition().getX());
@@ -437,7 +440,6 @@ public class Drivetrain extends SubsystemBase {
     }
 
     if (autoWorks) {
-      Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
       // Create a list of waypoints from poses. Each pose represents one waypoint.
       // The rotation component of the pose should be the direction of travel. Do not
       // use holonomic rotation.
@@ -446,16 +448,16 @@ public class Drivetrain extends SubsystemBase {
                                                                                          // at
                                                                                          // minimum two pose2ds (current
                                                                                          // and target)
-          new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
-
-      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this
+          // new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
+          testPose2d);
+      PathConstraints constraints = new PathConstraints(1.0, 1.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this
                                                                                              // path.
       // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
       // You can also use unlimited constraints, only limited by motor torque and
       // nominal battery voltage
 
       // Create the path using the waypoints created above
-      PathPlannerPath path = new PathPlannerPath(
+      path = new PathPlannerPath(
           waypoints,
           constraints,
           null, // The ideal starting state, this is only relevant for pre-planned paths, so can
@@ -476,14 +478,6 @@ public class Drivetrain extends SubsystemBase {
 
   public Rotation2d getRotation() {
     return m_poseEstimator.getEstimatedPosition().getRotation();
-  }
-
-  public double getX() {
-    return m_poseEstimator.getEstimatedPosition().getX();
-  }
-
-  public double getY() {
-    return m_poseEstimator.getEstimatedPosition().getY();
   }
 
   @Override

@@ -10,11 +10,16 @@ import frc.robot.subsystems.Drivetrain;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -62,15 +67,17 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+  Pose2d test = new Pose2d(11.0, 0.0, new Rotation2d(1.0));
+
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1),
         () -> m_joystick.getRawAxis(0),
         () -> m_joystick.getRawAxis(2)));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain
-        .toPose(new Pose2d(m_drivetrain.getX() - .5, m_drivetrain.getY() - .5, m_drivetrain.getRotation()))));
-
+    // toPoseButton.onTrue(Commands.runOnce(() ->
+    // m_drivetrain.getAutonomousCommand(m_drivetrain.toPose(test))));
+    toPoseButton.onTrue(getAutonomousCommand());
   }
 
   public Drivetrain getDrivetrain() {
@@ -84,7 +91,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return m_drivetrain.getAutonomousCommand("straight");
+    // return m_drivetrain.getAutonomousCommand("straight");
+    return AutoBuilder.followPath(m_drivetrain.toPose(test));
   }
 
   public void setMotorBrake(boolean brake) {

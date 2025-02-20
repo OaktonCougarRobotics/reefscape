@@ -104,8 +104,8 @@ public class RobotContainer {
         () -> m_joystick.getRawAxis(2) * -1));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-    // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(3,
-    // 1, m_drivetrain.get))));
+    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain
+        .toPose(new Pose2d(m_drivetrain.getX() - 1, m_drivetrain.getY() - 1, m_drivetrain.getRotation()))));
     zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
     inputSpin.whileTrue(Commands.runOnce(() -> {
       twist(true);

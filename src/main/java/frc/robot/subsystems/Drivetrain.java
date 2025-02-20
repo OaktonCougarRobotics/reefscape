@@ -55,7 +55,7 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Swerve drive object.
    */
-  private final SwerveDrive swerveDrive;
+  public final SwerveDrive swerveDrive;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -133,7 +133,7 @@ public class Drivetrain extends SubsystemBase {
     }
     // SwerveDrive.invertOdometry();
     swerveDrive.setMotorIdleMode(true);
-    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via
+    swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via
                                             // 
     // swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation);
     // // Disables cosine compensation for simulations since it causes discrepancies
@@ -192,12 +192,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
-        if (translationX.equals(0) && translationY.equals(0) && angularRotation.equals(0)) {
-          return run(()->{
-            for(String key:swerveDrive.getModuleMap().keySet())
-              swerveDrive.getModuleMap().get(key).getDriveMotor().setVoltage(0);
-          });
-        }
+        System.out.println("Translation X Value :" + translationX.getAsDouble() + " Translation Y Value :" + translationY.getAsDouble() + " Angular Rotation Value :" + angularRotation.getAsDouble());
     return run(() -> {
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
           deadzone(translationX.getAsDouble(), Constants.Drivebase.X_DEADBAND)
@@ -477,6 +472,9 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
+    
+    // 
+    
     // System.out.println("pp has \"turn\" command: "+NamedCommands.hasCommand("turn")); 
     // printOdometry();
     // This method will be called once per scheduler run

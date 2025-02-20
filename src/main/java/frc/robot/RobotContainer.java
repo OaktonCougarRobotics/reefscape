@@ -36,11 +36,11 @@ import com.pathplanner.lib.auto.NamedCommands;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
+  public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final Joystick m_joystick = new Joystick(1);
+  public final Joystick m_joystick = new Joystick(1);
   Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
   Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
   Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
@@ -53,8 +53,9 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+  
     // Configure the trigger bindings
-    NamedCommands.registerCommand("turn", Commands.print("I FHJAKLDHFKJLADHFKJLAHDJKFLAHDJKFLASHFJKDASLHFDJKALFHSAKJL"));
+    NamedCommands.registerCommand("turn", Commands.run(()->{twist(true);}));
 
     configureBindings();
   }
@@ -87,7 +88,7 @@ public class RobotContainer {
         () -> m_joystick.getRawAxis(2) * -1));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(11, 0, new Rotation2d(0, 0)))));
+    // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(3, 1, m_drivetrain.get))));
     zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
     inputSpin.whileTrue(Commands.runOnce(()->{
       twist(true);

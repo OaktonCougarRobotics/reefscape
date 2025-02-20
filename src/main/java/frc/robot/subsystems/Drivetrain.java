@@ -421,12 +421,18 @@ public class Drivetrain extends SubsystemBase {
       PIDController thetaController = new PIDController(1, 0, 0);
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-      double xSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getX(), targetPose.getX());
-      double ySpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getY(), targetPose.getY());
-      double thetaSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
-          targetPose.getRotation().getRadians());
-
-      swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
+      double xSpeed = xController.calculate(targetPose.getX(), m_poseEstimator.getEstimatedPosition().getX());
+      double ySpeed = yController.calculate(targetPose.getY(), m_poseEstimator.getEstimatedPosition().getY());
+      double thetaSpeed = xController.calculate(targetPose.getRotation().getRadians(),
+          m_poseEstimator.getEstimatedPosition().getRotation().getRadians());
+      while ((Math.abs(getX() - targetPose.getX()) >= .1) && Math.abs(getY() - targetPose.getY()) >= .1) {
+        swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
+        if (Math.abs(getX() - targetPose.getX()) <= .1)
+          System.out.println("X is in position");
+        if (Math.abs(getY() - targetPose.getY()) <= .1)
+          System.out.println("Y is in position");
+        updateOdometry();
+      }
 
     }
 
@@ -468,14 +474,26 @@ public class Drivetrain extends SubsystemBase {
     swerveDrive.setMotorIdleMode(brake);
   }
 
+  public Rotation2d getRotation() {
+    return m_poseEstimator.getEstimatedPosition().getRotation();
+  }
+
+  public double getX() {
+    return m_poseEstimator.getEstimatedPosition().getX();
+  }
+
+  public double getY() {
+    return m_poseEstimator.getEstimatedPosition().getY();
+  }
+
   @Override
   public void periodic() {
     updateOdometry();
-    printOdometry();
+    // printOdometry();
     // This method will be called once per scheduler run
-    System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
-    System.out.println("x:" + swerveDrive.getPose().getX());
-    System.out.println("y:" + swerveDrive.getPose().getY());
+    // System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
+    // System.out.println("x:" + swerveDrive.getPose().getX());
+    // System.out.println("y:" + swerveDrive.getPose().getY());
   }
 
   @Override

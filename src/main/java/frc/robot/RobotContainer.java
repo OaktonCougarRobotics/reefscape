@@ -70,8 +70,9 @@ public class RobotContainer {
 
   }
   public Command getSpinMotorCommand(){
-     
-    return Commands.runOnce(()->{System.out.println("SPIN COMMAND IS BEING CALLED!"); });
+    return Commands.runOnce(()-> {
+      System.out.println("SPIN COMMAND IS BEING CALLED!");
+    });
   }
 
   /**
@@ -117,9 +118,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    if(NamedCommands.hasCommand("turn"))
-    System.out.println("fdhdjfhskdfhidegfisydfgsugsdfj");
-    return m_drivetrain.getAutonomousCommand("commandtesting");
+    // if(NamedCommands.hasCommand("turn"))
+    // System.out.println("fdhdjfhskdfhidegfisydfgsugsdfj");
+    // System.out.println(NamedCommands.getCommand("spin"));
+
+    return m_drivetrain.getAutonomousCommand("sigma");
   }             
 
   public void setMotorBrake(boolean brake) {

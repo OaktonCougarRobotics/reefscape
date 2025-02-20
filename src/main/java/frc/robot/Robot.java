@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 // import com.ctre.phoenix6.controls.DutyCycleOut;
 // import com.ctre.phoenix6.swerve.SwerveModule;
 
@@ -89,6 +91,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    // System.out.println(NamedCommands.getCommand("spin"));
   }
 
   @Override

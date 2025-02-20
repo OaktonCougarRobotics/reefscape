@@ -11,7 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "straight1"
+                  "pathName": "com"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "spin"
                 }
               }
             ]

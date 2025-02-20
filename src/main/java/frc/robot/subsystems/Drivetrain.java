@@ -4,11 +4,22 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -24,26 +35,25 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.Trajectory;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
+import swervelib.imu.SwerveIMU;
+// import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 import swervelib.imu.*;
@@ -67,7 +77,7 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Swerve drive object.
    */
-  private final SwerveDrive swerveDrive;
+  public final SwerveDrive swerveDrive;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -105,7 +115,6 @@ public class Drivetrain extends SubsystemBase {
   public SwerveModule m_frontRight;
   public SwerveModule m_backLeft;
   public SwerveModule m_backRight;
-
   public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation,
       m_backLeftLocation, m_backRightLocation);
 
@@ -115,7 +124,6 @@ public class Drivetrain extends SubsystemBase {
 
   /** Creates a new ExampleSubsystem. */
   public Drivetrain(File directory) {
-
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     // In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     // The encoder resolution per motor revolution is 1 per motor revolution.
@@ -145,8 +153,10 @@ public class Drivetrain extends SubsystemBase {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+    // SwerveDrive.invertOdometry();
+    swerveDrive.setMotorIdleMode(true);
     swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via
-                                            // angle.
+                                            //
     // swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation);
     // // Disables cosine compensation for simulations since it causes discrepancies
     // not seen in real life.
@@ -157,12 +167,14 @@ public class Drivetrain extends SubsystemBase {
         true,
         -0.05); // Correct for skew that gets worse as angular velocity increases. Start with a
     // coefficient of 0.1.
+
     swerveDrive.setModuleEncoderAutoSynchronize(false,
         1); // Enable if you want to resynchronize your absolute encoders and motor encoders
             // periodically when they are not moving.
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the
                                          // offsets onto it. Throws warning if not possible
     // VISION, NOT YAGSL(NO CLUE IF THESE INDEXES ARE RIGHT)
+
     m_frontLeft = swerveDrive.getModules()[0];
     m_frontRight = swerveDrive.getModules()[1];
     m_backLeft = swerveDrive.getModules()[2];
@@ -187,6 +199,8 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("Front right: " + swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
     System.out.println("Back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
     System.out.println("Back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
+    // setupPathPlanner();
+
   }
 
   /**
@@ -200,73 +214,86 @@ public class Drivetrain extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
+    System.out.println("Translation X Value :" + translationX.getAsDouble() + " Translation Y Value :"
+        + translationY.getAsDouble() + " Angular Rotation Value :" + angularRotation.getAsDouble());
+
     return run(() -> {
-      // swerveDrive.drive(new ChassisSpeeds(translationX.getAsDouble() *
-      // Constants.MAX_SPEED, translationY.getAsDouble() * Constants.MAX_SPEED,
-      // Math.PI+(Math.PI*angularRotation.getAsDouble())));;
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
-          deadzone(translationX.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
-          deadzone(translationY.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity(),
-          deadzone(angularRotation.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisAngularVelocity()));
+          deadzone(translationX.getAsDouble(), Constants.Drivebase.X_DEADBAND)
+              * swerveDrive.getMaximumChassisVelocity(),
+          deadzone(translationY.getAsDouble(), Constants.Drivebase.Y_DEADBAND)
+              * swerveDrive.getMaximumChassisVelocity(),
+          deadzone(angularRotation.getAsDouble(), Constants.Drivebase.Z_DEADBAND)
+              * swerveDrive.getMaximumChassisAngularVelocity()),
+          new Translation2d());
     });
     // Make the robot move
-    // swerveDrive.drive(new Translation2d(
-    // deadzone(translationX.getAsDouble(), OperatorConstants.X_DEADBAND) *
+    // swerveDrive.drive(
+    // new Translation2d(deadzone(translationX.getAsDouble(), 0.05) *
     // swerveDrive.getMaximumChassisVelocity(),
-    // deadzone(translationY.getAsDouble(), OperatorConstants.Y_DEADBAND) *
+    // deadzone(translationY.getAsDouble(), 0.05) *
     // swerveDrive.getMaximumChassisVelocity()),
-    // deadzone(angularRotation.getAsDouble(), OperatorConstants.Z_DEADBAND)
-    // * swerveDrive.getMaximumChassisAngularVelocity(),
+
+    // deadzone(angularRotation.getAsDouble(), 0.05) *
+    // swerveDrive.getMaximumChassisAngularVelocity(),
     // true,
     // false);
+
+    // swerveDrive.driveFieldOriented(
+    // )
     // });
   }
-
-  public void updateOdometry() {
-    m_poseEstimator.update(
-        m_gyro.getRotation3d().toRotation2d(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_backLeft.getPosition(),
-            m_backRight.getPosition()
-        });
-
-    boolean doRejectUpdate = false;
-
-    LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-        0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our angular velocity is greater than 720
-                                                                    // degrees per second, ignore vision updates
-    {
-      doRejectUpdate = true;
-    }
-    if (mt2 == null) {
-      SmartDashboard.putBoolean("mt2Null?", true);
-      doRejectUpdate = true;
-    } else {
-      SmartDashboard.putBoolean("mt2Null?", false);
-    }
-    if (mt2.tagCount == 0) {
-      doRejectUpdate = true;
-    }
-    if (!doRejectUpdate) {
-      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-      m_poseEstimator.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
-    } else if (doRejectUpdate) {
-      m_poseEstimator.update(
-          m_gyro.getRotation3d().toRotation2d(),
-          new SwerveModulePosition[] {
-              m_frontLeft.getPosition(),
-              m_frontRight.getPosition(),
-              m_backLeft.getPosition(),
-              m_backRight.getPosition()
-          });
-    }
-  }
+  /*
+   * public void updateOdometry() {
+   * m_poseEstimator.update(
+   * m_gyro.getRotation3d().toRotation2d(),
+   * new SwerveModulePosition[] {
+   * m_frontLeft.getPosition(),
+   * m_frontRight.getPosition(),
+   * m_backLeft.getPosition(),
+   * m_backRight.getPosition()
+   * });
+   * 
+   * boolean doRejectUpdate = false;
+   * 
+   * LimelightHelpers.SetRobotOrientation("limelight",
+   * m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+   * 0, 0, 0, 0, 0);
+   * LimelightHelpers.PoseEstimate mt2 =
+   * LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+   * if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our
+   * angular velocity is greater than 720
+   * // degrees per second, ignore vision updates
+   * {
+   * doRejectUpdate = true;
+   * }
+   * if (mt2 == null) {
+   * SmartDashboard.putBoolean("mt2Null?", true);
+   * doRejectUpdate = true;
+   * } else {
+   * SmartDashboard.putBoolean("mt2Null?", false);
+   * }
+   * if (mt2.tagCount == 0) {
+   * doRejectUpdate = true;
+   * }
+   * if (!doRejectUpdate) {
+   * m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7,
+   * 9999999));
+   * m_poseEstimator.addVisionMeasurement(
+   * mt2.pose,
+   * mt2.timestampSeconds);
+   * } else if (doRejectUpdate) {
+   * m_poseEstimator.update(
+   * m_gyro.getRotation3d().toRotation2d(),
+   * new SwerveModulePosition[] {
+   * m_frontLeft.getPosition(),
+   * m_frontRight.getPosition(),
+   * m_backLeft.getPosition(),
+   * m_backRight.getPosition()
+   * });
+   * }
+   * }
+   */
 
   public Pose2d getPose() {
     return swerveDrive.getPose();
@@ -485,13 +512,32 @@ public class Drivetrain extends SubsystemBase {
     updateOdometry();
     // printOdometry();
     // This method will be called once per scheduler run
-    // System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
+    // for(String key:swerveDrive.getModuleMap().keySet())
+
+    // System.out.println(key+":
+    // "+swerveDrive.getModuleMap().get(key).getAbsolutePosition());
     // System.out.println("x:" + swerveDrive.getPose().getX());
     // System.out.println("y:" + swerveDrive.getPose().getY());
+    // System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
+    updateTelemetry();
+  }
+
+  public void updateTelemetry() {
+    for (String key : swerveDrive.getModuleMap().keySet()) {
+      SmartDashboard.putNumber(key, swerveDrive.getModuleMap().get(key).getAbsolutePosition());
+    }
+    SmartDashboard.putString("position",
+        "(" + swerveDrive.getPose().getX() + ", " + swerveDrive.getPose().getY() + ")");
+    SmartDashboard.putNumber("theta", swerveDrive.getOdometryHeading().getDegrees());
   }
 
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+  public void zeroWheels() {
+    for (String key : swerveDrive.getModuleMap().keySet())
+      swerveDrive.getModuleMap().get(key).setAngle(0);
   }
 }

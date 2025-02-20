@@ -4,9 +4,13 @@
 
 package frc.robot;
 
+// import com.ctre.phoenix6.controls.DutyCycleOut;
+// import com.ctre.phoenix6.swerve.SwerveModule;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import swervelib.SwerveModule;
 
 
 /**
@@ -71,6 +75,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    m_robotContainer.getDrivetrain().zeroWheels();
     m_robotContainer.getDrivetrain().zeroGyro();
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -100,6 +105,17 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+// m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1) * -1,
+    // () -> m_joystick.getRawAxis(0) * -1,
+    // () -> m_joystick.getRawAxis(2) * -1));
+    if (Math.abs(m_robotContainer.m_joystick.getRawAxis(0))<0.06 && Math.abs( m_robotContainer.m_joystick.getRawAxis(1)) <0.06 && Math.abs(m_robotContainer.m_joystick.getRawAxis(2) )<0.06){
+        for(SwerveModule mo: m_robotContainer.m_drivetrain.swerveDrive.getModules()){
+          mo.getDriveMotor().set(0);
+          // .setControl(new DutyCycleOut(0.0));
+        }
+    }
+      // m_robotContainer.m_drivetrain.swerveDrive.lockPose();
+
   }
 
   @Override

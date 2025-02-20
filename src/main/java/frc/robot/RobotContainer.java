@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.Drivebase;
 import frc.robot.subsystems.Drivetrain;
 
 import java.io.File;
@@ -18,6 +18,7 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +26,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.pathplanner.lib.auto.NamedCommands;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -37,24 +42,48 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
+  public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final Joystick m_joystick = new Joystick(1);
+  public final Joystick m_joystick = new Joystick(1);
   Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
   Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
+  Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
+  Trigger inputSpin = new Trigger(() -> m_joystick.getRawButton(6));
+  public TalonSRX feederMotor = new TalonSRX(22);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configure the trigger bindings
+    m_drivetrain.setupPathPlanner();
+    // NamedCommands.registerCommand("turn", Commands.run(()->{twist(true);}));
+    NamedCommands.registerCommand("spin", getSpinMotorCommand());
+    // NamedCommands.registerCommand("print",
+    // Commands.print("fghjfgjfghjfghjfghjfghj"));
+
     configureBindings();
   }
 
+  public void twist(boolean spin) {
+    System.out.println("ahfdjsaklhfjkalhfjdkaslhfjkaslhfjdkl");
+    if (spin)
+      feederMotor.set(TalonSRXControlMode.PercentOutput, 0.5);
+    else
+      feederMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
+
+  }
+
+  public Command getSpinMotorCommand() {
+
+    return Commands.runOnce(() -> {
+      System.out.println("SPIN COMMAND IS BEING CALLED!");
+    });
+  }
+
   /**
-   * Use this method to define your trigger->command mappings. Triggers can be
+   * Use this method to define your trigger->command mapping s. Triggers can be
    * created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
    * an arbitrary
@@ -70,14 +99,20 @@ public class RobotContainer {
   Pose2d test = new Pose2d(11.0, 0.0, new Rotation2d(1.0));
 
   private void configureBindings() {
-    m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1),
-        () -> m_joystick.getRawAxis(0),
-        () -> m_joystick.getRawAxis(2)));
+    m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1) * -1,
+        () -> m_joystick.getRawAxis(0) * -1,
+        () -> m_joystick.getRawAxis(2) * -1));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-    // toPoseButton.onTrue(Commands.runOnce(() ->
-    // m_drivetrain.getAutonomousCommand(m_drivetrain.toPose(test))));
-    toPoseButton.onTrue(getAutonomousCommand());
+    // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(3,
+    // 1, m_drivetrain.get))));
+    zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
+    inputSpin.whileTrue(Commands.runOnce(() -> {
+      twist(true);
+    }));
+    inputSpin.whileFalse(Commands.runOnce(() -> {
+      twist(false);
+    }));
   }
 
   public Drivetrain getDrivetrain() {
@@ -85,17 +120,21 @@ public class RobotContainer {
   }
 
   /**
+   * 
+   * 
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    // return m_drivetrain.getAutonomousCommand("straight");
-    return AutoBuilder.followPath(m_drivetrain.toPose(test));
+    if (NamedCommands.hasCommand("turn"))
+      System.out.println("fdhdjfhskdfhidegfisydfgsugsdfj");
+    return m_drivetrain.getAutonomousCommand("commandtesting");
   }
 
   public void setMotorBrake(boolean brake) {
     m_drivetrain.setMotorBrake(brake);
   }
+
 }

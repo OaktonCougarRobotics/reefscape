@@ -115,11 +115,6 @@ public class Drivetrain extends SubsystemBase {
     // The encoder resolution per motor revolution is 1 per motor revolution.
     double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
 
-    System.out.println("\"conversionFactors\": {");
-    System.out.println("\t\"angle\": {\"factor\": " + angleConversionFactor + " },");
-    System.out.println("\t\"drive\": {\"factor\": " + driveConversionFactor + " }");
-    System.out.println("}");
-
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED,
           new Pose2d(new Translation2d(Meter.of(0),
@@ -173,13 +168,6 @@ public class Drivetrain extends SubsystemBase {
         new Pose2d(),
         VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
         VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
-
-    System.out.println("Front left: " + swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
-    System.out.println("Front right: " + swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
-    System.out.println("Back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
-    System.out.println("Back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
-    // setupPathPlanner();
-    
   }
 
   /**
@@ -364,7 +352,6 @@ public class Drivetrain extends SubsystemBase {
 
   public void printOdometry() {
     Pose2d pose = m_poseEstimator.getEstimatedPosition();
-    System.out.println("x=" + pose.getX() + ", y=" + pose.getY() + ", theta=" + pose.getRotation().getDegrees());
   }
 
   // private void setDrivetrainVelocity(double linearVelocity, double
@@ -475,19 +462,6 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // updateOdometry();
-    
-    // 
-    
-    // System.out.println("pp has \"turn\" command: "+NamedCommands.hasCommand("turn")); 
-    // printOdometry();
-    // This method will be called once per scheduler run
-    // for(String key:swerveDrive.getModuleMap().keySet())
-
-    //   System.out.println(key+": "+swerveDrive.getModuleMap().get(key).getAbsolutePosition());
-    // System.out.println("x:" + swerveDrive.getPose().getX());
-    // System.out.println("y:" + swerveDrive.getPose().getY());
-    // System.out.println("theta:" + swerveDrive.getOdometryHeading().getDegrees());
     updateTelemetry();
   }
 

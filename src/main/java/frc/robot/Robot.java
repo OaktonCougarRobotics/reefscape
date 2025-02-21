@@ -108,17 +108,11 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-// m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1) * -1,
-    // () -> m_joystick.getRawAxis(0) * -1,
-    // () -> m_joystick.getRawAxis(2) * -1));
     if (Math.abs(m_robotContainer.m_joystick.getRawAxis(0))<0.06 && Math.abs( m_robotContainer.m_joystick.getRawAxis(1)) <0.06 && Math.abs(m_robotContainer.m_joystick.getRawAxis(2) )<0.06){
         for(SwerveModule mo: m_robotContainer.m_drivetrain.swerveDrive.getModules()){
           mo.getDriveMotor().set(0);
-          // .setControl(new DutyCycleOut(0.0));
         }
     }
-      // m_robotContainer.m_drivetrain.swerveDrive.lockPose();
-
   }
 
   @Override

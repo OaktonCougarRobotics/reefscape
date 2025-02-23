@@ -24,7 +24,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-                                                                                                                  
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -96,7 +96,7 @@ public class Drivetrain extends SubsystemBase {
   public SwerveModule m_backRight;
   public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation,
       m_backLeftLocation, m_backRightLocation);
-  
+
   // do all the consturction in init, remove the final, only declare local
   // variables here
   public final SwerveDrivePoseEstimator m_poseEstimator;
@@ -130,7 +130,7 @@ public class Drivetrain extends SubsystemBase {
     // SwerveDrive.invertOdometry();
     swerveDrive.setMotorIdleMode(true);
     swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via
-                                            // 
+                                            //
     // swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation);
     // // Disables cosine compensation for simulations since it causes discrepancies
     // not seen in real life.
@@ -141,7 +141,7 @@ public class Drivetrain extends SubsystemBase {
         true,
         -0.05); // Correct for skew that gets worse as angular velocity increases. Start with a
     // coefficient of 0.1.
-    
+
     swerveDrive.setModuleEncoderAutoSynchronize(false,
         1); // Enable if you want to resynchronize your absolute encoders and motor encoders
             // periodically when they are not moving.
@@ -181,7 +181,8 @@ public class Drivetrain extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
-        System.out.println("Translation X Value :" + translationX.getAsDouble() + " Translation Y Value :" + translationY.getAsDouble() + " Angular Rotation Value :" + angularRotation.getAsDouble());
+    System.out.println("Translation X Value :" + translationX.getAsDouble() + " Translation Y Value :"
+        + translationY.getAsDouble() + " Angular Rotation Value :" + angularRotation.getAsDouble());
 
     return run(() -> {
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
@@ -209,53 +210,56 @@ public class Drivetrain extends SubsystemBase {
     // )
     // });
   }
-/* 
-  public void updateOdometry() {
-    m_poseEstimator.update(
-        m_gyro.getRotation3d().toRotation2d(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_backLeft.getPosition(),
-            m_backRight.getPosition()
-        });
 
-    boolean doRejectUpdate = false;
+  // public void updateOdometry() {
+  // m_poseEstimator.update(
+  // m_gyro.getRotation3d().toRotation2d(),
+  // new SwerveModulePosition[] {
+  // m_frontLeft.getPosition(),
+  // m_frontRight.getPosition(),
+  // m_backLeft.getPosition(),
+  // m_backRight.getPosition()
+  // });
 
-    LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-        0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our angular velocity is greater than 720
-                                                                    // degrees per second, ignore vision updates
-    {
-      doRejectUpdate = true;
-    }
-    if (mt2 == null) {
-      SmartDashboard.putBoolean("mt2Null?", true);
-      doRejectUpdate = true;
-    } else {
-      SmartDashboard.putBoolean("mt2Null?", false);
-    }
-    if (mt2.tagCount == 0) {
-      doRejectUpdate = true;
-    }
-    if (!doRejectUpdate) {
-      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-      m_poseEstimator.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
-    } else if (doRejectUpdate) {
-      m_poseEstimator.update(
-          m_gyro.getRotation3d().toRotation2d(),
-          new SwerveModulePosition[] {
-              m_frontLeft.getPosition(),
-              m_frontRight.getPosition(),
-              m_backLeft.getPosition(),
-              m_backRight.getPosition()
-          });
-    }
-  }
-    */
+  // boolean doRejectUpdate = false;
+
+  // LimelightHelpers.SetRobotOrientation("limelight",
+  // m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+  // 0, 0, 0, 0, 0);
+  // LimelightHelpers.PoseEstimate mt2 =
+  // LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+  // if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our
+  // angular velocity is greater than 720
+  // // degrees per second, ignore vision updates
+  // {
+  // doRejectUpdate = true;
+  // }
+  // if (mt2 == null) {
+  // SmartDashboard.putBoolean("mt2Null?", true);
+  // doRejectUpdate = true;
+  // } else {
+  // SmartDashboard.putBoolean("mt2Null?", false);
+  // }
+  // if (mt2.tagCount == 0) {
+  // doRejectUpdate = true;
+  // }
+  // if (!doRejectUpdate) {
+  // m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7,
+  // 9999999));
+  // m_poseEstimator.addVisionMeasurement(
+  // mt2.pose,
+  // mt2.timestampSeconds);
+  // } else if (doRejectUpdate) {
+  // m_poseEstimator.update(
+  // m_gyro.getRotation3d().toRotation2d(),
+  // new SwerveModulePosition[] {
+  // m_frontLeft.getPosition(),
+  // m_frontRight.getPosition(),
+  // m_backLeft.getPosition(),
+  // m_backRight.getPosition()
+  // });
+  // }
+  // }
 
   public Pose2d getPose() {
     return swerveDrive.getPose();
@@ -466,19 +470,21 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void updateTelemetry() {
-    for(String key:swerveDrive.getModuleMap().keySet()){
-    SmartDashboard.putNumber(key, swerveDrive.getModuleMap().get(key).getAbsolutePosition());  
+    for (String key : swerveDrive.getModuleMap().keySet()) {
+      SmartDashboard.putNumber(key, swerveDrive.getModuleMap().get(key).getAbsolutePosition());
     }
-    SmartDashboard.putString("position", "("+ swerveDrive.getPose().getX()+", "+swerveDrive.getPose().getY()+")");
+    SmartDashboard.putString("position",
+        "(" + swerveDrive.getPose().getX() + ", " + swerveDrive.getPose().getY() + ")");
     SmartDashboard.putNumber("theta", swerveDrive.getOdometryHeading().getDegrees());
   }
+
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
 
   public void zeroWheels() {
-    for(String key:swerveDrive.getModuleMap().keySet())
+    for (String key : swerveDrive.getModuleMap().keySet())
       swerveDrive.getModuleMap().get(key).setAngle(0);
   }
 }

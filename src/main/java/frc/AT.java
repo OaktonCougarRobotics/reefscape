@@ -1,49 +1,30 @@
 package frc;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.Constants;
 
 public class AT{
-    private double x;
-    private double y;
-    private Rotation2d robotTheta;
-    private Rotation2d theta;
-    private double offsetX;
-    private double offsetY;
+    private Pose2d aprilTagPose;
+    private Pose2d offsetPose;
     private int id;
 
-    public AT(double x, double y, Rotation2d robotTheta, Rotation2d theta, double offSetX, double offsetY, int id)
+    public AT(double x, double y, double theta, int id)
     {
-        this.x = x;
-        this.y = y;
-        this.robotTheta = robotTheta;
-        this.theta = theta;
-        this.offsetX = offSetX;
-        this.offsetY = offsetY;
+        this.aprilTagPose = new Pose2d(x, y, new Rotation2d(theta * 2 * (Math.PI)/360));
+        this.offsetPose = new Pose2d(x + Math.cos(Constants.ANATOLI_CHASSIS_WIDTH/2), 
+        y + Math.cos(Constants.ANATOLI_CHASSIS_WIDTH/2), 
+        new Rotation2d(theta * 2 * (Math.PI)/360 + Math.PI));
         this.id = id;
     } 
 
-    public double getX() {
-        return x;
+    public Pose2d getPose() {
+        return aprilTagPose;
     }
 
-    public double getY() {
-        return y;
-    }
-
-    public Rotation2d getRobotTheta() {
-        return robotTheta;
-    }
-
-    public Rotation2d getTheta() {
-        return theta;
-    }
-
-    public double getOffsetX() {
-        return offsetX;
-    }
-
-    public double getOffsetY() {
-        return offsetY;
+    public Pose2d getOffestPose()
+    {
+        return offsetPose;
     }
 
     public int getId() {

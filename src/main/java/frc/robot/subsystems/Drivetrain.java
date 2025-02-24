@@ -13,6 +13,8 @@ import java.io.File;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
+import org.dyn4j.geometry.Vector2;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -20,11 +22,6 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPoint;
-import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.path.*;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
@@ -48,17 +45,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.AT;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
-import swervelib.imu.SwerveIMU;
-// import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 import swervelib.imu.*;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -67,8 +62,6 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -501,6 +494,20 @@ public class Drivetrain extends SubsystemBase {
   // path.preventFlipping = true;
   // }
   // }
+
+   public double findAngleRad(Pose2d center, Pose2d b) {
+    Vector2 ca = new Vector2(m_poseEstimator.getEstimatedPosition().getX() - center.getX(),
+        m_poseEstimator.getEstimatedPosition().getY() - center.getY());
+    Vector2 cb = new Vector2(b.getX() - center.getX(), b.getY() - center.getY());
+    double dotProduct = ca.dot(cb);
+    double caMag = ca.getMagnitude();
+    double cbMag = cb.getMagnitude();
+    return Math.acos(dotProduct / (caMag * cbMag));
+  }
+
+  public Pose2d findB(AT aprilTag){
+    return new Pose2d((aprilTag.getX() + Math.cos(aprilTag.getTheta().getRadians())), (aprilTag.getX() + Math.cos(aprilTag.getTheta().getRadians())), aprilTag.getRobotTheta());
+  }
 
   public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);

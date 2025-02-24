@@ -455,7 +455,7 @@ public class Drivetrain extends SubsystemBase {
       double thetaSpeed = xController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
       while ((Math.abs(m_poseEstimator.getEstimatedPosition().getX() - targetPose.getX()) >= .1)
           && Math.abs(m_poseEstimator.getEstimatedPosition().getY() - targetPose.getY()) >= .1) {
-        swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
+        swerveDrive.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
         updateOdometry();
       }
     }

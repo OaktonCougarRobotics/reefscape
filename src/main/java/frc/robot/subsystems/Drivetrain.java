@@ -346,7 +346,29 @@ public class Drivetrain extends SubsystemBase {
     // event markers.
     // return new PathPlannerAuto(pathName);
     return new PathPlannerAuto(pathName);
+    // return AutoBuilder.buildAuto(pathName);
+
+    // PathPlannerPath[] pathGroup = {PathPlannerPath.fromPathFile(pathName)};
+    // return AutoBuilder.followPath(pathGroup[0]);
   }
+
+  // public Command getAutonomousCommand() {
+  // // Try loading as an auto first
+  // try {
+  // System.out.println("Loading as an auto...");
+  // return AutoBuilder.buildAuto("Scizo");
+  // } catch (Exception e) {
+  // // If that fails, try loading as a path
+  // System.out.println("Loading as a path...");
+  // try {
+  // PathPlannerPath path = PathPlannerPath.fromPathFile("Scizo");
+  // return AutoBuilder.followPath(path);
+  // } catch (Exception e2) {
+  // System.out.println("Both approaches failed: " + e2.getMessage());
+  // return Commands.none();
+  // }
+  // }
+  // }
 
   public static double deadzone(double num, double deadband) {
     if (Math.abs(num) < deadband)

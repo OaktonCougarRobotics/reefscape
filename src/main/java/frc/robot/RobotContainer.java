@@ -38,7 +38,14 @@ public class RobotContainer {
   Command spinFeederCommand = new SpinFeeder(feederMotor);
 
   public RobotContainer() {
-    NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> SmartDashboard.putNumber("AAAA", 911)));
+    // NamedCommands.registerCommand("TestMe", Commands.runOnce(() ->
+    // SmartDashboard.putNumber("AAAA", 911)));
+    NamedCommands.registerCommand("Print", Commands.runOnce(() -> System.out.println("THDJAKLHRUAESITYADU ILSYF")));
+    NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
+      System.out.println("TestMe command executed!");
+      SmartDashboard.putNumber("GGGGGGGGG", 911);
+    }));
+
     NamedCommands.registerCommand("spin", spinFeederCommand);
 
     m_drivetrain.setupPathPlanner();
@@ -76,6 +83,18 @@ public class RobotContainer {
     // 1, m_drivetrain.get))));
     zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
     inputSpin.whileTrue(spinFeederCommand);
+
+    // Add this to configureBindings()
+    Trigger testCommandTrigger = new Trigger(() -> m_joystick.getRawButton(5)); // or use another unused button
+    testCommandTrigger.onTrue(Commands.runOnce(() -> {
+      System.out.println("Manually triggering the TestMe command");
+      Command testCommand = NamedCommands.getCommand("TestMe");
+      if (testCommand != null) {
+        testCommand.schedule();
+      } else {
+        System.out.println("ERROR: TestMe command not found in registry!");
+      }
+    }));
   }
 
   public Drivetrain getDrivetrain() {
@@ -92,6 +111,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
 
     return m_drivetrain.getAutonomousCommand("Scizo");
+    // return m_drivetrain.getAutonomousCommand();
   }
 
   public void setMotorBrake(boolean brake) {

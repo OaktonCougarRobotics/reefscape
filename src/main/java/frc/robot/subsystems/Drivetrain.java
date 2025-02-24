@@ -115,6 +115,8 @@ public class Drivetrain extends SubsystemBase {
   // variables here
   public final SwerveDrivePoseEstimator m_poseEstimator;
 
+  public final double radiusOfRotation = 2;//Used for toAprilTag to find radius of rotation around the reef
+
   /** Creates a new ExampleSubsystem. */
   public Drivetrain(File directory) {
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
@@ -495,18 +497,33 @@ public class Drivetrain extends SubsystemBase {
   // }
   // }
 
-   public double findAngleRad(Pose2d center, Pose2d b) {
-    Vector2 ca = new Vector2(m_poseEstimator.getEstimatedPosition().getX() - center.getX(),
-        m_poseEstimator.getEstimatedPosition().getY() - center.getY());
-    Vector2 cb = new Vector2(b.getX() - center.getX(), b.getY() - center.getY());
-    double dotProduct = ca.dot(cb);
-    double caMag = ca.getMagnitude();
-    double cbMag = cb.getMagnitude();
-    return Math.acos(dotProduct / (caMag * cbMag));
+   public double findAngleRad(Pose2d reef, Pose2d endPosition) 
+   {
+    Vector2 reefToBot = new Vector2(m_poseEstimator.getEstimatedPosition().getX() - reef.getX(),
+        m_poseEstimator.getEstimatedPosition().getY() - reef.getY());
+    Vector2 reefToEndPosition = new Vector2(endPosition.getX() - reef.getX(), endPosition.getY() - reef.getY());
+    double dotProduct = reefToBot.dot(reefToEndPosition);
+    double reefToBotMag = reefToBot.getMagnitude();
+    double reefToEndPositionMag = reefToEndPosition.getMagnitude();
+    return Math.acos(dotProduct / (reefToBotMag * reefToEndPositionMag));
+  }
+
+  public Pose2d findPoseA(Pose2d reef, AT aprilTag)//If auto doesnt work, finds the starting point of the robots circular rotation around the reef
+  {
+    double dx= m_poseEstimator.getEstimatedPosition().getX() - reef.getX();
+    double dy=m_poseEstimator.getEstimatedPosition().getY() - reef.getY();
+    double theta = Math.atan(dy/dx);
+    double ax = reef.getX() + radiusOfRotation * Math.cos(theta);
+    double ay = reef.getY()+ radiusOfRotation * Math.sin(theta);
+    Pose2d a= new Pose2d(ax,ay, new Rotation2d(theta + Math.PI));
+
+    return a;
   }
 
   public Pose2d findB(AT aprilTag){
-    return new Pose2d((aprilTag.getX() + Math.cos(aprilTag.getTheta().getRadians())), (aprilTag.getX() + Math.cos(aprilTag.getTheta().getRadians())), aprilTag.getRobotTheta());
+    return new Pose2d((aprilTag.getPose().getX() + radiusOfRotation * Math.cos(aprilTag.getPose().getRotation().getRadians())), 
+    (aprilTag.getPose().getY() + radiusOfRotation * Math.sin(aprilTag.getPose().getRotation().getRadians())), 
+     aprilTag.getOffestPose().getRotation());
   }
 
   public void setMotorBrake(boolean brake) {

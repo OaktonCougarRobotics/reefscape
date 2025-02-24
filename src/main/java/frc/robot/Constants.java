@@ -103,6 +103,8 @@ public final class Constants {
 
   public static final double ENCODER_VOLTAGE_TO_DEGREE = 360 / 4.809;
 
+  public static final double ANATOLI_CHASSIS_WIDTH = .3; // m
+
   public static final String COB_KEY_IS_RED = "/FMSInfo/IsRedAlliance";
   public static final String COB_KEY_DISTANCE = "/COB/distance";
   public static final String COB_KEY_BOT_POSE_FRONT = "/limelight-front/botpose";

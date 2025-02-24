@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -21,6 +23,35 @@ import swervelib.math.Matter;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  static Pose2d april1 = new Pose2d(657.37, 25.80, new Rotation2d(0.0));
+  static Pose2d april2 = new Pose2d(657.37, 291.20, new Rotation2d(0.0));
+  static Pose2d april3 = new Pose2d(455.15, 317.15, new Rotation2d(0.0));
+  static Pose2d april4 = new Pose2d(365.20, 241.64, new Rotation2d(0.0));
+  static Pose2d april5 = new Pose2d(365.20, 75.39, new Rotation2d(0.0));
+  static Pose2d april6 = new Pose2d(530.49, 130.17, new Rotation2d(0.0));
+  static Pose2d april7 = new Pose2d(546.87, 158.50, new Rotation2d(0.0));
+  static Pose2d april8 = new Pose2d(530.49, 186.83, new Rotation2d(0.0));
+  static Pose2d april9 = new Pose2d(497.77, 186.83, new Rotation2d(0.0));
+  static Pose2d april10 = new Pose2d(481.39, 158.50, new Rotation2d(0.0));
+  static Pose2d april11 = new Pose2d(497.77, 130.17, new Rotation2d(0.0));
+  static Pose2d april12 = new Pose2d(33.51, 25.80, new Rotation2d(0.0));
+  static Pose2d april13 = new Pose2d(33.51, 291.20, new Rotation2d(0.0));
+  static Pose2d april14 = new Pose2d(325.68, 241.64, new Rotation2d(0.0));
+  static Pose2d april15 = new Pose2d(325.68, 75.39, new Rotation2d(0.0));
+  static Pose2d april16 = new Pose2d(235.73, -0.15, new Rotation2d(0.0));
+  static Pose2d april17 = new Pose2d(160.39, 130.17, new Rotation2d(0.0));
+  static Pose2d april18 = new Pose2d(144.00, 158.50, new Rotation2d(0.0));
+  static Pose2d april19 = new Pose2d(160.39, 186.83, new Rotation2d(0.0));
+  static Pose2d april20 = new Pose2d(193.10, 186.83, new Rotation2d(0.0));
+  static Pose2d april21 = new Pose2d(209.49, 158.50, new Rotation2d(0.0));
+  static Pose2d april22 = new Pose2d(193.10, 130.17, new Rotation2d(0.0));
+
+
+  public static Pose2d[] aprilPose = new Pose2d[]{null, april1, april2, april3, april4, april5, april6, april7, april8, april9, april10, april11, april12, april13, april14, april15, april16, april17, april18, april19, april20, april21, april22};
+
+
+
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
@@ -103,8 +134,6 @@ public final class Constants {
 
   public static final double ENCODER_VOLTAGE_TO_DEGREE = 360 / 4.809;
 
-  public static final double ANATOLI_CHASSIS_WIDTH = .3; // m
-
   public static final String COB_KEY_IS_RED = "/FMSInfo/IsRedAlliance";
   public static final String COB_KEY_DISTANCE = "/COB/distance";
   public static final String COB_KEY_BOT_POSE_FRONT = "/limelight-front/botpose";
@@ -161,6 +190,8 @@ public final class Constants {
   public static final double WRIST_DFLT_ACC = 28000;
   public static final double PIVOT_ACC_DIVISOR = 3.5;
 
+  public static final double ANATOLI_CHASSIS_WIDTH = 0.3; //meters
+
   // Button IDs
   public static final int DUSTPANUP_LIMIT = 0;
   public static final int SHOOTER_SPEED = 1;
@@ -197,17 +228,21 @@ public final class Constants {
   // public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
   // }
 
-  public static final class Drivebase {
+  public static final class DrivebaseConstants {
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
+  }
+
+  public static class OperatorConstants {
+
     // Joystick Deadband
     public static final double LEFT_X_DEADBAND = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double X_DEADBAND = 0.05;
-    public static final double Y_DEADBAND = 0.05;
-    public static final double Z_DEADBAND = 0.05;
+    public static final double X_DEADBAND = 0.075;
+    public static final double Y_DEADBAND = 0.075;
+    public static final double Z_DEADBAND = 0.03;
     public static final double TURN_CONSTANT = 6;
   }
 }

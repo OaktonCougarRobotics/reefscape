@@ -214,11 +214,11 @@ public class Drivetrain extends SubsystemBase {
 
     return run(() -> {
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
-          deadzone(translationX.getAsDouble(), Constants.Drivebase.X_DEADBAND)
+          deadzone(translationX.getAsDouble(), Constants.OperatorConstants.X_DEADBAND)
               * swerveDrive.getMaximumChassisVelocity(),
-          deadzone(translationY.getAsDouble(), Constants.Drivebase.Y_DEADBAND)
+          deadzone(translationY.getAsDouble(), Constants.OperatorConstants.Y_DEADBAND)
               * swerveDrive.getMaximumChassisVelocity(),
-          deadzone(angularRotation.getAsDouble(), Constants.Drivebase.Z_DEADBAND)
+          deadzone(angularRotation.getAsDouble(), Constants.OperatorConstants.Z_DEADBAND)
               * swerveDrive.getMaximumChassisAngularVelocity()),
           new Translation2d());
     });

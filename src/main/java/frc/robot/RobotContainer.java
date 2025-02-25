@@ -49,7 +49,7 @@ public class RobotContainer {
 
     m_drivetrain.setupPathPlanner();
 
-    NamedCommands.registerCommand("spin", spinFeederCommand);
+    // NamedCommands.registerCommand("spin", spinFeederCommand);
 
     configureBindings();
   }
@@ -111,7 +111,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
-    return m_drivetrain.getAutonomousCommand("Scizo");
+    return m_drivetrain.getAutonomousCommand("sigma");
     // return m_drivetrain.getAutonomousCommand();
   }
 

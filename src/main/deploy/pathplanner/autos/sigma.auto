@@ -5,22 +5,21 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "com"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "TestMe"
-                }
-              }
-            ]
+            "pathName": "straight1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spin"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "straight2"
           }
         }
       ]

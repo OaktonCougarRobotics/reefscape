@@ -9,12 +9,15 @@ public class AT{
     private Pose2d offsetPose;
     private int id;
 
-    public AT(double x, double y, double theta, int id)
+    public AT(double xIn, double yIn, double thetaDeg, int id)
     {
-        this.aprilTagPose = new Pose2d(x, y, new Rotation2d(theta * 2 * (Math.PI)/360));
+        double x = xIn * 39.3701;
+        double y = yIn * 39.3701;
+        double theta = thetaDeg * Math.PI / 180;
+        this.aprilTagPose = new Pose2d(x, y, new Rotation2d(theta));
         this.offsetPose = new Pose2d(x + Math.cos(Constants.ANATOLI_CHASSIS_WIDTH/2), 
         y + Math.cos(Constants.ANATOLI_CHASSIS_WIDTH/2), 
-        new Rotation2d(theta * 2 * (Math.PI)/360 + Math.PI));
+        new Rotation2d(theta + Math.PI));
         this.id = id;
     } 
 

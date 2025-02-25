@@ -530,6 +530,22 @@ public class Drivetrain extends SubsystemBase {
     swerveDrive.setMotorIdleMode(brake);
   }
 
+  public int closestAprilTag(){
+    double min = Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[1].getPose().getX(),2) + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[1].getPose().getY(),2));
+    int index = 0;
+    for(int i = 1; i<=22; i++){
+      if( Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(),2) + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(),2)) < min){
+        min = Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(),2) + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(),2));
+        index = i;
+      }
+    }
+    return index;
+  }
+
+  public void toClosestAprilTag(){
+    toPose(Constants.aprilPose[closestAprilTag()].getOffestPose());
+  }
+
   public double getX() {
     return m_poseEstimator.getEstimatedPosition().getX();
   }

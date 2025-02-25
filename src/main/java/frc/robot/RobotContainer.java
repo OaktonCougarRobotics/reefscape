@@ -11,7 +11,6 @@ import java.io.File;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,15 +28,16 @@ public class RobotContainer {
   // Joystick object
   public final Joystick m_joystick = new Joystick(1);
   // Triggers on the joystick
-  private Trigger inputSpin = new Trigger(() -> m_joystick.getRawButton(6));
+  private Trigger inputSpin = new Trigger(()-> m_joystick.getRawButton(6));
   private Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
   private Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
   private Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
-  // feeder motor
+  // feeder motor 
   private TalonSRX feederMotor = new TalonSRX(22);
   Command spinFeederCommand = new SpinFeeder(feederMotor);
 
   public RobotContainer() {
+<<<<<<< HEAD
     // NamedCommands.registerCommand("TestMe", Commands.runOnce(() ->
     // SmartDashboard.putNumber("AAAA", 911)));
     NamedCommands.registerCommand("Print", Commands.runOnce(() -> System.out.println("THDJAKLHRUAESITYADU ILSYF")));
@@ -48,19 +48,23 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("spin", spinFeederCommand);
 
+=======
+>>>>>>> parent of ad8622a (put the namedcommands as the very first thing within robotcontainer)
     m_drivetrain.setupPathPlanner();
+
+    NamedCommands.registerCommand("spin", spinFeederCommand);
 
     configureBindings();
   }
 
-  public Command getSpinMotorCommand() {
-    return Commands.runOnce(() -> {
+  public Command getSpinMotorCommand(){
+    return Commands.runOnce(()-> {
       System.out.println("SPIN COMMAND IS BEING CALLED!");
     });
   }
 
   /**
-   * Use this method to define your trigger->command mapping s. Triggers can be
+   * Use this method to define your trigger->command mapping  s. Triggers can be
    * created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
    * an arbitrary
@@ -79,8 +83,7 @@ public class RobotContainer {
         () -> m_joystick.getRawAxis(2) * -1));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-    // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(3,
-    // 1, m_drivetrain.get))));
+    // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(3, 1, m_drivetrain.get))));
     zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
     inputSpin.whileTrue(spinFeederCommand);
 
@@ -111,8 +114,12 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
 
     return m_drivetrain.getAutonomousCommand("Scizo");
+<<<<<<< HEAD
     // return m_drivetrain.getAutonomousCommand();
   }
+=======
+  }             
+>>>>>>> parent of ad8622a (put the namedcommands as the very first thing within robotcontainer)
 
   public void setMotorBrake(boolean brake) {
     m_drivetrain.setMotorBrake(brake);

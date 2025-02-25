@@ -116,9 +116,9 @@ public class Robot extends TimedRobot {
     if (Math.abs(m_robotContainer.m_joystick.getRawAxis(0)) < 0.06
         && Math.abs(m_robotContainer.m_joystick.getRawAxis(1)) < 0.06
         && Math.abs(m_robotContainer.m_joystick.getRawAxis(2)) < 0.06) {
-      for (SwerveModule mo : m_robotContainer.m_drivetrain.swerveDrive.getModules()) {
-        mo.getDriveMotor().set(0);
-      }
+      // for (SwerveModule mo : m_robotContainer.m_drivetrain.swerveDrive.getModules()) {
+      //   mo.getDriveMotor().set(0);
+      // }
     }
   }
 

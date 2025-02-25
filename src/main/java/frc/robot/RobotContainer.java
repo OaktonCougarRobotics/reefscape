@@ -4,11 +4,10 @@
 
 package frc.robot;
 
-import frc.robot.Constants.DrivebaseConstants;
+import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
 
 import java.io.File;
-import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -18,16 +17,14 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -45,18 +42,28 @@ public class RobotContainer {
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
+  // Joystick object
   public final Joystick m_joystick = new Joystick(1);
-  Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
-  Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
-  Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
-  Trigger inputSpin = new Trigger(() -> m_joystick.getRawButton(6));
-  public TalonSRX feederMotor = new TalonSRX(22);
+  // Triggers on the joystick
+  private Trigger inputSpin = new Trigger(() -> m_joystick.getRawButton(6));
+  private Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
+  private Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
+  private Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
+  // feeder motor
+  private TalonSRX feederMotor = new TalonSRX(22);
+  Command spinFeederCommand = new SpinFeeder(feederMotor);
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
   public RobotContainer() {
+    // NamedCommands.registerCommand("TestMe", Commands.runOnce(() ->
+    // SmartDashboard.putNumber("AAAA", 911)));
+    NamedCommands.registerCommand("Print", Commands.runOnce(() -> System.out.println("THDJAKLHRUAESITYADU ILSYF")));
+    NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
+      System.out.println("TestMe command executed!");
+      SmartDashboard.putNumber("GGGGGGGGG", 911);
+    }));
+
+    NamedCommands.registerCommand("spin", spinFeederCommand);
+
     m_drivetrain.setupPathPlanner();
     // NamedCommands.registerCommand("turn", Commands.run(()->{twist(true);}));
     NamedCommands.registerCommand("spin", getSpinMotorCommand());
@@ -66,17 +73,7 @@ public class RobotContainer {
     configureBindings();
   }
 
-  public void twist(boolean spin) {
-    System.out.println("ahfdjsaklhfjkalhfjdkaslhfjkaslhfjdkl");
-    if (spin)
-      feederMotor.set(TalonSRXControlMode.PercentOutput, 0.5);
-    else
-      feederMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
-
-  }
-
   public Command getSpinMotorCommand() {
-
     return Commands.runOnce(() -> {
       System.out.println("SPIN COMMAND IS BEING CALLED!");
     });
@@ -107,11 +104,18 @@ public class RobotContainer {
     toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain
         .toPose(new Pose2d(m_drivetrain.getX() - 1, m_drivetrain.getY() - 1, m_drivetrain.getRotation()))));
     zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
-    inputSpin.whileTrue(Commands.runOnce(() -> {
-      twist(true);
-    }));
-    inputSpin.whileFalse(Commands.runOnce(() -> {
-      twist(false);
+    inputSpin.whileTrue(spinFeederCommand);
+
+    // Add this to configureBindings()
+    Trigger testCommandTrigger = new Trigger(() -> m_joystick.getRawButton(5)); // or use another unused button
+    testCommandTrigger.onTrue(Commands.runOnce(() -> {
+      System.out.println("Manually triggering the TestMe command");
+      Command testCommand = NamedCommands.getCommand("TestMe");
+      if (testCommand != null) {
+        testCommand.schedule();
+      } else {
+        System.out.println("ERROR: TestMe command not found in registry!");
+      }
     }));
   }
 
@@ -127,10 +131,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    if (NamedCommands.hasCommand("turn"))
-      System.out.println("fdhdjfhskdfhidegfisydfgsugsdfj");
-    return m_drivetrain.getAutonomousCommand("commandtesting");
+
+    return m_drivetrain.getAutonomousCommand("sigma");
+    // return m_drivetrain.getAutonomousCommand();
   }
 
   public void setMotorBrake(boolean brake) {

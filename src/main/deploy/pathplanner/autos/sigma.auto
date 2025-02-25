@@ -9,6 +9,18 @@
           "data": {
             "pathName": "straight1"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spin"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "straight2"
+          }
         }
       ]
     }

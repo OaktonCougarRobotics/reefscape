@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.75,
+        "x": 3.0,
         "y": 7.0
       },
       "isLocked": false,
@@ -16,53 +16,21 @@
     },
     {
       "anchor": {
-        "x": 4.06575,
-        "y": 6.131
+        "x": 6.644638310185185,
+        "y": 5.062520616319444
       },
       "prevControl": {
-        "x": 4.06575,
-        "y": 5.881
-      },
-      "nextControl": {
-        "x": 4.06575,
-        "y": 6.381000000000001
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 4.06575,
-        "y": 7.320499999999999
-      },
-      "prevControl": {
-        "x": 4.06575,
-        "y": 7.070499999999999
-      },
-      "nextControl": {
-        "x": 4.06575,
-        "y": 7.853589085103278
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 6.513,
-        "y": 7.0
-      },
-      "prevControl": {
-        "x": 6.263,
-        "y": 7.0
+        "x": 5.644638310185185,
+        "y": 5.062520616319444
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "EndStraight1"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.9,
+      "waypointRelativePos": 0.5,
       "rotationDegrees": 90.0
     }
   ],
@@ -71,9 +39,9 @@
   "eventMarkers": [
     {
       "name": "spin",
-      "waypointRelativePos": 0.5498759305210777,
-      "endWaypointRelativePos": 2.0694789081885823,
-      "command": "spin"
+      "waypointRelativePos": 0.45291111311239207,
+      "endWaypointRelativePos": null,
+      "command": null
     }
   ],
   "globalConstraints": {

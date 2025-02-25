@@ -4,14 +4,16 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 // import com.ctre.phoenix6.controls.DutyCycleOut;
 // import com.ctre.phoenix6.swerve.SwerveModule;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import swervelib.SwerveModule;
-
+import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -34,6 +36,11 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
+    NamedCommands.registerCommand("Print", Commands.runOnce(() -> System.out.println("THDJAKLHRUAESITYADU ILSYF")));
+    NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
+      System.out.println("TestMe command executed!");
+      SmartDashboard.putNumber("fyghjfghjfghjfghnfgbj", 911);
+    }));
     m_robotContainer = new RobotContainer();
   }
 
@@ -58,7 +65,6 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
-  
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
@@ -89,6 +95,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    // System.out.println(NamedCommands.getCommand("spin"));
   }
 
   @Override
@@ -105,17 +112,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-// m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1) * -1,
-    // () -> m_joystick.getRawAxis(0) * -1,
-    // () -> m_joystick.getRawAxis(2) * -1));
-    if (Math.abs(m_robotContainer.m_joystick.getRawAxis(0))<0.06 && Math.abs( m_robotContainer.m_joystick.getRawAxis(1)) <0.06 && Math.abs(m_robotContainer.m_joystick.getRawAxis(2) )<0.06){
-        for(SwerveModule mo: m_robotContainer.m_drivetrain.swerveDrive.getModules()){
-          mo.getDriveMotor().set(0);
-          // .setControl(new DutyCycleOut(0.0));
-        }
-    }
-      // m_robotContainer.m_drivetrain.swerveDrive.lockPose();
-
   }
 
   @Override

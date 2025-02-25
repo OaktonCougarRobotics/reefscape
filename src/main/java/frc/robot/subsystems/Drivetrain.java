@@ -115,7 +115,7 @@ public class Drivetrain extends SubsystemBase {
   // variables here
   public final SwerveDrivePoseEstimator m_poseEstimator;
 
-  public final double radiusOfRotation = 2;//Used for toAprilTag to find radius of rotation around the reef
+  public final double radiusOfRotation = 2;// Used for toAprilTag to find radius of rotation around the reef
 
   /** Creates a new ExampleSubsystem. */
   public Drivetrain(File directory) {
@@ -130,11 +130,6 @@ public class Drivetrain extends SubsystemBase {
     // The gear ratio is 6.75 motor revolutions per wheel rotation.
     // The encoder resolution per motor revolution is 1 per motor revolution.
     double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
-
-    System.out.println("\"conversionFactors\": {");
-    System.out.println("\t\"angle\": {\"factor\": " + angleConversionFactor + " },");
-    System.out.println("\t\"drive\": {\"factor\": " + driveConversionFactor + " }");
-    System.out.println("}");
 
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED,
@@ -189,13 +184,6 @@ public class Drivetrain extends SubsystemBase {
         new Pose2d(),
         VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
         VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
-
-    System.out.println("Front left: " + swerveDrive.getModuleMap().get("frontleft").getRawAbsolutePosition());
-    System.out.println("Front right: " + swerveDrive.getModuleMap().get("frontright").getRawAbsolutePosition());
-    System.out.println("Back left: " + swerveDrive.getModuleMap().get("backleft").getRawAbsolutePosition());
-    System.out.println("Back right: " + swerveDrive.getModuleMap().get("backright").getRawAbsolutePosition());
-    // setupPathPlanner();
-
   }
 
   /**
@@ -371,8 +359,31 @@ public class Drivetrain extends SubsystemBase {
   public Command getAutonomousCommand(String pathName) {
     // Create a path following command using AutoBuilder. This will also trigger
     // event markers.
+    // return new PathPlannerAuto(pathName);
     return new PathPlannerAuto(pathName);
+    // return AutoBuilder.buildAuto(pathName);
+
+    // PathPlannerPath[] pathGroup = {PathPlannerPath.fromPathFile(pathName)};
+    // return AutoBuilder.followPath(pathGroup[0]);
   }
+
+  // public Command getAutonomousCommand() {
+  // // Try loading as an auto first
+  // try {
+  // System.out.println("Loading as an auto...");
+  // return AutoBuilder.buildAuto("Scizo");
+  // } catch (Exception e) {
+  // // If that fails, try loading as a path
+  // System.out.println("Loading as a path...");
+  // try {
+  // PathPlannerPath path = PathPlannerPath.fromPathFile("Scizo");
+  // return AutoBuilder.followPath(path);
+  // } catch (Exception e2) {
+  // System.out.println("Both approaches failed: " + e2.getMessage());
+  // return Commands.none();
+  // }
+  // }
+  // }
 
   public static double deadzone(double num, double deadband) {
     if (Math.abs(num) < deadband)
@@ -382,7 +393,6 @@ public class Drivetrain extends SubsystemBase {
 
   public void printOdometry() {
     Pose2d pose = m_poseEstimator.getEstimatedPosition();
-    System.out.println("x=" + pose.getX() + ", y=" + pose.getY() + ", theta=" + pose.getRotation().getDegrees());
   }
 
   // private void setDrivetrainVelocity(double linearVelocity, double
@@ -497,8 +507,7 @@ public class Drivetrain extends SubsystemBase {
   // }
   // }
 
-   public double findAngleRad(Pose2d reef, Pose2d endPosition) 
-   {
+  public double findAngleRad(Pose2d reef, Pose2d endPosition) {
     Vector2 reefToBot = new Vector2(m_poseEstimator.getEstimatedPosition().getX() - reef.getX(),
         m_poseEstimator.getEstimatedPosition().getY() - reef.getY());
     Vector2 reefToEndPosition = new Vector2(endPosition.getX() - reef.getX(), endPosition.getY() - reef.getY());
@@ -508,41 +517,49 @@ public class Drivetrain extends SubsystemBase {
     return Math.acos(dotProduct / (reefToBotMag * reefToEndPositionMag));
   }
 
-  public Pose2d findPoseA(Pose2d reef, AT aprilTag)//If auto doesnt work, finds the starting point of the robots circular rotation around the reef
+  public Pose2d findPoseA(Pose2d reef, AT aprilTag)// If auto doesnt work, finds the starting point of the robots
+                                                   // circular rotation around the reef
   {
-    double dx= m_poseEstimator.getEstimatedPosition().getX() - reef.getX();
-    double dy=m_poseEstimator.getEstimatedPosition().getY() - reef.getY();
-    double theta = Math.atan(dy/dx);
+    double dx = m_poseEstimator.getEstimatedPosition().getX() - reef.getX();
+    double dy = m_poseEstimator.getEstimatedPosition().getY() - reef.getY();
+    double theta = Math.atan(dy / dx);
     double ax = reef.getX() + radiusOfRotation * Math.cos(theta);
-    double ay = reef.getY()+ radiusOfRotation * Math.sin(theta);
-    Pose2d a= new Pose2d(ax,ay, new Rotation2d(theta + Math.PI));
+    double ay = reef.getY() + radiusOfRotation * Math.sin(theta);
+    Pose2d a = new Pose2d(ax, ay, new Rotation2d(theta + Math.PI));
 
     return a;
   }
 
-  public Pose2d findB(AT aprilTag){
-    return new Pose2d((aprilTag.getPose().getX() + radiusOfRotation * Math.cos(aprilTag.getPose().getRotation().getRadians())), 
-    (aprilTag.getPose().getY() + radiusOfRotation * Math.sin(aprilTag.getPose().getRotation().getRadians())), 
-     aprilTag.getOffestPose().getRotation());
+  public Pose2d findB(AT aprilTag) {
+    return new Pose2d(
+        (aprilTag.getPose().getX() + radiusOfRotation * Math.cos(aprilTag.getPose().getRotation().getRadians())),
+        (aprilTag.getPose().getY() + radiusOfRotation * Math.sin(aprilTag.getPose().getRotation().getRadians())),
+        aprilTag.getOffestPose().getRotation());
   }
 
   public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);
   }
 
-  public int closestAprilTag(){
-    double min = Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[1].getPose().getX(),2) + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[1].getPose().getY(),2));
+  public int closestAprilTag() {
+    double min = Math
+        .sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[1].getPose().getX(), 2)
+            + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[1].getPose().getY(), 2));
     int index = 0;
-    for(int i = 1; i<=22; i++){
-      if( Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(),2) + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(),2)) < min){
-        min = Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(),2) + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(),2));
+    for (int i = 1; i <= 22; i++) {
+      if (Math.sqrt(
+          Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(), 2) + Math
+              .pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(), 2)) < min) {
+        min = Math
+            .sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(), 2)
+                + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(), 2));
         index = i;
       }
     }
     return index;
   }
 
-  public void toClosestAprilTag(){
+  public void toClosestAprilTag() {
     toPose(Constants.aprilPose[closestAprilTag()].getOffestPose());
   }
 

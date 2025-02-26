@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.DriveCommand;
 import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
 
@@ -35,7 +36,12 @@ public class RobotContainer {
   // feeder motor
   private TalonSRX feederMotor = new TalonSRX(22);
   Command spinFeederCommand = new SpinFeeder(feederMotor);
-
+  DriveCommand driveCommand = new DriveCommand(
+    m_drivetrain,
+    () -> (m_joystick.getRawAxis(1) * -1),
+    () -> (m_joystick.getRawAxis(0) * -1),
+    () -> (m_joystick.getRawAxis(2) * -1)
+    );
   public RobotContainer() {
     // NamedCommands.registerCommand("TestMe", Commands.runOnce(() ->
     // SmartDashboard.putNumber("AAAA", 911)));
@@ -75,9 +81,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1) * -1,
-        () -> m_joystick.getRawAxis(0) * -1,
-        () -> m_joystick.getRawAxis(2) * -1));
+    m_drivetrain.setDefaultCommand(
+      driveCommand
+    // m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1) * -1,
+    //     () -> m_joystick.getRawAxis(0) * -1,
+    //     () -> m_joystick.getRawAxis(2) * -1)
+        );
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
     // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(3,
@@ -111,7 +120,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
-    return m_drivetrain.getAutonomousCommand("Scizo");
+    return m_drivetrain.getAutonomousCommand("Blue rightest StartPos");
     // return m_drivetrain.getAutonomousCommand();
   }
 

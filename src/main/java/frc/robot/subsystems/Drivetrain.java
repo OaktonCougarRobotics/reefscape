@@ -450,21 +450,23 @@ public class Drivetrain extends SubsystemBase {
     Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
     if (!autoWorks)// Work in progress - Horatio
     {
-      PIDController xController = new PIDController(1, 0, 0);
-      PIDController yController = new PIDController(1, 0, 0);
+      PIDController xController = new PIDController(15, 0, 0);
+      PIDController yController = new PIDController(15, 0, 0);
       PIDController thetaController = new PIDController(1, 0, 0);
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
       double xSpeed = xController.calculate(getX(), targetPose.getX());
       double ySpeed = yController.calculate(getY(), targetPose.getY());
       double thetaSpeed = xController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
-      while ((Math.abs(m_poseEstimator.getEstimatedPosition().getX() - targetPose.getX()) >= .1)
-          && Math.abs(m_poseEstimator.getEstimatedPosition().getY() - targetPose.getY()) >= .1) {
+      while (m_poseEstimator.getEstimatedPosition().equals(targetPose) && (Math.abs(xSpeed) > 0.5 || Math.abs(ySpeed) > 0.5 || Math.abs(thetaSpeed) > 0.5)) 
+      {
         swerveDrive.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
         updateOdometry();
+        xSpeed = xController.calculate(getX(), targetPose.getX());
+        ySpeed = yController.calculate(getY(), targetPose.getY());
+        thetaSpeed = xController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
       }
     }
-
   }
 
   // if (autoWorks) {

@@ -93,7 +93,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  Pose2d test = new Pose2d(11.0, 0.0, new Rotation2d(1.0));
+  Pose2d test = new Pose2d(2.0, 0.0, new Rotation2d(0.0));
 
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1) * -1,
@@ -101,10 +101,14 @@ public class RobotContainer {
         () -> m_joystick.getRawAxis(2) * -1));
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain
-        .toPose(new Pose2d(m_drivetrain.getX() - 1, m_drivetrain.getY() - 1, m_drivetrain.getRotation()))));
-    zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
-    inputSpin.whileTrue(spinFeederCommand);
+
+    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.driveToPose(test)));
+    // toPoseButton.onTrue(Commands.runOnce(() -> AutoBuilder.followPath(m_drivetrain.driveToPose(test))));
+
+    // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain
+    //     .toPose(new Pose2d(m_drivetrain.getX() - 1, m_drivetrain.getY() - 1, m_drivetrain.getRotation()))));
+    // zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
+    // inputSpin.whileTrue(spinFeederCommand);
 
     // Add this to configureBindings()
     Trigger testCommandTrigger = new Trigger(() -> m_joystick.getRawButton(5)); // or use another unused button

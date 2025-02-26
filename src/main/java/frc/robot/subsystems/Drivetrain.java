@@ -237,7 +237,7 @@ public class Drivetrain extends SubsystemBase {
             m_backRight.getPosition()
         });
 
-    boolean doRejectUpdate = false;
+    boolean rejectVision = true;
 
     LimelightHelpers.SetRobotOrientation("limelight",
         m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
@@ -247,24 +247,24 @@ public class Drivetrain extends SubsystemBase {
     // angular velocity is greater than 720
     // degrees per second, ignore vision updates
     {
-      doRejectUpdate = true;
+      rejectVision = true;
     }
-    if (mt2 == null) {
-      SmartDashboard.putBoolean("mt2Null?", true);
-      doRejectUpdate = true;
-    } else {
-      SmartDashboard.putBoolean("mt2Null?", false);
-    }
-    if (mt2.tagCount == 0) {
-      doRejectUpdate = true;
-    }
-    if (!doRejectUpdate) {
-      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7,
-          9999999));
+    // if (mt2.tagCount == 0) {
+    //   // SmartDashboard.putBoolean("mt2Null?", true);
+    //   doRejectUpdate = true;
+    // // } else {
+    // //   SmartDashboard.putBoolean("mt2Null?", false);
+    // // }
+    // }
+    // if (mt2.tagCount == 0 || mt2.pose == null) {
+    //   doRejectUpdate = true;
+    // }
+    if (!rejectVision) {
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
       m_poseEstimator.addVisionMeasurement(
           mt2.pose,
           mt2.timestampSeconds);
-    } else if (doRejectUpdate) {
+    } else if (rejectVision) {
       m_poseEstimator.update(
           m_gyro.getRotation3d().toRotation2d(),
           new SwerveModulePosition[] {
@@ -472,38 +472,40 @@ public class Drivetrain extends SubsystemBase {
   // // The rotation component of the pose should be the direction of travel. Do
   // not
   // // use holonomic rotation.
-  // List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-  // new Pose2d(currentPose.getX(), currentPose.getY(),
-  // currentPose.getRotation()), // waypoints will always have
-  // // at
-  // // minimum two pose2ds (current
-  // // and target)
-  // // new Pose2d(targetPose.getX(), targetPose.getY(),
-  // targetPose.getRotation()));
-  // testPose2d);
-  // PathConstraints constraints = new PathConstraints(1.0, 1.0, 2 * Math.PI, 4 *
-  // Math.PI); // The constraints for this
-  // // path.
-  // // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0);
-  // //
-  // // You can also use unlimited constraints, only limited by motor torque and
-  // // nominal battery voltage
+  public PathPlannerPath driveToPose(Pose2d pose) {
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_poseEstimator.getEstimatedPosition(), pose);
 
-  // // Create the path using the waypoints created above
-  // path = new PathPlannerPath(
-  // waypoints,
-  // constraints,
-  // null, // The ideal starting state, this is only relevant for pre-planned
-  // paths, so can
-  // // be null for on-the-fly paths.
-  // new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can
-  // set a holonomic rotation here. If
-  // // using a differential drivetrain, the rotation will have no
-  // // effect.
-  // );
+    System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() + " y: "
+        + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
+        + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+        
+    PathConstraints constraints = new PathConstraints(1.0, 1.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+
+    PathPlannerPath path = new PathPlannerPath(
+      waypoints,
+      constraints,
+      null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
+      new GoalEndState(0.0, pose.getRotation())); 
+
+      path.preventFlipping = true; // Prevent the path from being flipped if the coordinates are already correct
+
+      AutoBuilder.followPath(path).schedule();
+
+      return path;
+  }
+  // waypoints will always have
+  // at
+  // minimum two pose2ds (current
+  // and target)
+  // new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation())); testPose2d);
+  
+  // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0);
+  //
+  // You can also use unlimited constraints, only limited by motor torque and
+  // nominal battery voltage
 
   // // Prevent the path from being flipped if the coordinates are already correct
-  // path.preventFlipping = true;
+  // 
   // }
   // }
 

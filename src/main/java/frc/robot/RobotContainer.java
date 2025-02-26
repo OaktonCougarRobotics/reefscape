@@ -55,7 +55,7 @@ public class RobotContainer {
 
     m_drivetrain.setupPathPlanner();
 
-    NamedCommands.registerCommand("spin", spinFeederCommand);
+    // NamedCommands.registerCommand("spin", spinFeederCommand);
 
     configureBindings();
   }

@@ -16,22 +16,34 @@
     },
     {
       "anchor": {
-        "x": 6.880942622950819,
-        "y": 7.0
+        "x": 6.644638310185185,
+        "y": 5.062520616319444
       },
       "prevControl": {
-        "x": 5.880942622950819,
-        "y": 7.0
+        "x": 5.644638310185185,
+        "y": 5.062520616319444
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "EndStraight1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "spin",
+      "waypointRelativePos": 0.45291111311239207,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 1.0,

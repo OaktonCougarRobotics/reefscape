@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import swervelib.SwerveModule;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -113,13 +112,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if (Math.abs(m_robotContainer.m_joystick.getRawAxis(0)) < 0.06
-        && Math.abs(m_robotContainer.m_joystick.getRawAxis(1)) < 0.06
-        && Math.abs(m_robotContainer.m_joystick.getRawAxis(2)) < 0.06) {
-      // for (SwerveModule mo : m_robotContainer.m_drivetrain.swerveDrive.getModules()) {
-      //   mo.getDriveMotor().set(0);
-      // }
-    }
   }
 
   @Override

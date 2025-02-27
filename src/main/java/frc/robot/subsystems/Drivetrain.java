@@ -237,7 +237,7 @@ public class Drivetrain extends SubsystemBase {
             m_backRight.getPosition()
         });
 
-    boolean rejectVision = true;
+    boolean rejectVision = false;
 
     LimelightHelpers.SetRobotOrientation("limelight",
         m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
@@ -249,16 +249,15 @@ public class Drivetrain extends SubsystemBase {
     {
       rejectVision = true;
     }
-    // if (mt2.tagCount == 0) {
-    //   // SmartDashboard.putBoolean("mt2Null?", true);
-    //   doRejectUpdate = true;
-    // // } else {
-    // //   SmartDashboard.putBoolean("mt2Null?", false);
-    // // }
-    // }
-    // if (mt2.tagCount == 0 || mt2.pose == null) {
-    //   doRejectUpdate = true;
-    // }
+    if (mt2.tagCount == 0) {
+      SmartDashboard.putBoolean("mt2Null?", true);
+      rejectVision = true;
+      } else {
+        SmartDashboard.putBoolean("mt2Null?", false);
+    }
+    if (mt2.tagCount == 0){ //|| mt2.pose == null) {
+        rejectVision = true;
+    }
     if (!rejectVision) {
       m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
       m_poseEstimator.addVisionMeasurement(
@@ -450,22 +449,26 @@ public class Drivetrain extends SubsystemBase {
     Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
     if (!autoWorks)// Work in progress - Horatio
     {
-      PIDController xController = new PIDController(15, 0, 0);
-      PIDController yController = new PIDController(15, 0, 0);
-      PIDController thetaController = new PIDController(1, 0, 0);
+      PIDController xController = new PIDController(10, 0, 0);
+      PIDController yController = new PIDController(10, 0, 0);
+      PIDController thetaController = new PIDController(4.5, 0, 3);
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
       double xSpeed = xController.calculate(getX(), targetPose.getX());
       double ySpeed = yController.calculate(getY(), targetPose.getY());
-      double thetaSpeed = xController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
-      while (m_poseEstimator.getEstimatedPosition().equals(targetPose) && (Math.abs(xSpeed) > 0.5 || Math.abs(ySpeed) > 0.5 || Math.abs(thetaSpeed) > 0.5)) 
+      double thetaSpeed = thetaController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
+      while (!m_poseEstimator.getEstimatedPosition().equals(targetPose) && (Math.abs(xSpeed) > 0.1 || Math.abs(ySpeed) > 0.1 || Math.abs(thetaSpeed) > 0.05)) 
       {
         swerveDrive.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
         updateOdometry();
         xSpeed = xController.calculate(getX(), targetPose.getX());
         ySpeed = yController.calculate(getY(), targetPose.getY());
-        thetaSpeed = xController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
+        thetaSpeed = thetaController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
       }
+      System.out.println("/////////////////////////////////////////////////////////////");
+      System.out.println((targetPose.getX() - getX()) + ", " + (targetPose.getY() - getY()) + ", " + 
+      (Math.round(targetPose.getRotation().getDegrees() * 100)/100 - Math.round(getRotation().getDegrees()) * 100)/100);
+      System.out.println("/////////////////////////////////////////////////////////////");
     }
   }
 
@@ -583,6 +586,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     updateOdometry();
     updateTelemetry();
+    //System.out.println(getX() + ", " + getY() + ", " + getRotation().getDegrees());
   }
 
   public void updateTelemetry() {

@@ -23,7 +23,6 @@ public class SpinFeeder extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("START START START START START");
         feederMotor.set(TalonSRXControlMode.PercentOutput, 0.5);
         timer.reset();
         timer.start();
@@ -31,8 +30,7 @@ public class SpinFeeder extends Command {
 
     @Override
     public void execute() {
-        // setting motor is a basic command that does not require
-        // code in the execute method to constantly run
+
     }
 
     @Override

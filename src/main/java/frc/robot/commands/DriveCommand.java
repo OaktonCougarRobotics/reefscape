@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.HashSet;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -8,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
-import swervelib.SwerveDrive;
 
 public class DriveCommand extends Command {
     
@@ -18,44 +18,36 @@ public class DriveCommand extends Command {
     private DoubleSupplier thetaTranslationSupplier;
 
 /**
-     * Constructs a DriveCommand command. Does not perform any regularization techniques
+     * Constructs a DriveCommand command
      * 
      * @param swerveDrive the swerveDrive instance
-     * @param xDoubleSupplier 
-     * @param yDoubleSupplier the swerveDrive instance
-     * @param thetaDoubbleSupplier the swerveDrive instance
+     * @param xDoubleSupplier {@link java.util.function.DoubleSupplier DoubleSupplier} that supplies the double value between [-1,1] for joystick x translation
+     * @param yDoubleSupplier {@link java.util.function.DoubleSupplier DoubleSupplier} that supplies the double value between [-1,1] for joystick y translation
+     * @param thetaDoubbleSupplier {@link java.util.function.DoubleSupplier DoubleSupplier} that supplies the double value between [-1,1] for joystick theta translation
      */
     public DriveCommand(Drivetrain drivetrain, DoubleSupplier xTranslationSupplier, DoubleSupplier yTranslationSupplier, DoubleSupplier thetaTranslationSupplier){
         this.drivetrain = drivetrain;
         this.xTranslationSupplier = xTranslationSupplier;
         this.yTranslationSupplier = yTranslationSupplier;
         this.thetaTranslationSupplier = thetaTranslationSupplier;
-        addRequirements(drivetrain);
     }
-
+    @Override
     public void initialize() {
-        // drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(
-        //   deadzone(xTranslationSupplier.getAsDouble(), Constants.Drivebase.X_DEADBAND)
-        //       * drivetrain.swerveDrive.getMaximumChassisVelocity(),
-        //   deadzone(YTranslationSupplier.getAsDouble(), Constants.Drivebase.Y_DEADBAND)
-        //       * drivetrain.swerveDrive.getMaximumChassisVelocity(),
-        //   deadzone(thetaTranslationSupplier.getAsDouble(), Constants.Drivebase.Z_DEADBAND)
-        //       * drivetrain.swerveDrive.getMaximumChassisAngularVelocity()),
-        //   new Translation2d());
-    }
 
+    }
+    @Override
     public void execute(){
         drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(
-          deadzone(xTranslationSupplier.getAsDouble(), Constants.Drivebase.X_DEADBAND)
-              * drivetrain.swerveDrive.getMaximumChassisVelocity(),
-          deadzone(yTranslationSupplier.getAsDouble(), Constants.Drivebase.Y_DEADBAND)
-              * drivetrain.swerveDrive.getMaximumChassisVelocity(),
-          deadzone(thetaTranslationSupplier.getAsDouble(), Constants.Drivebase.Z_DEADBAND)
+          Math.pow(deadzone(xTranslationSupplier.getAsDouble(),0.05)
+              * drivetrain.swerveDrive.getMaximumChassisVelocity(),3),
+              Math.pow(deadzone(yTranslationSupplier.getAsDouble(),0.05)
+              * drivetrain.swerveDrive.getMaximumChassisVelocity(),3),
+              deadzone(thetaTranslationSupplier.getAsDouble(),0.05)
               * drivetrain.swerveDrive.getMaximumChassisAngularVelocity()),
           new Translation2d());
     }
-
-    public void end(){
+    @Override
+    public void end(boolean interrupted){
         
     } 
 
@@ -63,10 +55,21 @@ public class DriveCommand extends Command {
         
         return false;
     }
-    public static double deadzone(double num, double deadband){
-        if (Math.abs(num) < deadband)
-      return 0.0;
-    return num;
+
+    @Override
+    public boolean runsWhenDisabled(){
+        return false;
     }
 
+    public HashSet<Subsystem> getRequirements(){
+        HashSet<Subsystem> req = new HashSet<>();
+        req.add(drivetrain);
+        return req;
+    }
+
+    public static double deadzone(double num, double deadband){
+        if (Math.abs(num) < deadband)
+          return 0.0;
+        return num;
+      }
 }

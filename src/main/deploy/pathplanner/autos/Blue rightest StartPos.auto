@@ -33,6 +33,24 @@
           "data": {
             "pathName": "Station to B2"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drop Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B2 to Station"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
         }
       ]
     }

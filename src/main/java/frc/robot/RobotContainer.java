@@ -36,12 +36,14 @@ public class RobotContainer {
   // feeder motor
   private TalonSRX feederMotor = new TalonSRX(22);
   Command spinFeederCommand = new SpinFeeder(feederMotor);
-  DriveCommand driveCommand = new DriveCommand(
-    m_drivetrain,
-    () -> (m_joystick.getRawAxis(1) * -1),
-    () -> (m_joystick.getRawAxis(0) * -1),
-    () -> (m_joystick.getRawAxis(2) * -1)
-    );
+
+    DriveCommand driveCommand = new DriveCommand(
+      m_drivetrain,
+      () -> m_joystick.getRawAxis(1) * -1,
+      () -> m_joystick.getRawAxis(0) * -1,
+      () ->m_joystick.getRawAxis(2) * -1
+      );
+
   public RobotContainer() {
     // NamedCommands.registerCommand("TestMe", Commands.runOnce(() ->
     // SmartDashboard.putNumber("AAAA", 911)));
@@ -124,8 +126,10 @@ public class RobotContainer {
     // return m_drivetrain.getAutonomousCommand();
   }
 
-  public void setMotorBrake(boolean brake) {
-    m_drivetrain.setMotorBrake(brake);
+  public static double deadzone(double num, double deadband){
+    if (Math.abs(num) < deadband)
+      return 0.0;
+    return num;
   }
 
 }

@@ -122,7 +122,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
-    return m_drivetrain.getAutonomousCommand("Blue rightest StartPos");
+    return m_drivetrain.getAutonomousCommand("Scizo");
     // return m_drivetrain.getAutonomousCommand();
   }
 

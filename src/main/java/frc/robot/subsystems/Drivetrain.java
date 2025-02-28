@@ -209,53 +209,7 @@ public class Drivetrain extends SubsystemBase {
     // )
     // });
   }
-/* 
-  public void updateOdometry() {
-    m_poseEstimator.update(
-        m_gyro.getRotation3d().toRotation2d(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_backLeft.getPosition(),
-            m_backRight.getPosition()
-        });
 
-    boolean doRejectUpdate = false;
-
-    LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-        0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our angular velocity is greater than 720
-                                                                    // degrees per second, ignore vision updates
-    {
-      doRejectUpdate = true;
-    }
-    if (mt2 == null) {
-      SmartDashboard.putBoolean("mt2Null?", true);
-      doRejectUpdate = true;
-    } else {
-      SmartDashboard.putBoolean("mt2Null?", false);
-    }
-    if (mt2.tagCount == 0) {
-      doRejectUpdate = true;
-    }
-    if (!doRejectUpdate) {
-      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-      m_poseEstimator.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
-    } else if (doRejectUpdate) {
-      m_poseEstimator.update(
-          m_gyro.getRotation3d().toRotation2d(),
-          new SwerveModulePosition[] {
-              m_frontLeft.getPosition(),
-              m_frontRight.getPosition(),
-              m_backLeft.getPosition(),
-              m_backRight.getPosition()
-          });
-    }
-  }
-    */
 
   public Pose2d getPose() {
     return swerveDrive.getPose();
@@ -342,29 +296,7 @@ public class Drivetrain extends SubsystemBase {
     // event markers.
     // return new PathPlannerAuto(pathName);
     return new PathPlannerAuto(pathName);
-    // return AutoBuilder.buildAuto(pathName);
-
-    // PathPlannerPath[] pathGroup = {PathPlannerPath.fromPathFile(pathName)};
-    // return AutoBuilder.followPath(pathGroup[0]);
   }
-
-  // public Command getAutonomousCommand() {
-  // // Try loading as an auto first
-  // try {
-  // System.out.println("Loading as an auto...");
-  // return AutoBuilder.buildAuto("Scizo");
-  // } catch (Exception e) {
-  // // If that fails, try loading as a path
-  // System.out.println("Loading as a path...");
-  // try {
-  // PathPlannerPath path = PathPlannerPath.fromPathFile("Scizo");
-  // return AutoBuilder.followPath(path);
-  // } catch (Exception e2) {
-  // System.out.println("Both approaches failed: " + e2.getMessage());
-  // return Commands.none();
-  // }
-  // }
-  // }
 
   public static double deadzone(double num, double deadband) {
     if (Math.abs(num) < deadband)
@@ -375,56 +307,6 @@ public class Drivetrain extends SubsystemBase {
   public void printOdometry() {
     Pose2d pose = m_poseEstimator.getEstimatedPosition();
   }
-
-  // private void setDrivetrainVelocity(double linearVelocity, double
-  // angularVelocity) {
-  // linearVelocity = limitVelocity(linearVelocity);
-  // angularVelocity = limitAngularVelocity(angularVelocity);
-  // }
-
-  // private double limitVelocity(double velocity) {
-  // return Math.min(Math.max(velocity, -MAX_LINEAR_VELOCITY),
-  // MAX_LINEAR_VELOCITY);
-  // }
-
-  // private double limitAngularVelocity(double angularVelocity) {
-  // return Math.min(Math.max(angularVelocity, -MAX_ANGULAR_VELOCITY),
-  // MAX_ANGULAR_VELOCITY);
-  // }
-
-  // private Trajectory generateTrajectory(Pose2d startPose, Pose2d endPose,
-  // TrajectoryConfig config) {
-  // return TrajectoryGenerator.generateTrajectory(
-  // startPose,
-  // List.of(),
-  // endPose,
-  // config
-  // );
-  // }
-
-  // Follow the generated trajectory
-  // private void followTrajectory(Trajectory trajectory) {
-  // // Simple path-following using a PIDController for both x and theta (angular)
-  // try (PIDController xController = new PIDController(1.0, 0, 0);
-  // PIDController thetaController = new PIDController(1.0, 0, 0)) {
-
-  // for (Trajectory.State state : trajectory.getStates()) {
-  // // Update the robot’s velocity to follow the trajectory
-  // double xError = state.poseMeters.getX() -
-  // m_poseEstimator.getEstimatedPosition().getX();
-  // double yError = state.poseMeters.getY() -
-  // m_poseEstimator.getEstimatedPosition().getY();
-  // double thetaError = state.poseMeters.getRotation().getDegrees() -
-  // m_poseEstimator.getEstimatedPosition().getRotation().getDegrees();
-
-  // double linearVelocity = xController.calculate(xError) + yError; // Using both
-  // x and y errors
-  // double angularVelocity = thetaController.calculate(thetaError);
-
-  // setDrivetrainVelocity(linearVelocity, angularVelocity);
-  // }
-  // }
-  // }
 
   public void toPose(Pose2d targetPose) {
     boolean autoWorks = false;

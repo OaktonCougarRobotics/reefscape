@@ -25,7 +25,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-                                                                                                                  
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -42,6 +42,7 @@ import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -73,7 +74,6 @@ public class Drivetrain extends SubsystemBase {
   // reallocation.
   private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
-
   DecimalFormat decF = new DecimalFormat("0.000");
   // limiting linear and angular velocity
   // private static final double MAX_LINEAR_VELOCITY = 3.0; //max speed in
@@ -99,7 +99,7 @@ public class Drivetrain extends SubsystemBase {
   public SwerveModule m_backRight;
   public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation,
       m_backLeftLocation, m_backRightLocation);
-  
+
   // do all the consturction in init, remove the final, only declare local
   // variables here
   public final SwerveDrivePoseEstimator m_poseEstimator;
@@ -133,7 +133,7 @@ public class Drivetrain extends SubsystemBase {
     // SwerveDrive.invertOdometry();
     swerveDrive.setMotorIdleMode(true);
     swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via
-                                            // 
+                                            //
     // swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation);
     // // Disables cosine compensation for simulations since it causes discrepancies
     // not seen in real life.
@@ -144,7 +144,7 @@ public class Drivetrain extends SubsystemBase {
         true,
         -0.05); // Correct for skew that gets worse as angular velocity increases. Start with a
     // coefficient of 0.1.
-    
+
     swerveDrive.setModuleEncoderAutoSynchronize(false,
         1); // Enable if you want to resynchronize your absolute encoders and motor encoders
             // periodically when they are not moving.
@@ -184,7 +184,8 @@ public class Drivetrain extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
-        System.out.println("Translation X Value :" + translationX.getAsDouble() + " Translation Y Value :" + translationY.getAsDouble() + " Angular Rotation Value :" + angularRotation.getAsDouble());
+    System.out.println("Translation X Value :" + translationX.getAsDouble() + " Translation Y Value :"
+        + translationY.getAsDouble() + " Angular Rotation Value :" + angularRotation.getAsDouble());
 
     return run(() -> {
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
@@ -212,7 +213,6 @@ public class Drivetrain extends SubsystemBase {
     // )
     // });
   }
-
 
   public Pose2d getPose() {
     return swerveDrive.getPose();
@@ -312,55 +312,66 @@ public class Drivetrain extends SubsystemBase {
   }
 
   // public void toPose(Pose2d targetPose) {
-  //   boolean autoWorks = false;
-  //   if (!autoWorks)// Work in progress - Horatio
-  //   {
-  //     PIDController xController = new PIDController(1, 0, 0);
-  //     PIDController yController = new PIDController(1, 0, 0);
-  //     PIDController thetaController = new PIDController(1, 0, 0);
-  //     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+  // boolean autoWorks = false;
+  // if (!autoWorks)// Work in progress - Horatio
+  // {
+  // PIDController xController = new PIDController(1, 0, 0);
+  // PIDController yController = new PIDController(1, 0, 0);
+  // PIDController thetaController = new PIDController(1, 0, 0);
+  // thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-  //     double xSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getX(), targetPose.getX());
-  //     double ySpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getY(), targetPose.getY());
-  //     double thetaSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
-  //         targetPose.getRotation().getRadians());
+  // double xSpeed =
+  // xController.calculate(m_poseEstimator.getEstimatedPosition().getX(),
+  // targetPose.getX());
+  // double ySpeed =
+  // xController.calculate(m_poseEstimator.getEstimatedPosition().getY(),
+  // targetPose.getY());
+  // double thetaSpeed =
+  // xController.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
+  // targetPose.getRotation().getRadians());
 
-  //     swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
+  // swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
 
-  //   }
+  // }
 
-  //   if (autoWorks) {
-  //     Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
-  //     // Create a list of waypoints from poses. Each pose represents one waypoint.
-  //     // The rotation component of the pose should be the direction of travel. Do not
-  //     // use holonomic rotation.
-  //     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-  //         new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()), // waypoints will always have
-  //                                                                                        // at
-  //                                                                                        // minimum two pose2ds (current
-  //                                                                                        // and target)
-  //         new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
+  // if (autoWorks) {
+  // Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
+  // // Create a list of waypoints from poses. Each pose represents one waypoint.
+  // // The rotation component of the pose should be the direction of travel. Do
+  // not
+  // // use holonomic rotation.
+  // List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+  // new Pose2d(currentPose.getX(), currentPose.getY(),
+  // currentPose.getRotation()), // waypoints will always have
+  // // at
+  // // minimum two pose2ds (current
+  // // and target)
+  // new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
 
-  //     PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this
-  //                                                                                            // path.
-  //     // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
-  //     // You can also use unlimited constraints, only limited by motor torque and
-  //     // nominal battery voltage
+  // PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 *
+  // Math.PI); // The constraints for this
+  // // path.
+  // // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0);
+  // //
+  // // You can also use unlimited constraints, only limited by motor torque and
+  // // nominal battery voltage
 
-  //     // Create the path using the waypoints created above
-  //     PathPlannerPath path = new PathPlannerPath(
-  //         waypoints,
-  //         constraints,
-  //         null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-  //               // be null for on-the-fly paths.
-  //         new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If
-  //                                                         // using a differential drivetrain, the rotation will have no
-  //                                                         // effect.
-  //     );
+  // // Create the path using the waypoints created above
+  // PathPlannerPath path = new PathPlannerPath(
+  // waypoints,
+  // constraints,
+  // null, // The ideal starting state, this is only relevant for pre-planned
+  // paths, so can
+  // // be null for on-the-fly paths.
+  // new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can
+  // set a holonomic rotation here. If
+  // // using a differential drivetrain, the rotation will have no
+  // // effect.
+  // );
 
-  //     // Prevent the path from being flipped if the coordinates are already correct
-  //     path.preventFlipping = true;
-  //   }
+  // // Prevent the path from being flipped if the coordinates are already correct
+  // path.preventFlipping = true;
+  // }
   // }
 
   public void setMotorBrake(boolean brake) {
@@ -373,41 +384,50 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void updateTelemetry() {
-    for(String key:swerveDrive.getModuleMap().keySet()){
-    SmartDashboard.putNumber(key, swerveDrive.getModuleMap().get(key).getAbsolutePosition());  
+    for (String key : swerveDrive.getModuleMap().keySet()) {
+      SmartDashboard.putNumber(key, swerveDrive.getModuleMap().get(key).getAbsolutePosition());
     }
-    SmartDashboard.putString("position", "("+ decF.format(swerveDrive.getPose().getX())+", "+decF.format(swerveDrive.getPose().getY())+")");
+    SmartDashboard.putString("position",
+        "(" + decF.format(swerveDrive.getPose().getX()) + ", " + decF.format(swerveDrive.getPose().getY()) + ")");
     SmartDashboard.putNumber("theta", swerveDrive.getOdometryHeading().getDegrees());
   }
+
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
 
   public void zeroWheels() {
-    for(String key:swerveDrive.getModuleMap().keySet())
+    for (String key : swerveDrive.getModuleMap().keySet())
       swerveDrive.getModuleMap().get(key).setAngle(0);
   }
 
   public Command makePath() {
-    // Since we are using a holonomic drivetrain, the rotation component of this pose
+    // Since we are using a holonomic drivetrain, the rotation component of this
+    // pose
     // represents the goal holonomic rotation
-    Pose2d targetPose = new Pose2d(0, 0, Rotation2d.fromDegrees(180));
+    Pose2d targetPose = new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180));
 
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-            1.0, 1.0,
-            Units.degreesToRadians(540), Units.degreesToRadians(720));
+        0.5,
+        1.0,
+        Units.degreesToRadians(540),
+        Units.degreesToRadians(720));
 
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
     Command pathfindingCommand = AutoBuilder.pathfindToPose(
-            targetPose,
-            constraints,
-            0.0 // Goal end velocity in meters/sec
-            /*0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.*/
+        targetPose,
+        constraints,
+        0.0 // Goal end velocity in meters/sec
+    /*
+     * 0.0 // Rotation delay distance in meters. This is how far the robot should
+     * travel before attempting to rotate.
+     */
     );
     pathfindingCommand.addRequirements(this);
-    return pathfindingCommand.andThen(Commands.print("JHGUSFDUGSIDHGSIDHSGIDHVSJGDFSUTDU"));
-  } 
+    return pathfindingCommand;
+    // return Commands.print("dsfkjsdnfksjfsdkjbfsdkjfbidsf");
+  }
 
 }

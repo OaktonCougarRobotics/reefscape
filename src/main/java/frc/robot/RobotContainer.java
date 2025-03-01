@@ -31,8 +31,8 @@ public class RobotContainer {
   // Triggers on the joystick
   private Trigger inputSpin = new Trigger(() -> m_joystick.getRawButton(6));
   private Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
-  private Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
-  private Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
+  private Trigger toPoseButton = new Trigger(() -> m_joystick.getRawButton(2)); // Work in Progress - Horatio
+  // private Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
   // feeder motor
   private TalonSRX feederMotor = new TalonSRX(22);
   Command spinFeederCommand = new SpinFeeder(feederMotor);
@@ -108,7 +108,7 @@ public class RobotContainer {
       }
     }));
 
-    zeroWheels.whileTrue(m_drivetrain.makePath());
+    toPoseButton.whileTrue(m_drivetrain.makePath());
   }
 
   public Drivetrain getDrivetrain() {

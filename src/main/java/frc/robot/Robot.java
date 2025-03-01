@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 // import com.ctre.phoenix6.controls.DutyCycleOut;
 // import com.ctre.phoenix6.swerve.SwerveModule;

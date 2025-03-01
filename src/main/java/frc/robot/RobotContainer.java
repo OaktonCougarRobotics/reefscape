@@ -93,7 +93,7 @@ public class RobotContainer {
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
     // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(3,
     // 1, m_drivetrain.get))));
-    zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
+    // zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
     inputSpin.whileTrue(spinFeederCommand);
 
     // Add this to configureBindings()
@@ -107,6 +107,8 @@ public class RobotContainer {
         System.out.println("ERROR: TestMe command not found in registry!");
       }
     }));
+
+    zeroWheels.onTrue(m_drivetrain.makePath());
   }
 
   public Drivetrain getDrivetrain() {

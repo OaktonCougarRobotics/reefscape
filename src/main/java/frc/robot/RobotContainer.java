@@ -108,7 +108,7 @@ public class RobotContainer {
       }
     }));
 
-    zeroWheels.onTrue(m_drivetrain.makePath());
+    zeroWheels.whileTrue(m_drivetrain.makePath());
   }
 
   public Drivetrain getDrivetrain() {

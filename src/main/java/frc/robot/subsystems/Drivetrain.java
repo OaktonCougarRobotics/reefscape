@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.Volts;
 import java.io.File;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.text.DecimalFormat;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -72,6 +73,8 @@ public class Drivetrain extends SubsystemBase {
   // reallocation.
   private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
+
+  DecimalFormat decF = new DecimalFormat("0.000");
   // limiting linear and angular velocity
   // private static final double MAX_LINEAR_VELOCITY = 3.0; //max speed in
   // meters/second
@@ -308,57 +311,57 @@ public class Drivetrain extends SubsystemBase {
     Pose2d pose = m_poseEstimator.getEstimatedPosition();
   }
 
-  public void toPose(Pose2d targetPose) {
-    boolean autoWorks = false;
-    if (!autoWorks)// Work in progress - Horatio
-    {
-      PIDController xController = new PIDController(1, 0, 0);
-      PIDController yController = new PIDController(1, 0, 0);
-      PIDController thetaController = new PIDController(1, 0, 0);
-      thetaController.enableContinuousInput(-Math.PI, Math.PI);
+  // public void toPose(Pose2d targetPose) {
+  //   boolean autoWorks = false;
+  //   if (!autoWorks)// Work in progress - Horatio
+  //   {
+  //     PIDController xController = new PIDController(1, 0, 0);
+  //     PIDController yController = new PIDController(1, 0, 0);
+  //     PIDController thetaController = new PIDController(1, 0, 0);
+  //     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-      double xSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getX(), targetPose.getX());
-      double ySpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getY(), targetPose.getY());
-      double thetaSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
-          targetPose.getRotation().getRadians());
+  //     double xSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getX(), targetPose.getX());
+  //     double ySpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getY(), targetPose.getY());
+  //     double thetaSpeed = xController.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
+  //         targetPose.getRotation().getRadians());
 
-      swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
+  //     swerveDrive.drive(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
 
-    }
+  //   }
 
-    if (autoWorks) {
-      Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
-      // Create a list of waypoints from poses. Each pose represents one waypoint.
-      // The rotation component of the pose should be the direction of travel. Do not
-      // use holonomic rotation.
-      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-          new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()), // waypoints will always have
-                                                                                         // at
-                                                                                         // minimum two pose2ds (current
-                                                                                         // and target)
-          new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
+  //   if (autoWorks) {
+  //     Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
+  //     // Create a list of waypoints from poses. Each pose represents one waypoint.
+  //     // The rotation component of the pose should be the direction of travel. Do not
+  //     // use holonomic rotation.
+  //     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+  //         new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()), // waypoints will always have
+  //                                                                                        // at
+  //                                                                                        // minimum two pose2ds (current
+  //                                                                                        // and target)
+  //         new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
 
-      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this
-                                                                                             // path.
-      // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
-      // You can also use unlimited constraints, only limited by motor torque and
-      // nominal battery voltage
+  //     PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this
+  //                                                                                            // path.
+  //     // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
+  //     // You can also use unlimited constraints, only limited by motor torque and
+  //     // nominal battery voltage
 
-      // Create the path using the waypoints created above
-      PathPlannerPath path = new PathPlannerPath(
-          waypoints,
-          constraints,
-          null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-                // be null for on-the-fly paths.
-          new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If
-                                                          // using a differential drivetrain, the rotation will have no
-                                                          // effect.
-      );
+  //     // Create the path using the waypoints created above
+  //     PathPlannerPath path = new PathPlannerPath(
+  //         waypoints,
+  //         constraints,
+  //         null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+  //               // be null for on-the-fly paths.
+  //         new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If
+  //                                                         // using a differential drivetrain, the rotation will have no
+  //                                                         // effect.
+  //     );
 
-      // Prevent the path from being flipped if the coordinates are already correct
-      path.preventFlipping = true;
-    }
-  }
+  //     // Prevent the path from being flipped if the coordinates are already correct
+  //     path.preventFlipping = true;
+  //   }
+  // }
 
   public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);
@@ -373,7 +376,7 @@ public class Drivetrain extends SubsystemBase {
     for(String key:swerveDrive.getModuleMap().keySet()){
     SmartDashboard.putNumber(key, swerveDrive.getModuleMap().get(key).getAbsolutePosition());  
     }
-    SmartDashboard.putString("position", "("+ swerveDrive.getPose().getX()+", "+swerveDrive.getPose().getY()+")");
+    SmartDashboard.putString("position", "("+ decF.format(swerveDrive.getPose().getX())+", "+decF.format(swerveDrive.getPose().getY())+")");
     SmartDashboard.putNumber("theta", swerveDrive.getOdometryHeading().getDegrees());
   }
   @Override
@@ -389,7 +392,7 @@ public class Drivetrain extends SubsystemBase {
   public Command makePath() {
     // Since we are using a holonomic drivetrain, the rotation component of this pose
     // represents the goal holonomic rotation
-    Pose2d targetPose = new Pose2d(1, 2, Rotation2d.fromDegrees(180));
+    Pose2d targetPose = new Pose2d(0, 0, Rotation2d.fromDegrees(180));
 
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
@@ -403,7 +406,8 @@ public class Drivetrain extends SubsystemBase {
             0.0 // Goal end velocity in meters/sec
             /*0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.*/
     );
+    pathfindingCommand.addRequirements(this);
+    return pathfindingCommand.andThen(Commands.print("JHGUSFDUGSIDHGSIDHSGIDHVSJGDFSUTDU"));
+  } 
 
-    return pathfindingCommand;
-  }
 }

@@ -164,8 +164,6 @@ public class Drivetrain extends SubsystemBase {
     swerveDrive.setModuleEncoderAutoSynchronize(false,
         1); // Enable if you want to resynchronize your absolute encoders and motor encoders
             // periodically when they are not moving.
-    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the
-                                         // offsets onto it. Throws warning if not possible
     // VISION, NOT YAGSL(NO CLUE IF THESE INDEXES ARE RIGHT)
 
     m_frontLeft = swerveDrive.getModules()[0];
@@ -255,11 +253,11 @@ public class Drivetrain extends SubsystemBase {
     if (mt2.tagCount == 0) {
       SmartDashboard.putBoolean("mt2Null?", true);
       rejectVision = true;
-      } else {
-        SmartDashboard.putBoolean("mt2Null?", false);
+    } else {
+      SmartDashboard.putBoolean("mt2Null?", false);
     }
-    if (mt2.tagCount == 0){ //|| mt2.pose == null) {
-        rejectVision = true;
+    if (mt2.tagCount == 0) { // || mt2.pose == null) {
+      rejectVision = true;
     }
     if (!rejectVision) {
       m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
@@ -451,8 +449,8 @@ public class Drivetrain extends SubsystemBase {
       double xSpeed = xController.calculate(getX(), targetPose.getX());
       double ySpeed = yController.calculate(getY(), targetPose.getY());
       double thetaSpeed = thetaController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
-      while (!m_poseEstimator.getEstimatedPosition().equals(targetPose) && (Math.abs(xSpeed) > 0.1 || Math.abs(ySpeed) > 0.1 || Math.abs(thetaSpeed) > 0.05)) 
-      {
+      while (!m_poseEstimator.getEstimatedPosition().equals(targetPose)
+          && (Math.abs(xSpeed) > 0.1 || Math.abs(ySpeed) > 0.1 || Math.abs(thetaSpeed) > 0.05)) {
         swerveDrive.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
         updateOdometry();
         xSpeed = xController.calculate(getX(), targetPose.getX());
@@ -460,8 +458,9 @@ public class Drivetrain extends SubsystemBase {
         thetaSpeed = thetaController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
       }
       System.out.println("/////////////////////////////////////////////////////////////");
-      System.out.println((targetPose.getX() - getX()) + ", " + (targetPose.getY() - getY()) + ", " + 
-      (Math.round(targetPose.getRotation().getDegrees() * 100)/100 - Math.round(getRotation().getDegrees()) * 100)/100);
+      System.out.println((targetPose.getX() - getX()) + ", " + (targetPose.getY() - getY()) + ", " +
+          (Math.round(targetPose.getRotation().getDegrees() * 100) / 100 - Math.round(getRotation().getDegrees()) * 100)
+              / 100);
       System.out.println("/////////////////////////////////////////////////////////////");
     }
   }
@@ -477,34 +476,38 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() + " y: "
         + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
         + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
-        
-    PathConstraints constraints = new PathConstraints(1.0, 1.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+
+    PathConstraints constraints = new PathConstraints(3.0, 1.5, 4 * Math.PI, 3 * Math.PI); // The constraints for this
+                                                                                           // path.
 
     PathPlannerPath path = new PathPlannerPath(
-      waypoints,
-      constraints,
-      null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
-      new GoalEndState(0.0, pose.getRotation())); 
+        waypoints,
+        constraints,
+        null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+              // be null for on-the-fly paths.
+        new GoalEndState(0.0, pose.getRotation()));
 
-      path.preventFlipping = true; // Prevent the path from being flipped if the coordinates are already correct
+    path.preventFlipping = true; // Prevent the path from being flipped if the coordinates are already correct
 
-      AutoBuilder.followPath(path).schedule();
+    AutoBuilder.followPath(path).addRequirements(this);
+    AutoBuilder.followPath(path).schedule();
 
-      return path;
+    return path;
   }
   // waypoints will always have
   // at
   // minimum two pose2ds (current
   // and target)
-  // new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation())); testPose2d);
-  
+  // new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
+  // testPose2d);
+
   // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0);
   //
   // You can also use unlimited constraints, only limited by motor torque and
   // nominal battery voltage
 
   // // Prevent the path from being flipped if the coordinates are already correct
-  // 
+  //
   // }
   // }
 
@@ -580,7 +583,8 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     updateOdometry();
     updateTelemetry();
-    //System.out.println(getX() + ", " + getY() + ", " + getRotation().getDegrees());
+    // System.out.println(getX() + ", " + getY() + ", " +
+    // getRotation().getDegrees());
   }
 
   public void updateTelemetry() {

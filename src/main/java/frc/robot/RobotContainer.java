@@ -54,12 +54,11 @@ public class RobotContainer {
   private TalonSRX feederMotor = new TalonSRX(22);
   Command spinFeederCommand = new SpinFeeder(feederMotor);
 
-    DriveCommand driveCommand = new DriveCommand(
+  DriveCommand driveCommand = new DriveCommand(
       m_drivetrain,
       () -> m_joystick.getRawAxis(1) * -1,
       () -> m_joystick.getRawAxis(0) * -1,
-      () ->m_joystick.getRawAxis(2) * -1
-      );
+      () -> m_joystick.getRawAxis(2) * -1);
 
   public RobotContainer() {
     // NamedCommands.registerCommand("TestMe", Commands.runOnce(() ->
@@ -101,19 +100,13 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  Pose2d test = new Pose2d(2.0, 0.0, new Rotation2d(0.0));
+  Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180)));
 
   private void configureBindings() {
-    m_drivetrain.setDefaultCommand(
-      driveCommand
-    // m_drivetrain.driveCommand(() -> m_joystick.getRawAxis(1) * -1,
-    //     () -> m_joystick.getRawAxis(0) * -1,
-    //     () -> m_joystick.getRawAxis(2) * -1)
-        );
+    m_drivetrain.setDefaultCommand(driveCommand);
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-    // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(3,
-    // 1, m_drivetrain.get))));
+    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.driveToPose(test)));
     // zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
     inputSpin.whileTrue(spinFeederCommand);
 
@@ -129,7 +122,7 @@ public class RobotContainer {
       }
     }));
 
-    toPoseButton.whileTrue(m_drivetrain.makePath());
+    // toPoseButton.whileTrue(m_drivetrain.makePath());
   }
 
   public Drivetrain getDrivetrain() {
@@ -149,7 +142,7 @@ public class RobotContainer {
     // return m_drivetrain.getAutonomousCommand();
   }
 
-  public static double deadzone(double num, double deadband){
+  public static double deadzone(double num, double deadband) {
     if (Math.abs(num) < deadband)
       return 0.0;
     return num;

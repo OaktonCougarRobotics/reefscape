@@ -10,9 +10,17 @@ import frc.robot.subsystems.Drivetrain;
 
 import java.io.File;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -21,6 +29,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.pathplanner.lib.auto.NamedCommands;
 
+/**
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
+ * subsystems, commands, and trigger mappings) should be declared here.
+ */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
@@ -56,8 +73,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("spin", spinFeederCommand);
 
     m_drivetrain.setupPathPlanner();
-
-    // NamedCommands.registerCommand("spin", spinFeederCommand);
+    // NamedCommands.registerCommand("turn", Commands.run(()->{twist(true);}));
+    NamedCommands.registerCommand("spin", getSpinMotorCommand());
+    // NamedCommands.registerCommand("print",
+    // Commands.print("fghjfgjfghjfghjfghjfghj"));
 
     configureBindings();
   }
@@ -82,6 +101,8 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+  Pose2d test = new Pose2d(2.0, 0.0, new Rotation2d(0.0));
+
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(
       driveCommand

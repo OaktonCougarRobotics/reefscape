@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
+import frc.AT;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -21,6 +24,36 @@ import swervelib.math.Matter;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static AT april1 = new AT(657.37, 25.80, 126, 1);//static Pose2d april1 = new Pose2d(657.37, 25.80, new Rotation2d(0.0));
+  public static AT april2 = new AT(657.37, 291.20, 234, 1);//static Pose2d april2 = new Pose2d(657.37, 291.20, new Rotation2d(0.0));
+  public static AT april3 = new AT(455.15, 317.15, 270, 1);//static Pose2d april3 = new Pose2d(455.15, 317.15, new Rotation2d(0.0));
+  public static AT april4 = new AT(365.20, 241.64,0 ,1);
+  public static AT april5 = new AT(365.20, 75.39, 0, 1);
+  public static AT april6 = new AT(530.49, 130.17, 300, 1);
+  public static AT april7 = new AT(546.87, 158.5, 0, 1);
+  public static AT april8 = new AT(530.49, 186.83, 60, 1);
+  public static AT april9 = new AT(497.77, 186.83, 120, 1);
+  public static AT april10 = new AT(481.39, 158.5, 180, 1);
+  public static AT april11 = new AT(497.77, 130.17, 240, 1);
+  public static AT april12 = new AT(33.51, 25.80, 54, 1);
+  public static AT april13 = new AT(33.51, 291.20, 306, 1);
+  public static AT april14 = new AT(325.68, 241.64, 180, 1);
+  public static AT april15 = new AT(325.68, 75.39, 180, 1);
+  public static AT april16 = new AT(235.73, -0.15, 90, 1);
+  public static AT april17 = new AT(160.39, 130.17, 240, 1);
+  public static AT april18 = new AT(144.00, 158.50, 180, 1);
+  public static AT april19 = new AT(160.39, 186.83, 120, 1);
+  public static AT april20 = new AT(193.10, 186.83, 60, 1);
+  public static AT april21 = new AT(209.49, 158.50, 0, 1);
+  public static AT april22 = new AT(193.10, 130.17, 300, 1);
+
+
+
+  public static AT[] aprilPose = new AT[]{null, april1, april2, april3, april4, april5, april6, april7, april8, april9, april10, april11, april12, april13, april14, april15, april16, april17, april18, april19, april20, april21, april22};
+
+
+
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
@@ -159,6 +192,8 @@ public final class Constants {
   public static final double WRIST_DFLT_ACC = 28000;
   public static final double PIVOT_ACC_DIVISOR = 3.5;
 
+  public static final double ANATOLI_CHASSIS_WIDTH = 0.3; //meters
+
   // Button IDs
   public static final int DUSTPANUP_LIMIT = 0;
   public static final int SHOOTER_SPEED = 1;
@@ -195,17 +230,21 @@ public final class Constants {
   // public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
   // }
 
-  public static final class Drivebase {
+  public static final class DrivebaseConstants {
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
+  }
+
+  public static class OperatorConstants {
+
     // Joystick Deadband
     public static final double LEFT_X_DEADBAND = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double X_DEADBAND = 0.05;
-    public static final double Y_DEADBAND = 0.05;
-    public static final double Z_DEADBAND = 0.05;
+    public static final double X_DEADBAND = 0.075;
+    public static final double Y_DEADBAND = 0.075;
+    public static final double Z_DEADBAND = 0.03;
     public static final double TURN_CONSTANT = 6;
   }
 }

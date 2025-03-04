@@ -139,6 +139,7 @@ public class Drivetrain extends SubsystemBase {
           new Pose2d(new Translation2d(Meter.of(0),
               Meter.of(0)),
               Rotation2d.fromDegrees(0)));
+
       // Alternative method if you don't want to supply the conversion factor via JSON
       // files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed,
@@ -274,6 +275,10 @@ public class Drivetrain extends SubsystemBase {
               m_backRight.getPosition()
           });
     }
+
+    // System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() 
+    //                 + " y: " + m_poseEstimator.getEstimatedPosition().getY() 
+    //                 + " rotation: " + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
   }
 
   public Pose2d getPose() {
@@ -560,6 +565,7 @@ public class Drivetrain extends SubsystemBase {
         index = i;
       }
     }
+    System.out.println(index);
     return index;
   }
 

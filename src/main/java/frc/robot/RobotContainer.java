@@ -107,7 +107,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(90)));
+  Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180)));
 
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(driveCommand);

@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.text.DecimalFormat;
@@ -94,7 +95,8 @@ public class Drivetrain extends SubsystemBase {
   // meters/second
   // private static final double MAX_ANGULAR_VELOCITY = 2.0; //max speed in
   // radians/second
-
+  double angleThreshold = 10;
+  double positionThreshold= 0.2;
   // Limelight stuff, NOT YAGSL, VISION MADE THIS IT MAY BE BROKEN
   public final Translation2d m_frontLeftLocation = new Translation2d(Inches.of(12.125), Inches.of(12.125));
   public final Translation2d m_frontRightLocation = new Translation2d(Inches.of(12.125),
@@ -361,6 +363,7 @@ public class Drivetrain extends SubsystemBase {
     // event markers.
     // return new PathPlannerAuto(pathName);
     return new PathPlannerAuto(pathName);
+    
   }
 
   public static double deadzone(double num, double deadband) {
@@ -471,47 +474,56 @@ public class Drivetrain extends SubsystemBase {
   // not
   // // use holonomic rotation.
   public PathPlannerPath driveToPose(Pose2d pose) {
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_poseEstimator.getEstimatedPosition(), pose);
-
-    System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() + " y: "
-        + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
-        + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
-
-    PathConstraints constraints = new PathConstraints(3.0, 1.5, 4 * Math.PI, 3 * Math.PI); // The constraints for this
-                                                                                           // path.
-
-    PathPlannerPath path = new PathPlannerPath(
-        waypoints,
-        constraints,
-        null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-              // be null for on-the-fly paths.
-        new GoalEndState(0.0, pose.getRotation()));
-
-    path.preventFlipping = true; // Prevent the path from being flipped if the coordinates are already correct
-
-    AutoBuilder.followPath(path).addRequirements(this);
-    AutoBuilder.followPath(path).schedule();
-
-    return path;
-  }
-  // waypoints will always have
-  // at
-  // minimum two pose2ds (current
-  // and target)
-  // new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
-  // testPose2d);
-
-  // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0);
-  //
-  // You can also use unlimited constraints, only limited by motor torque and
-  // nominal battery voltage
-
-  // // Prevent the path from being flipped if the coordinates are already correct
-  //
-  // }
-  // }
-
-  public double findAngleRad(Pose2d reef, Pose2d endPosition) {
+    if (!within(pose, getPose())) {
+          List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_poseEstimator.getEstimatedPosition(), pose);
+    
+          System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() + " y: "
+              + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
+              + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    
+          PathConstraints constraints = new PathConstraints(3.0, 1.5, 4 * Math.PI, 3 * Math.PI); // The constraints for this
+                                                                                                 // path.
+    
+          PathPlannerPath path = new PathPlannerPath(
+              waypoints,
+              constraints,
+              null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+                    // be null for on-the-fly paths.
+              new GoalEndState(0.0, pose.getRotation()));
+    
+          path.preventFlipping = true; // Prevent the path from being flipped if the coordinates are already correct
+    
+          AutoBuilder.followPath(path).addRequirements(this);
+          AutoBuilder.followPath(path).schedule();
+    
+          return path;
+        }
+        return null;
+      }
+      // waypoints will always have
+      // at
+      // minimum two pose2ds (current
+      // and target)
+      // new Pose2d(targetPose.getX(), targetPose.getY(), targetPose.getRotation()));
+      // testPose2d);
+    
+      // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0);
+      //
+      // You can also use unlimited constraints, only limited by motor torque and
+      // nominal battery voltage
+    
+      // // Prevent the path from being flipped if the coordinates are already correct
+      //
+      // }
+      // }
+    
+      private boolean within(Pose2d pose, Pose2d pose2) {
+        return Math.abs(pose.getX()-pose2.getX())<positionThreshold &&
+               Math.abs(pose.getY()-pose2.getY())<positionThreshold &&
+               Math.abs(pose.getRotation().getDegrees()-pose2.getRotation().getDegrees())< angleThreshold; 
+      }
+    
+      public double findAngleRad(Pose2d reef, Pose2d endPosition) {
     Vector2 reefToBot = new Vector2(m_poseEstimator.getEstimatedPosition().getX() - reef.getX(),
         m_poseEstimator.getEstimatedPosition().getY() - reef.getY());
     Vector2 reefToEndPosition = new Vector2(endPosition.getX() - reef.getX(), endPosition.getY() - reef.getY());

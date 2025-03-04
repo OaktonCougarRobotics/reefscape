@@ -111,28 +111,39 @@ public class RobotContainer {
 
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(driveCommand);
-    setTargetPose.onTrue(Commands.runOnce(()->{test =m_drivetrain.getPose();} ));
-    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.driveToPose(test))
-  //   .andThen(Commands.runOnce(()->{
-  //     if(true){
-  //       // m_drivetrain.swerveDrive.drive;
-  //       PIDController thetaController = new PIDController(.5,0,.00001);
-  //       thetaController.enableContinuousInput(-Math.PI, Math.PI);
-  //          double thetaSpeed = thetaController.calculate(m_drivetrain.getRotation().getRadians(), test.getRotation().getRadians());
-  //     while ( Math.abs(thetaSpeed) > 0.1) 
-  //     {
-  //       m_drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(0, 0, thetaSpeed));
-  //       thetaSpeed = thetaController.calculate(m_drivetrain.getRotation().getRadians(), test.getRotation().getRadians());
-  //       // while (Math.abs(thetaSpeed) > 0.05) 
-  //       // {
-  //       //   m_drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(0, 0, thetaSpeed));
-  //       //   m_drivetrain.updateOdometry();
-  //       // }
-  //     }
 
-  // }}))
-  );
+    setTargetPose.onTrue(Commands.runOnce(() -> {
+      test = m_drivetrain.getPose();
+    }));
+    navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
+    toPoseButton.onTrue(Commands.runOnce(
+        () -> m_drivetrain.driveToPose(test))
+    // .andThen(Commands.runOnce(()->{
+    // if(m_drivetrain.getPose().getRotation().getDegrees()
+    // -test.getRotation().getDegrees()>7){
+    // // m_drivetrain.swerveDrive.drive;
+    // PIDController thetaController = new PIDController(.5,0,.00001);
+    // thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    // double thetaSpeed =
+    // thetaController.calculate(m_drivetrain.getRotation().getRadians(),
+    // test.getRotation().getRadians());
+    // while ( Math.abs(thetaSpeed) > 0.1)
+    // {
+    // m_drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(0, 0,
+    // thetaSpeed));
+    // thetaSpeed =
+    // thetaController.calculate(m_drivetrain.getRotation().getRadians(),
+    // test.getRotation().getRadians());
+    // // while (Math.abs(thetaSpeed) > 0.05)
+    // // {
+    // // m_drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(0, 0,
+    // thetaSpeed));
+    // // m_drivetrain.updateOdometry();
+    // // }
+    // }
+
+    // }}))
+    );
     // zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
     inputSpin.whileTrue(spinFeederCommand);
 
@@ -164,7 +175,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
-    return m_drivetrain.getAutonomousCommand("Scizo");
+    return m_drivetrain.getAutonomousCommand("Blue rightest StartPos");
+    
     // return m_drivetrain.getAutonomousCommand();
   }
 

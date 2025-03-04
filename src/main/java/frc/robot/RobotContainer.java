@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
+import swervelib.SwerveDrive;
 
 import java.io.File;
 
@@ -14,7 +15,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -28,6 +31,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -100,13 +105,31 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180)));
+  Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(90)));
 
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(driveCommand);
 
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.driveToPose(test)));
+    toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.driveToPose(test))
+    .andThen(Commands.runOnce(()->{
+      if(true){
+        // m_drivetrain.swerveDrive.drive;
+        PIDController thetaController = new PIDController(.5,0,.00001);
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+           double thetaSpeed = thetaController.calculate(m_drivetrain.getRotation().getRadians(), test.getRotation().getRadians());
+      while ( Math.abs(thetaSpeed) > 0.1) 
+      {
+        m_drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(0, 0, thetaSpeed));
+        thetaSpeed = thetaController.calculate(m_drivetrain.getRotation().getRadians(), test.getRotation().getRadians());
+        // while (Math.abs(thetaSpeed) > 0.05) 
+        // {
+        //   m_drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(0, 0, thetaSpeed));
+        //   m_drivetrain.updateOdometry();
+        // }
+      }
+
+  }})));
     // zeroWheels.onTrue(Commands.runOnce(m_drivetrain::zeroWheels));
     inputSpin.whileTrue(spinFeederCommand);
 

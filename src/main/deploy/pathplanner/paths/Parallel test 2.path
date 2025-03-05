@@ -3,42 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6660000000000004,
-        "y": 5.428999999999999
+        "x": 5.492109374999999,
+        "y": 6.382932581018519
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5067799094344636,
-        "y": 6.3948076651034205
+        "x": 6.492109374999999,
+        "y": 6.382932581018519
       },
       "isLocked": false,
-      "linkedName": "Reef"
+      "linkedName": "end parallel 1"
     },
     {
       "anchor": {
-        "x": 1.2467213114816618,
-        "y": 7.08785860655358
+        "x": 6.634389467592593,
+        "y": 5.14806351273148
       },
       "prevControl": {
-        "x": 1.9330101906304265,
-        "y": 6.17847530977149
+        "x": 5.634389467592593,
+        "y": 5.14806351273148
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blue Coral Station"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Prepare for intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 1.5,
@@ -48,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 126.591
+    "velocity": 0,
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -59.45242825109296
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }

@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 // import com.ctre.phoenix6.controls.DutyCycleOut;
 // import com.ctre.phoenix6.swerve.SwerveModule;
 
@@ -107,6 +109,11 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
+    }
+
+    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+      // getgyro to get urrent gyro and setgyro to set the gyro just tset the gyro to getgyro-180
+      m_robotContainer.m_drivetrain.changeYawAutoRed();
     }
   }
 

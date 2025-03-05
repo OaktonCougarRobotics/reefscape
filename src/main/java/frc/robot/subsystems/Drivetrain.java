@@ -26,12 +26,14 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.*;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -486,7 +488,7 @@ public class Drivetrain extends SubsystemBase {
               + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
               + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
     
-          PathConstraints constraints = new PathConstraints(3.0, 1.5, 4 * Math.PI, 3 * Math.PI); // The constraints for this
+          PathConstraints constraints = new PathConstraints(0.30, 0.5, 4 * Math.PI, 3 * Math.PI); // The constraints for this
                                                                                                  // path.
     
           PathPlannerPath path = new PathPlannerPath(
@@ -652,4 +654,12 @@ public class Drivetrain extends SubsystemBase {
     // return Commands.print("dsfkjsdnfksjfsdkjbfsdkjfbidsf");
   }
 
+  public void changeYawAutoRed() {
+    // PathPlannerTrajectoryState path = new PathPlannerTrajectory(new PathPlannerPath(), new ChassisSpeeds(), new Rotation2d()).getEndState();
+
+// Getting the end pose of the path
+    // Pose2d endPose = path.getEndPose();
+
+      swerveDrive.setGyro(swerveDrive.getGyro().getRotation3d().minus(new Rotation3d(new Rotation2d(180 - 126.591))));
+  }
 }

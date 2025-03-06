@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.pathplanner.lib.auto.NamedCommands;
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -46,6 +47,11 @@ public class RobotContainer {
   Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
   Trigger inputSpin = new Trigger(()-> m_joystick.getRawButton(6));
   public TalonSRX feederMotor = new TalonSRX(22);
+  public WPI_TalonSRX CoralDriveMotor = new WPI_TalonSRX(Constants.CORALWHEEL_MOTOR);
+  public WPI_TalonSRX CoralPivotMotor = new WPI_TalonSRX(Constants.CORALPIVOT_MOTOR);
+  public TalonFX AlgaeDriveMotor = new TalonFX(Constants.ALGAEDRIVEMOTOR);
+  public TalonFX AlgaePivotMotor = new TalonFX(Constants.ALGAEPIVOTMOTOR);
+  public TalonFX TelescopeMotor = new TalonFX(Constants.TELESCOPE_MOTOR);
 
 
   
@@ -122,7 +128,7 @@ public class RobotContainer {
     // System.out.println("fdhdjfhskdfhidegfisydfgsugsdfj");
     // System.out.println(NamedCommands.getCommand("spin"));
 
-    return m_drivetrain.getAutonomousCommand("sigma");
+    return m_drivetrain.getAutonomousCommand("New Auto");
   }             
 
   public void setMotorBrake(boolean brake) {

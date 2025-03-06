@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -118,12 +119,20 @@ public final class Constants {
   public static final String COB_KEY_MATCHTIME = "/COB/matchTime";
 
   // ARM_SUBSYSTEM Configuration
-  public static final int PIVOT_MOTOR = 39;
-  public static final int SHOOTER1_MOTOR = 30;
-  public static final int SHOOTER2_MOTOR = 33;
-  public static final int FEEDER_MOTOR = 22;
-
-  public static final int STRINGPOT_ANALOG_INPUT_ID = 0;
+  //All -1 as filler values, define all the motor id's and DIO id later
+  public static final int CORALWHEEL_MOTOR = -1;
+  public static final int CORALPIVOT_MOTOR = -1;
+  public static final int ALGAEDRIVEMOTOR = -1;
+  public static final int ALGAEPIVOTMOTOR = -1;
+  public static final int TELESCOPE_MOTOR = -1;
+  public static final DigitalInput bottomSwitch = new DigitalInput(-1);
+  public static final DigitalInput TopSwitch = new DigitalInput(-1);
+  //Figure out how to get ticks from the motor
+  public static double BOTTOM_TURNS = -1;
+  public static final double LOW_TARGET = -1;
+  public static final double MID_TARGET = -1;
+  public static final double HIGH_TARGET = -1;
+  public static final double PICKUP_TARGET = -1;
 
   public static final double PIVOT_CAN_DIFFERENCE_BETWEEN_STARTING_AND_LEVEL = -1;
   public static final double PIVOT_GEAR_RATIO = 160.0;

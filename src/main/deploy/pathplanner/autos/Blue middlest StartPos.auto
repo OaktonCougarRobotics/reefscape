@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid to reef"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B2 to Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Station to B2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B2 to Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Station to B2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

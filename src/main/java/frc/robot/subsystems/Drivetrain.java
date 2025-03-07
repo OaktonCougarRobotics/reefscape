@@ -488,7 +488,7 @@ public class Drivetrain extends SubsystemBase {
               + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
               + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
     
-          PathConstraints constraints = new PathConstraints(0.30, 0.5, 4 * Math.PI, 3 * Math.PI); // The constraints for this
+          PathConstraints constraints = new PathConstraints(1, 1, 4 * Math.PI, 3 * Math.PI); // The constraints for this
                                                                                                  // path.
     
           PathPlannerPath path = new PathPlannerPath(
@@ -505,6 +505,11 @@ public class Drivetrain extends SubsystemBase {
     
           return path;
         }
+        else
+        {
+          toPose(pose);
+        }
+
         return null;
       }
       // waypoints will always have
@@ -526,8 +531,8 @@ public class Drivetrain extends SubsystemBase {
     
       private boolean within(Pose2d pose, Pose2d pose2) {
         return Math.abs(pose.getX()-pose2.getX())<positionThreshold &&
-               Math.abs(pose.getY()-pose2.getY())<positionThreshold &&
-               Math.abs(pose.getRotation().getDegrees()-pose2.getRotation().getDegrees())< angleThreshold; 
+               Math.abs(pose.getY()-pose2.getY())<positionThreshold;
+              //  Math.abs(pose.getRotation().getDegrees()-pose2.getRotation().getDegrees())< angleThreshold; 
       }
     
       public double findAngleRad(Pose2d reef, Pose2d endPosition) {

@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.wpilibj.DriverStation;
 
 // import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -16,7 +13,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -37,35 +33,25 @@ public class Robot extends TimedRobot {
    */
   public Robot() {
     // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
-    // autonomous chooser on the dashboard.
-    NamedCommands.registerCommand("Print", Commands.runOnce(() -> System.out.println("THDJAKLHRUAESITYADU ILSYF")));
-    NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
-      System.out.println("TestMe command executed!");
-      SmartDashboard.putNumber("fyghjfghjfghjfghnfgbj", 911);
-    }));
+    // and put our autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
   }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items
-   * like diagnostics
-   * that you want ran during disabled, autonomous, teleoperated and test.
+   * like diagnostics that you want ran during disabled, autonomous, teleoperated
+   * and test.
    *
-   * <p>
    * This runs after the mode specific periodic functions, but before LiveWindow
-   * and
-   * SmartDashboard integrated updating.
+   * and SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
     // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled
-    // commands, running already-scheduled commands, removing finished or
-    // interrupted commands,
-    // and running subsystem periodic() methods. This must be called from the
-    // robot's periodic
-    // block in order for anything in the Command-based framework to work.
+    // newly-scheduled commands, running already-scheduled commands, removing
+    // finished or interrupted commands, and running subsystem periodic() methods.
+    // This must be called from the robot's periodic block in order for anything in
+    // the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
   }
@@ -112,7 +98,8 @@ public class Robot extends TimedRobot {
     }
 
     if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      // getgyro to get urrent gyro and setgyro to set the gyro just tset the gyro to getgyro-180
+      // getgyro to get urrent gyro and setgyro to set the gyro just tset the gyro to
+      // getgyro-180
       m_robotContainer.m_drivetrain.changeYawAutoRed();
     }
   }

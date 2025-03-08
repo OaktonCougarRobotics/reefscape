@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -25,10 +23,13 @@ import frc.AT;
  */
 public final class Constants {
 
-  public static AT april1 = new AT(657.37, 25.80, 126, 1);//static Pose2d april1 = new Pose2d(657.37, 25.80, new Rotation2d(0.0));
-  public static AT april2 = new AT(657.37, 291.20, 234, 1);//static Pose2d april2 = new Pose2d(657.37, 291.20, new Rotation2d(0.0));
-  public static AT april3 = new AT(455.15, 317.15, 270, 1);//static Pose2d april3 = new Pose2d(455.15, 317.15, new Rotation2d(0.0));
-  public static AT april4 = new AT(365.20, 241.64,0 ,1);
+  public static AT april1 = new AT(657.37, 25.80, 126, 1);// static Pose2d april1 = new Pose2d(657.37, 25.80, new
+                                                          // Rotation2d(0.0));
+  public static AT april2 = new AT(657.37, 291.20, 234, 1);// static Pose2d april2 = new Pose2d(657.37, 291.20, new
+                                                           // Rotation2d(0.0));
+  public static AT april3 = new AT(455.15, 317.15, 270, 1);// static Pose2d april3 = new Pose2d(455.15, 317.15, new
+                                                           // Rotation2d(0.0));
+  public static AT april4 = new AT(365.20, 241.64, 0, 1);
   public static AT april5 = new AT(365.20, 75.39, 0, 1);
   public static AT april6 = new AT(530.49, 130.17, 300, 1);
   public static AT april7 = new AT(546.87, 158.5, 0, 1);
@@ -48,12 +49,9 @@ public final class Constants {
   public static AT april21 = new AT(209.49, 158.50, 0, 1);
   public static AT april22 = new AT(193.10, 130.17, 300, 1);
 
-
-
-  public static AT[] aprilPose = new AT[]{null, april1, april2, april3, april4, april5, april6, april7, april8, april9, april10, april11, april12, april13, april14, april15, april16, april17, april18, april19, april20, april21, april22};
-
-
-
+  public static AT[] aprilPose = new AT[] { null, april1, april2, april3, april4, april5, april6, april7, april8,
+      april9, april10, april11, april12, april13, april14, april15, april16, april17, april18, april19, april20,
+      april21, april22 };
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
@@ -151,12 +149,16 @@ public final class Constants {
   public static final String COB_KEY_MATCHTIME = "/COB/matchTime";
 
   // ARM_SUBSYSTEM Configuration
-  public static final int PIVOT_MOTOR = 39;
-  public static final int SHOOTER1_MOTOR = 30;
-  public static final int SHOOTER2_MOTOR = 33;
-  public static final int FEEDER_MOTOR = 22;
-
-  public static final int STRINGPOT_ANALOG_INPUT_ID = 0;
+  // All -1 as filler values, define all the motor id's and DIO id later
+  public static final int ELEVATOR_MOTOR = -1; // FIX
+  public static final int WRIST_MOTOR = -1; // FIX
+  public static final int FLYWHEEL_MOTOR = -1; // FIX
+  // Figure out how to get ticks from the motor
+  public static double BOTTOM_TURNS = -1;
+  public static final double LOW_TARGET = -1;
+  public static final double MID_TARGET = -1;
+  public static final double HIGH_TARGET = -1;
+  public static final double PICKUP_TARGET = -1;
 
   public static final double PIVOT_CAN_DIFFERENCE_BETWEEN_STARTING_AND_LEVEL = -1;
   public static final double PIVOT_GEAR_RATIO = 160.0;
@@ -192,7 +194,7 @@ public final class Constants {
   public static final double WRIST_DFLT_ACC = 28000;
   public static final double PIVOT_ACC_DIVISOR = 3.5;
 
-  public static final double ANATOLI_CHASSIS_WIDTH = 0.3; //meters
+  public static final double ANATOLI_CHASSIS_WIDTH = 0.3; // meters
 
   // Button IDs
   public static final int DUSTPANUP_LIMIT = 0;

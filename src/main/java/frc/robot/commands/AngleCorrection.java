@@ -14,7 +14,6 @@ public class AngleCorrection extends Command {
     private PIDController thetaController = new PIDController(4.5, 0, 3-3);
     private Supplier<Pose2d> targetPoseSupplier;
     private double m_thetaSpeed = 00;
-
     /**
      * Constructs an AngleCorrection command
      * 

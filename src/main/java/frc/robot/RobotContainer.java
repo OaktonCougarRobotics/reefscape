@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.SpinFeeder;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -102,6 +104,7 @@ public class RobotContainer {
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 
+    /*
     m_toPose.whileTrue(
       Commands.runOnce(
         ()->{
@@ -120,6 +123,28 @@ public class RobotContainer {
     //   }
     // }
     // )
+    );
+
+    */
+
+    m_toPose.onTrue(
+      Commands.runOnce(
+        ()->{
+          Command drive = m_drivetrain.driveToPose(test);
+          drive.schedule();
+          if (m_drivetrain.within(m_drivetrain.getPose(), test)) {
+            angleCorrection.schedule();
+          } else if (m_joystick.getRawAxis(1) > OperatorConstants.X_DEADBAND || m_joystick.getRawAxis(0) > OperatorConstants.X_DEADBAND || m_joystick.getRawAxis(2) > OperatorConstants.X_DEADBAND) {
+            // CommandScheduler.getInstance().cancel(angleCorrection);
+            // CommandScheduler.getInstance().cancel(drive);
+            CommandScheduler.getInstance().cancelAll();
+            // angleCorrection.cancel();
+            // drive.cancel();
+          } //else {
+          //   drive.schedule();
+          // }
+        }
+      )
     );
     // m_toPose.whileFalse(Commands.run(()->{
     //   angleCorrection.end(true);

@@ -346,7 +346,7 @@ public class Drivetrain extends SubsystemBase {
   // Create a list of waypoints from poses. Each pose represents one waypoint. The
   // rotation component of the pose should be the direction of travel. Do not use
   // holonomic rotation.
-  public PathPlannerPath driveToPose(Pose2d pose) {
+  public Command driveToPose(Pose2d pose) {
     // if (!within(pose, getPose())) {
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_poseEstimator.getEstimatedPosition(), pose);
 
@@ -367,9 +367,9 @@ public class Drivetrain extends SubsystemBase {
       path.preventFlipping = true; // Prevent the path from being flipped if the coordinates are already correct
 
       AutoBuilder.followPath(path).addRequirements(this);
-      AutoBuilder.followPath(path).schedule();
+      // AutoBuilder.followPath(path).schedule();
 
-      return path;
+      return AutoBuilder.followPath(path);
     // } else {
     //   toPose(pose);
     // }

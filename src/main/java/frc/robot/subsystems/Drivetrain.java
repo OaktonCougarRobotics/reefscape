@@ -156,8 +156,6 @@ public class Drivetrain extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotation) {
-    System.out.println("Translation X Value :" + translationX.getAsDouble() + " Translation Y Value :"
-        + translationY.getAsDouble() + " Angular Rotation Value :" + angularRotation.getAsDouble());
 
     return run(() -> {
       swerveDrive.driveFieldOriented(new ChassisSpeeds(
@@ -342,18 +340,14 @@ public class Drivetrain extends SubsystemBase {
       ySpeed = yController.calculate(getY(), targetPose.getY());
       thetaSpeed = thetaController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
     }
-    System.out.println("/////////////////////////////////////////////////////////////");
-    System.out.println((targetPose.getX() - getX()) + ", " + (targetPose.getY() - getY()) + ", " +
-        (Math.round(targetPose.getRotation().getDegrees() * 100) / 100 - Math.round(getRotation().getDegrees()) * 100)
-            / 100);
-    System.out.println("/////////////////////////////////////////////////////////////");
+    
   }
 
   // Create a list of waypoints from poses. Each pose represents one waypoint. The
   // rotation component of the pose should be the direction of travel. Do not use
   // holonomic rotation.
   public PathPlannerPath driveToPose(Pose2d pose) {
-    if (!within(pose, getPose())) {
+    // if (!within(pose, getPose())) {
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_poseEstimator.getEstimatedPosition(), pose);
 
       System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() + " y: "
@@ -361,7 +355,7 @@ public class Drivetrain extends SubsystemBase {
           + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
       // the constraints for this path
-      PathConstraints constraints = new PathConstraints(1, 1, 4 * Math.PI, 3 * Math.PI);
+      PathConstraints constraints = new PathConstraints(3, 1, 4 * Math.PI, 3 * Math.PI);
 
       PathPlannerPath path = new PathPlannerPath(
           waypoints,
@@ -376,14 +370,12 @@ public class Drivetrain extends SubsystemBase {
       AutoBuilder.followPath(path).schedule();
 
       return path;
-    } else {
-      toPose(pose);
-    }
-
-    return null;
+    // } else {
+    //   toPose(pose);
+    // }
   }
 
-  private boolean within(Pose2d pose, Pose2d pose2) {
+  public boolean within(Pose2d pose, Pose2d pose2) {
     return Math.abs(pose.getX() - pose2.getX()) < positionThreshold &&
         Math.abs(pose.getY() - pose2.getY()) < positionThreshold;
   }

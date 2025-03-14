@@ -5,9 +5,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Arm {
+public class Arm extends SubsystemBase {
     public TalonFX m_ElevatorMotor;
 
     public Arm(TalonFX elev) {
@@ -38,7 +40,6 @@ public class Arm {
     public void intake(TalonSRX m_Motor){
         m_Motor.set(ControlMode.PercentOutput, 0.4);
     }
-
     
         
 

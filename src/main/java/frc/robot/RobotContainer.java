@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
 
@@ -139,23 +140,35 @@ public class RobotContainer {
   private void configureBindings() {
     // m_drivetrain.setDefaultCommand(driveCommand);
 
-    m_ArmUp.whileTrue(Commands.run(() -> {
-      if (m_elevatorMotor.getPosition().getValueAsDouble() > Constants.UPPER_LIMIT) {
-        m_elevatorMotor.set(-0.15);
-      } else {
-        m_elevatorMotor.set(0);
-      }
-    }));
+    // m_ArmUp.whileTrue(Commands.run(() -> {
+    //   if (m_elevatorMotor.getPosition().getValueAsDouble() > Constants.UPPER_LIMIT) {
+    //     m_elevatorMotor.set(-0.15);
+    //   } else {
+    //     m_elevatorMotor.set(0);
+    //   }
+    // }));
+    // m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+
+    // m_ArmDown.whileTrue(Commands.run(() -> {
+    //   if (m_elevatorMotor.getPosition().getValueAsDouble() < Constants.LOWER_LIMIT) {
+    //     m_elevatorMotor.set(0.15);
+    //   } else {
+    //     m_elevatorMotor.set(0);
+    //   }
+    // }));
+    // m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+
+
+
+
+    m_ArmUp.whileTrue(new ElevatorManual(m_Arm, -0.15));
     m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
-    m_ArmDown.whileTrue(Commands.run(() -> {
-      if (m_elevatorMotor.getPosition().getValueAsDouble() < Constants.LOWER_LIMIT) {
-        m_elevatorMotor.set(0.15);
-      } else {
-        m_elevatorMotor.set(0);
-      }
-    }));
+    m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.15));
     m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+
+
+
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 

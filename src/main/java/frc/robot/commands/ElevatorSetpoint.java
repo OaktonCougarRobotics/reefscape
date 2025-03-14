@@ -2,13 +2,14 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 
 public class ElevatorSetpoint extends Command {
   private final TalonFX elevator;
   private double target;
-
+  private PIDController controller = new PIDController(0.5,0,0);
   /**
    * Constructs a SpinFeeder command.
    *

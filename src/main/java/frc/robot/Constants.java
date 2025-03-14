@@ -150,9 +150,12 @@ public final class Constants {
 
   // ARM_SUBSYSTEM Configuration
   // All -1 as filler values, define all the motor id's and DIO id later
-  public static final int ELEVATOR_MOTOR = -1; // FIX
-  public static final int WRIST_MOTOR = -1; // FIX
-  public static final int FLYWHEEL_MOTOR = -1; // FIX
+  public static final int CORALFLYWHEEL_MOTOR = -1; // FIX
+  public static final int CORALPIVOT_MOTOR= -1; // FIX
+  public static final int ALGAEDRIVEMOTOR = -1;
+  public static final int ALGAEPIVOTMOTOR = -1;
+  public static final int TELESCOPE_MOTOR = -1;
+  public static final int ELEVATOR_MOTOR = -1;
   // Figure out how to get ticks from the motor
   public static double BOTTOM_TURNS = -1;
   public static final double LOW_TARGET = -1;
@@ -218,6 +221,11 @@ public final class Constants {
   public static final int CLIMB_DOWN = 20;
   public static final int DUSTPAN_UP = 21;
   public static final int DUSTPAN_DOWN = 22;
+  
+
+
+  public static final int ARM_UP = -1;
+  public static final int ARM_DOWN = -1;
 
   public static final double LIMELIGHT_HEIGHT = 0.238125; // m from the bottom
   public static final double LIMELIGHT_YTHETA = 60; // off the horizontal

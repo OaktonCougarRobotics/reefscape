@@ -447,7 +447,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void toClosestAprilTag() {
-    toPose(Constants.aprilPose[closestAprilTag()].getOffestPose());
+    toPose(Constants.aprilPose[closestAprilTag(Constants.aprilPose)].getOffestPose());
   }
 
   public double getX() {

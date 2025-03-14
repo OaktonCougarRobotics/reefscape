@@ -49,9 +49,9 @@ public final class Constants {
   public static AT april21 = new AT(209.49, 158.50, 0, 1);
   public static AT april22 = new AT(193.10, 130.17, 300, 1);
 
-  public static AT[] aprilPose = new AT[] { null, april1, april2, april3, april4, april5, april6, april7, april8,
-      april9, april10, april11, april12, april13, april14, april15, april16, april17, april18, april19, april20,
-      april21, april22 };
+  public static AT[] aprilPose = new AT[]{new AT(-999,-999,0,0), april1, april2, april3, april4, april5, april6, april7, april8, april9, april10, april11, april12, april13, april14, april15, april16, april17, april18, april19, april20, april21, april22};
+  public static AT[] scoringAprilPose = new AT[]{april6, april7, april8, april9, april10, april11, april17, april18, april19, april20, april21, april22};
+  public static AT[] pickupAprilPose = new AT[]{april1, april2, april12, april13};
 
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound

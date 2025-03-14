@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 
-
 import com.pathplanner.lib.auto.NamedCommands;
 
 /**
@@ -52,7 +51,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
-  public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor);     
+  public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor);
 
   // need actual hardware location of button board
   int x = -1;
@@ -91,7 +90,6 @@ public class RobotContainer {
   // feeder motor (anatoli)
   private TalonSRX m_feederMotor = new TalonSRX(22);
   // elevator, wrist, and flywheel
-
 
   SpinFeeder spinFeederCommand = new SpinFeeder(m_feederMotor);
   Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180)));
@@ -138,13 +136,9 @@ public class RobotContainer {
       test = m_drivetrain.getPose();
     }));
 
-    m_ArmUp.onTrue(Commands.runOnce(() -> 
-      m_elevatorMotor.set(0.2)
-    ));
+    m_ArmUp.onTrue(Commands.runOnce(() -> m_elevatorMotor.set(0.2)));
 
-    m_ArmDown.onTrue(Commands.runOnce(() -> 
-    m_elevatorMotor.set(-0.2)
-  ));
+    m_ArmDown.onTrue(Commands.runOnce(() -> m_elevatorMotor.set(-0.2)));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 

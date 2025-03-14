@@ -226,6 +226,8 @@ public final class Constants {
 
   public static final int ARM_UP = -1;
   public static final int ARM_DOWN = -1;
+  public static final int UPPER_LIMIT = -1;
+  public static final int LOWER_LIMIT = 0;
 
   public static final double LIMELIGHT_HEIGHT = 0.238125; // m from the bottom
   public static final double LIMELIGHT_YTHETA = 60; // off the horizontal
@@ -252,9 +254,9 @@ public final class Constants {
     public static final double LEFT_X_DEADBAND = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double X_DEADBAND = 0.075;
-    public static final double Y_DEADBAND = 0.075;
-    public static final double Z_DEADBAND = 0.03;
+    public static final double X_DEADBAND = 0.0; //0.075
+    public static final double Y_DEADBAND = 0.0;
+    public static final double Z_DEADBAND = 0.0; //0.03
     public static final double TURN_CONSTANT = 6;
   }
 }

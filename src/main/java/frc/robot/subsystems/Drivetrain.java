@@ -127,6 +127,12 @@ public class Drivetrain extends SubsystemBase {
 
     m_gyro = swerveDrive.getGyro();
 
+    for (String key: swerveDrive.getModuleMap().keySet())
+      System.out.println(key+": "+swerveDrive.getModuleMap().get(key).getAbsolutePosition());
+      // swerveDrive.getModuleMap().get("frontleft").setAngle(90);
+
+
+
     m_poseEstimator = new SwerveDrivePoseEstimator(
         m_kinematics,
         m_gyro.getRotation3d().toRotation2d(),
@@ -189,44 +195,45 @@ public class Drivetrain extends SubsystemBase {
             m_backLeft.getPosition(),
             m_backRight.getPosition()
         });
+      }
 
     boolean rejectVision = false;
 
-    LimelightHelpers.SetRobotOrientation("limelight",
-        m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-        0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our
-    // angular velocity is greater than 720
-    // degrees per second, ignore vision updates
-    {
-      rejectVision = true;
-    }
-    if (mt2.tagCount == 0) {
-      SmartDashboard.putBoolean("mt2Null?", true);
-      rejectVision = true;
-    } else {
-      SmartDashboard.putBoolean("mt2Null?", false);
-    }
-    if (mt2.tagCount == 0) { // || mt2.pose == null) {
-      rejectVision = true;
-    }
-    if (!rejectVision) {
-      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-      m_poseEstimator.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
-    } else if (rejectVision) {
-      m_poseEstimator.update(
-          m_gyro.getRotation3d().toRotation2d(),
-          new SwerveModulePosition[] {
-              m_frontLeft.getPosition(),
-              m_frontRight.getPosition(),
-              m_backLeft.getPosition(),
-              m_backRight.getPosition()
-          });
-    }
-  }
+    //LimelightHelpers.SetRobotOrientation("limelight",
+        //m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+        //0, 0, 0, 0, 0);
+    //LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    // if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our
+    // // angular velocity is greater than 720
+    // // degrees per second, ignore vision updates
+    // {
+    //   rejectVision = true;
+    // }
+  //   if (mt2.tagCount == 0) {
+  //     SmartDashboard.putBoolean("mt2Null?", true);
+  //     rejectVision = true;
+  //   } else {
+  //     SmartDashboard.putBoolean("mt2Null?", false);
+  //   }
+  //   if (mt2.tagCount == 0) { // || mt2.pose == null) {
+  //     rejectVision = true;
+  //   }
+  //   if (!rejectVision) {
+  //     m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+  //     m_poseEstimator.addVisionMeasurement(
+  //         mt2.pose,
+  //         mt2.timestampSeconds);
+  //   } else if (rejectVision) {
+  //     m_poseEstimator.update(
+  //         m_gyro.getRotation3d().toRotation2d(),
+  //         new SwerveModulePosition[] {
+  //             m_frontLeft.getPosition(),
+  //             m_frontRight.getPosition(),
+  //             m_backLeft.getPosition(),
+  //             m_backRight.getPosition()
+  //         });
+  //   }
+  // }
 
   public Pose2d getPose() {
     return swerveDrive.getPose();
@@ -452,6 +459,12 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     updateOdometry();
     updateTelemetry();
+    SmartDashboard.putNumber("Front left volt", swerveDrive.getModuleMap().get("frontleft").getAngleMotor().getVoltage());
+    for (String key: swerveDrive.getModuleMap().keySet()) {
+      SmartDashboard.putNumber(key + "rawabsolute",swerveDrive.getModuleMap().get(key).getRawAbsolutePosition());
+      // System.out.println(key+": "+swerveDrive.getModuleMap().get(key).getAbsolutePosition());
+      // System.out.println(key+": "+swerveDrive.getModuleMap().get(key).getRelativePosition());
+    }
   }
 
   public void updateTelemetry() {

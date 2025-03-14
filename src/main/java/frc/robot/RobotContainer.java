@@ -47,41 +47,39 @@ import com.pathplanner.lib.auto.NamedCommands;
  */
 public class RobotContainer {
   public TalonFX m_elevatorMotor = new TalonFX(Constants.ELEVATOR_MOTOR);
-  public SparkMax m_wristMotor = new SparkMax(Constants.CORALPIVOT_MOTOR, MotorType.kBrushless);
+  //public SparkMax m_wristMotor = new SparkMax(Constants.CORALPIVOT_MOTOR, MotorType.kBrushless);
   public TalonSRX m_flywheelMotor = new TalonSRX(Constants.CORALFLYWHEEL_MOTOR);
   // The robot's subsystems and commands are defined here...
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
-  public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor);     
+  // public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor);     
 
   // need actual hardware location of button board
   int x = -1;
-  public final Joystick m_buttonBoard = new Joystick(x);
-  // button board buttons
-  // four extra buttons not declared
-  public final Trigger m_climbLeft = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_climbRight = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // manual control button
-  public final Trigger m_manualWrist = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_manualElevatorLift = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // algae button
-  public final Trigger m_algae = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_intakeSwitch = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // different levels
-  public final Trigger m_startingArmPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_coralStationPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // vision button
-  public final Trigger m_horatioMagic = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Joystick m_buttonBoard = new Joystick(x);
+  // // button board buttons
+  // // four extra buttons not declared
+  // public final Trigger m_climbLeft = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_climbRight = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // // manual control button
+  // public final Trigger m_manualWrist = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_manualElevatorLift = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // // algae button
+  // public final Trigger m_algae = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_intakeSwitch = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // // different levels
+  // public final Trigger m_startingArmPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_coralStationPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // // vision button
+  // public final Trigger m_horatioMagic = new Trigger(() -> m_buttonBoard.getRawButton(x));
 
   // Joystick object
   public final Joystick m_joystick = new Joystick(1);
   // Triggers on the joystick
-  private Trigger m_elevatorUp = new Trigger(() -> m_joystick.getRawButton(6));
-  private Trigger m_elevatorDown = new Trigger(() -> m_joystick.getRawButton(4));
   private Trigger m_navxReset = new Trigger(() -> m_joystick.getRawButton(3));
   private Trigger m_toPose = new Trigger(() -> m_joystick.getRawButton(2)); // Work in Progress - Horatio
   private Trigger m_setTargetPose = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
@@ -148,9 +146,6 @@ public class RobotContainer {
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 
-    // FIX: ARM RELATED COMMANDS
-    m_elevatorUp.whileTrue(elevatorUp);
-    m_elevatorDown.whileTrue(elevatorDown);
 
     // FIX: ATTEMPTS AT TOPOSE METHOD W/ CANCELLATION
     // i think this might work, but not entirely sure

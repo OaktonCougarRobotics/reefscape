@@ -39,7 +39,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.AT;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.parser.SwerveParser;
@@ -462,8 +461,6 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Front left volt", swerveDrive.getModuleMap().get("frontleft").getAngleMotor().getVoltage());
     for (String key: swerveDrive.getModuleMap().keySet()) {
       SmartDashboard.putNumber(key + "rawabsolute",swerveDrive.getModuleMap().get(key).getRawAbsolutePosition());
-      // System.out.println(key+": "+swerveDrive.getModuleMap().get(key).getAbsolutePosition());
-      // System.out.println(key+": "+swerveDrive.getModuleMap().get(key).getRelativePosition());
     }
   }
 

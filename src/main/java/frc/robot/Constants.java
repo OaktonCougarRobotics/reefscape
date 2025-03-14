@@ -155,7 +155,7 @@ public final class Constants {
   public static final int ALGAEDRIVEMOTOR = -1;
   public static final int ALGAEPIVOTMOTOR = -1;
   public static final int TELESCOPE_MOTOR = -1;
-  public static final int ELEVATOR_MOTOR = -1;
+  public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
   public static double BOTTOM_TURNS = -1;
   public static final double LOW_TARGET = -1;
@@ -224,10 +224,10 @@ public final class Constants {
   
 
 
-  public static final int ARM_UP = -1;
-  public static final int ARM_DOWN = -1;
-  public static final int UPPER_LIMIT = -1;
-  public static final int LOWER_LIMIT = 0;
+  public static final int ARM_UP = 6;
+  public static final int ARM_DOWN = 4;
+  public static double UPPER_LIMIT = -70.87; //-84.87
+  public static double LOWER_LIMIT = -15; //0
 
   public static final double LIMELIGHT_HEIGHT = 0.238125; // m from the bottom
   public static final double LIMELIGHT_YTHETA = 60; // off the horizontal

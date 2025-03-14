@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -14,7 +13,7 @@ public class Arm extends SubsystemBase {
 
     public Arm(TalonFX elev) {
         this.m_ElevatorMotor = elev;
-        //this.m_CoralPivotMotor = m_PivotMotor;
+        // this.m_CoralPivotMotor = m_PivotMotor;
         // var slot0Configs = new Slot0Configs();
         // slot0Configs.kP = -1; // An error of 1 rotation results in 2.4 V output
         // slot0Configs.kI = -1; // no output for integrated error
@@ -25,9 +24,11 @@ public class Arm extends SubsystemBase {
         // SparkMaxConfig config = new SparkMaxConfig();
         // config.closedLoop.pid(1.0, 0.0, 0.0);
         // config.idleMode(SparkBaseConfig.IdleMode.kBrake);
-        // m_CoralPivotMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // m_CoralPivotMotor.configure(config, ResetMode.kResetSafeParameters,
+        // PersistMode.kPersistParameters);
         m_ElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        // CurrentLimitsConfigs m_configs = new CurrentLimitsConfigs().withStatorCurrentLimit(20);
+        // CurrentLimitsConfigs m_configs = new
+        // CurrentLimitsConfigs().withStatorCurrentLimit(20);
         // m_ElevatorMotor.setControl(new VelocityDutyCycle(1));
         // m_ElevatorMotor.getConfigurator().apply(m_configs);
     }
@@ -37,11 +38,8 @@ public class Arm extends SubsystemBase {
         m_ElevatorMotor.setPosition(Constants.BOTTOM_TURNS + targetTurns);
     }
 
-    public void intake(TalonSRX m_Motor){
+    public void intake(TalonSRX m_Motor) {
         m_Motor.set(ControlMode.PercentOutput, 0.4);
     }
-    
-        
-
 
 }

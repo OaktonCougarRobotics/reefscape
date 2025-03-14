@@ -1,42 +1,46 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.Arm;
 
 public class ElevatorSetpoint extends Command {
-  private final TalonFX elevator;
+  private final Arm arm;
   private double target;
-  private PIDController controller = new PIDController(0.5,0,0);
+  private PIDController controller = new PIDController(0.5, 0, 0);
+
   /**
    * Constructs a SpinFeeder command.
    *
    * @param elevator the elevator motor object
    * @param target   the target amount of turns that the elevator aims to reach
    */
-  public ElevatorSetpoint(TalonFX elevator, double targetTurns) {
-    this.elevator = elevator;
+  public ElevatorSetpoint(Arm arm, double targetTurns) {
+    this.arm = arm;
     target = targetTurns;
   }
 
   @Override
   public void initialize() {
+    addRequirements(arm);
   }
 
   @Override
   public void execute() {
-    elevator.setPosition(Constants.BOTTOM_TURNS + target);
+    double speed = controller.calculate(arm.m_ElevatorMotor.getPosition().getValueAsDouble(),
+        target);//Constants.BOTTOM_TURNS + target);
+    arm.m_ElevatorMotor.set(speed);
   }
 
   @Override
   public void end(boolean interrupted) {
-    elevator.set(0.0);
+    arm.m_ElevatorMotor.set(0.0);
+    controller.close();
   }
 
   @Override
   public boolean isFinished() {
-    return elevator.getPosition().getValueAsDouble() == (Constants.BOTTOM_TURNS + target);
+    return Math.abs(arm.m_ElevatorMotor.getPosition().getValueAsDouble() - (target)) < 0.1;//Constants.BOTTOM_TURNS + target) < 0.1;
   }
 }

@@ -34,6 +34,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -181,6 +182,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void updateOdometry() {
+    swerveDrive.addVisionMeasurement(getPose(), Timer.getFPGATimestamp());
+
     m_poseEstimator.update(
         m_gyro.getRotation3d().toRotation2d(),
         new SwerveModulePosition[] {
@@ -214,6 +217,11 @@ public class Drivetrain extends SubsystemBase {
     if (!rejectVision) {
       m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
       m_poseEstimator.addVisionMeasurement(
+          mt2.pose,
+          mt2.timestampSeconds);
+
+      swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+      swerveDrive.addVisionMeasurement(
           mt2.pose,
           mt2.timestampSeconds);
     } else if (rejectVision) {

@@ -193,7 +193,7 @@ public class Drivetrain extends SubsystemBase {
     boolean rejectVision = false;
 
     LimelightHelpers.SetRobotOrientation("limelight",
-        m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+        getPose().getRotation().getDegrees(),
         0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
     if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our
@@ -328,7 +328,7 @@ public class Drivetrain extends SubsystemBase {
     double xSpeed = xController.calculate(getX(), targetPose.getX());
     double ySpeed = yController.calculate(getY(), targetPose.getY());
     double thetaSpeed = thetaController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
-    while (!m_poseEstimator.getEstimatedPosition().equals(targetPose)
+    while (!getPose().equals(targetPose)
         && (Math.abs(xSpeed) > 0.1 || Math.abs(ySpeed) > 0.1 || Math.abs(thetaSpeed) > 0.05)) {
       swerveDrive.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
       updateOdometry();
@@ -346,11 +346,11 @@ public class Drivetrain extends SubsystemBase {
   // holonomic rotation.
   public Command driveToPose(Pose2d pose) {
     // if (!within(pose, getPose())) {
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_poseEstimator.getEstimatedPosition(), pose);
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(getPose(), pose);
 
-    System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() + " y: "
-        + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
-        + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    System.out.println("x: " + getPose().getX() + " y: "
+        + getPose().getY() + " rotation: "
+        + getPose().getRotation().getDegrees());
 
     // the constraints for this path
     PathConstraints constraints = new PathConstraints(3, 1, 4 * Math.PI, 3 * Math.PI);
@@ -379,8 +379,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double findAngleRad(Pose2d reef, Pose2d endPosition) {
-    Vector2 reefToBot = new Vector2(m_poseEstimator.getEstimatedPosition().getX() - reef.getX(),
-        m_poseEstimator.getEstimatedPosition().getY() - reef.getY());
+    Vector2 reefToBot = new Vector2(getPose().getX() - reef.getX(),
+        getPose().getY() - reef.getY());
     Vector2 reefToEndPosition = new Vector2(endPosition.getX() - reef.getX(), endPosition.getY() - reef.getY());
     double dotProduct = reefToBot.dot(reefToEndPosition);
     double reefToBotMag = reefToBot.getMagnitude();
@@ -392,8 +392,8 @@ public class Drivetrain extends SubsystemBase {
   // rotation
   // around the reef
   public Pose2d findPoseA(Pose2d reef, AT aprilTag) {
-    double dx = m_poseEstimator.getEstimatedPosition().getX() - reef.getX();
-    double dy = m_poseEstimator.getEstimatedPosition().getY() - reef.getY();
+    double dx = getPose().getX() - reef.getX();
+    double dy = getPose().getY() - reef.getY();
     double theta = Math.atan(dy / dx);
     double ax = reef.getX() + radiusOfRotation * Math.cos(theta);
     double ay = reef.getY() + radiusOfRotation * Math.sin(theta);
@@ -415,16 +415,16 @@ public class Drivetrain extends SubsystemBase {
 
   // public int closestAprilTag() {
   //   double min = Math
-  //       .sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[1].getPose().getX(), 2)
-  //           + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[1].getPose().getY(), 2));
+  //       .sqrt(Math.pow(getPose().getX() - Constants.aprilPose[1].getPose().getX(), 2)
+  //           + Math.pow(getPose().getY() - Constants.aprilPose[1].getPose().getY(), 2));
   //   int index = 0;
   //   for (int i = 1; i <= 22; i++) {
   //     if (Math.sqrt(
-  //         Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(), 2) + Math
-  //             .pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(), 2)) < min) {
+  //         Math.pow(getPose().getX() - Constants.aprilPose[i].getPose().getX(), 2) + Math
+  //             .pow(getPose().getY() - Constants.aprilPose[i].getPose().getY(), 2)) < min) {
   //       min = Math
-  //           .sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(), 2)
-  //               + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(), 2));
+  //           .sqrt(Math.pow(getPose().getX() - Constants.aprilPose[i].getPose().getX(), 2)
+  //               + Math.pow(getPose().getY() - Constants.aprilPose[i].getPose().getY(), 2));
   //       index = i;
   //     }
   //   }
@@ -433,15 +433,15 @@ public class Drivetrain extends SubsystemBase {
   // }
 
   public int closestAprilTag(AT[] aprilTags) {
-    double min = Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - aprilTags[0].getPose().getX(), 2)
-                         + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - aprilTags[0].getPose().getY(), 2));
+    double min = Math.sqrt(Math.pow(getPose().getX() - aprilTags[0].getPose().getX(), 2)
+                         + Math.pow(getPose().getY() - aprilTags[0].getPose().getY(), 2));
     int aprilTagID = aprilTags[0].getId();
     for(AT at: aprilTags)
     {
-      if (Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - at.getPose().getX(), 2) + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - at.getPose().getY(), 2)) < min) {
+      if (Math.sqrt(Math.pow(getPose().getX() - at.getPose().getX(), 2) + Math.pow(getPose().getY() - at.getPose().getY(), 2)) < min) {
         min = Math
-            .sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - at.getPose().getX(), 2)
-                + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - at.getPose().getY(), 2));
+            .sqrt(Math.pow(getPose().getX() - at.getPose().getX(), 2)
+                + Math.pow(getPose().getY() - at.getPose().getY(), 2));
         aprilTagID = at.getId();
     }
   }
@@ -453,15 +453,15 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getX() {
-    return m_poseEstimator.getEstimatedPosition().getX();
+    return getPose().getX();
   }
 
   public double getY() {
-    return m_poseEstimator.getEstimatedPosition().getY();
+    return getPose().getY();
   }
 
   public Rotation2d getRotation() {
-    return m_poseEstimator.getEstimatedPosition().getRotation();
+    return getPose().getRotation();
   }
 
   @Override

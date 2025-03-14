@@ -19,19 +19,19 @@ public class Arm {
     public Arm(TalonFX elev, SparkMax m_PivotMotor) {
         this.m_ElevatorMotor = elev;
         this.m_CoralPivotMotor = m_PivotMotor;
-        m_CoralPivotMotor = new SparkMax(1, MotorType.kBrushless);
-        SparkMaxConfig config = new SparkMaxConfig();
-        config.closedLoop.pid(1.0, 0.0, 0.0);
-        m_CoralPivotMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // m_CoralPivotMotor = new SparkMax(1, MotorType.kBrushless);
+        // SparkMaxConfig config = new SparkMaxConfig();
+        // config.closedLoop.pid(1.0, 0.0, 0.0);
+        // m_CoralPivotMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void GoToSetPoint(double targetTurns) {
         // m_ElevatorMotor.set(new VelocityDutyCycle(0.5));
-        m_ElevatorMotor.setPosition(Constants.BOTTOM_TURNS + targetTurns);
+        // m_ElevatorMotor.setPosition(Constants.BOTTOM_TURNS + targetTurns);
     }
 
     public void intake(TalonSRX m_Motor){
-        m_Motor.set(ControlMode.PercentOutput, 0.4);
+        // m_Motor.set(ControlMode.PercentOutput, 0.4);
     }
 
     

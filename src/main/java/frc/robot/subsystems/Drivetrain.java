@@ -205,13 +205,13 @@ public class Drivetrain extends SubsystemBase {
     {
       rejectVision = true;
     }
-    if (mt2.tagCount == 0) {
+    if (mt2 == null) {
       SmartDashboard.putBoolean("mt2Null?", true);
       rejectVision = true;
     } else {
       SmartDashboard.putBoolean("mt2Null?", false);
     }
-    if (mt2.tagCount == 0) { // || mt2.pose == null) {
+    if (mt2 == null || mt2.tagCount == 0) { // || mt2.pose == null) {
       rejectVision = true;
     }
     if (!rejectVision) {

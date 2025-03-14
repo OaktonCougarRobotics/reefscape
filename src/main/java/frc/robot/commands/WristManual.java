@@ -4,18 +4,18 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class ElevatorManual extends Command {
-  private TalonFX elevator;
+public class WristManual extends Command {
+  private TalonFX wrist;
   private double speed;
 
   /**
-   * Constructs an elevator movement command.
+   * Constructs a wrist movement command.
    *
-   * @param elevator the elevator motor object
-   * @param speed    the speed we aim to run the elevator motor at
+   * @param wrist the wrist motor object
+   * @param speed    the speed we aim to run the wrist motor at
    */
-  public ElevatorManual(TalonFX elevator, double speed) {
-    this.elevator = elevator;
+  public WristManual(TalonFX wrist, double speed) {
+    this.wrist = wrist;
     this.speed = speed;
   }
 
@@ -25,12 +25,12 @@ public class ElevatorManual extends Command {
 
   @Override
   public void execute() {
-    elevator.set(speed);
+    wrist.set(speed);
   }
 
   @Override
   public void end(boolean interrupted) {
-    elevator.set(0.0);
+    wrist.set(0.0);
   }
 
   @Override

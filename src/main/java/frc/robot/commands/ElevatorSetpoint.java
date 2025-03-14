@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 
 public class ElevatorSetpoint extends Command {
-  private TalonFX elevator;
+  private final TalonFX elevator;
   private double target;
 
   /**
    * Constructs a SpinFeeder command.
    *
    * @param elevator the elevator motor object
-   * @param target the target amount of turns that the elevator aims to reach
+   * @param target   the target amount of turns that the elevator aims to reach
    */
   public ElevatorSetpoint(TalonFX elevator, double targetTurns) {
     this.elevator = elevator;
@@ -22,12 +22,11 @@ public class ElevatorSetpoint extends Command {
 
   @Override
   public void initialize() {
-    elevator.setPosition(Constants.BOTTOM_TURNS + target);
   }
 
   @Override
   public void execute() {
-    //nothing ig
+    elevator.setPosition(Constants.BOTTOM_TURNS + target);
   }
 
   @Override
@@ -37,6 +36,6 @@ public class ElevatorSetpoint extends Command {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return elevator.getPosition().getValueAsDouble() == (Constants.BOTTOM_TURNS + target);
   }
 }

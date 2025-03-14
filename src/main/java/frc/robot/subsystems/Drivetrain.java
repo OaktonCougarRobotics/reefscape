@@ -108,11 +108,7 @@ public class Drivetrain extends SubsystemBase {
     swerveDrive.setMotorIdleMode(true);
     swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via
                                             //
-    // swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation);
-    // // Disables cosine compensation for simulations since it causes discrepancies
-    // not seen in real life.
-
-    // swerveDrive.
+    swerveDrive.setCosineCompensator(false);// FIX: test out, maybe implement?
 
     swerveDrive.setAngularVelocityCompensation(true,
         true,
@@ -340,7 +336,9 @@ public class Drivetrain extends SubsystemBase {
       ySpeed = yController.calculate(getY(), targetPose.getY());
       thetaSpeed = thetaController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
     }
-    
+    xController.close();
+    yController.close();
+    thetaController.close();
   }
 
   // Create a list of waypoints from poses. Each pose represents one waypoint. The
@@ -348,30 +346,30 @@ public class Drivetrain extends SubsystemBase {
   // holonomic rotation.
   public Command driveToPose(Pose2d pose) {
     // if (!within(pose, getPose())) {
-      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_poseEstimator.getEstimatedPosition(), pose);
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_poseEstimator.getEstimatedPosition(), pose);
 
-      System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() + " y: "
-          + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
-          + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() + " y: "
+        + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
+        + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
-      // the constraints for this path
-      PathConstraints constraints = new PathConstraints(3, 1, 4 * Math.PI, 3 * Math.PI);
+    // the constraints for this path
+    PathConstraints constraints = new PathConstraints(3, 1, 4 * Math.PI, 3 * Math.PI);
 
-      PathPlannerPath path = new PathPlannerPath(
-          waypoints,
-          constraints,
-          null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-                // be null for on-the-fly paths.
-          new GoalEndState(0.0, pose.getRotation()));
+    PathPlannerPath path = new PathPlannerPath(
+        waypoints,
+        constraints,
+        null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+              // be null for on-the-fly paths.
+        new GoalEndState(0.0, pose.getRotation()));
 
-      path.preventFlipping = true; // Prevent the path from being flipped if the coordinates are already correct
+    path.preventFlipping = true; // Prevent the path from being flipped if the coordinates are already correct
 
-      AutoBuilder.followPath(path).addRequirements(this);
-      // AutoBuilder.followPath(path).schedule();
+    AutoBuilder.followPath(path).addRequirements(this);
+    // AutoBuilder.followPath(path).schedule();
 
-      return AutoBuilder.followPath(path);
+    return AutoBuilder.followPath(path);
     // } else {
-    //   toPose(pose);
+    // toPose(pose);
     // }
   }
 

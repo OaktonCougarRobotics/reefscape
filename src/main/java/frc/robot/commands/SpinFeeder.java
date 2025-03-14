@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class SpinFeeder extends Command {
     private final Timer timer = new Timer();
     private final double duration = 1.0;
-    private TalonSRX feederMotor;
+    private final TalonSRX feederMotor;
 
     /**
      * Constructs a SpinFeeder command.

@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
-// import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
 
@@ -25,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 
-
 import com.pathplanner.lib.auto.NamedCommands;
 
 /**
@@ -39,59 +37,66 @@ import com.pathplanner.lib.auto.NamedCommands;
  */
 public class RobotContainer {
   public TalonFX m_elevatorMotor = new TalonFX(Constants.ELEVATOR_MOTOR);
-  //public SparkMax m_wristMotor = new SparkMax(Constants.CORALPIVOT_MOTOR, MotorType.kBrushless);
+  // public SparkMax m_wristMotor = new SparkMax(Constants.CORALPIVOT_MOTOR,
+  // MotorType.kBrushless);
   public TalonSRX m_flywheelMotor = new TalonSRX(Constants.CORALFLYWHEEL_MOTOR);
   // The robot's subsystems and commands are defined here...
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
-  public final Arm m_Arm = new Arm(m_elevatorMotor);     
+  public final Arm m_Arm = new Arm(m_elevatorMotor);
 
   // need actual hardware location of button board
   int x = -1;
   // public final Joystick m_buttonBoard = new Joystick(x);
   // // button board buttons
   // // four extra buttons not declared
-  // public final Trigger m_climbLeft = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // public final Trigger m_climbRight = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_climbLeft = new Trigger(() ->
+  // m_buttonBoard.getRawButton(x));
+  // public final Trigger m_climbRight = new Trigger(() ->
+  // m_buttonBoard.getRawButton(x));
   // // manual control button
-  // public final Trigger m_manualWrist = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // public final Trigger m_manualElevatorLift = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_manualWrist = new Trigger(() ->
+  // m_buttonBoard.getRawButton(x));
+  // public final Trigger m_manualElevatorLift = new Trigger(() ->
+  // m_buttonBoard.getRawButton(x));
   // // algae button
-  // public final Trigger m_algae = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // public final Trigger m_intakeSwitch = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_algae = new Trigger(() ->
+  // m_buttonBoard.getRawButton(x));
+  // public final Trigger m_intakeSwitch = new Trigger(() ->
+  // m_buttonBoard.getRawButton(x));
   // // different levels
-  // public final Trigger m_startingArmPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // public final Trigger m_coralStationPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_startingArmPos = new Trigger(() ->
+  // m_buttonBoard.getRawButton(x));
+  // public final Trigger m_coralStationPos = new Trigger(() ->
+  // m_buttonBoard.getRawButton(x));
   // public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(x));
   // public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(x));
   // public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(x));
   // public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(x));
   // // vision button
-  // public final Trigger m_horatioMagic = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // public final Trigger m_horatioMagic = new Trigger(() ->
+  // m_buttonBoard.getRawButton(x));
 
   // Joystick object
   public final Joystick m_joystick = new Joystick(1);
 
-  //buttonboard object
+  // buttonboard object
   public final GenericHID m_buttonBoard = new GenericHID(0);
-
 
   // Triggers on the joystick
   private Trigger m_navxReset = new Trigger(() -> m_joystick.getRawButton(3));
-  //private Trigger m_setTop = new Trigger(() -> m_joystick.getRawButton(2)); // Work in Progress - Horatio
-  //private Trigger m_setBottom = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
-  
+  // private Trigger m_setTop = new Trigger(() -> m_joystick.getRawButton(2)); //
+  // Work in Progress - Horatio
+  // private Trigger m_setBottom = new Trigger(() -> m_joystick.getRawButton(1));
+  // // Work in Progress - Horatio
 
-  //triggers on the button board
+  // triggers on the button board
   private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(22));
   private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(21));
-
-
 
   // feeder motor (anatoli)
   private TalonSRX m_feederMotor = new TalonSRX(22);
   // elevator, wrist, and flywheel
-
 
   SpinFeeder spinFeederCommand = new SpinFeeder(m_feederMotor);
   Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180)));
@@ -135,41 +140,36 @@ public class RobotContainer {
     // m_drivetrain.setDefaultCommand(driveCommand);
 
     m_ArmUp.whileTrue(Commands.run(() -> {
-      if(m_elevatorMotor.getPosition().getValueAsDouble() > Constants.UPPER_LIMIT) {
+      if (m_elevatorMotor.getPosition().getValueAsDouble() > Constants.UPPER_LIMIT) {
         m_elevatorMotor.set(-0.15);
       } else {
         m_elevatorMotor.set(0);
       }
     }));
-    m_ArmUp.onFalse(Commands.run(() -> 
-      m_elevatorMotor.set(0)
-    ));
+    m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
     m_ArmDown.whileTrue(Commands.run(() -> {
-    if(m_elevatorMotor.getPosition().getValueAsDouble() < Constants.LOWER_LIMIT) {
-      m_elevatorMotor.set(0.15);
-    } else {
-      m_elevatorMotor.set(0);
-    }
+      if (m_elevatorMotor.getPosition().getValueAsDouble() < Constants.LOWER_LIMIT) {
+        m_elevatorMotor.set(0.15);
+      } else {
+        m_elevatorMotor.set(0);
+      }
     }));
-    m_ArmDown.onFalse(Commands.run(() -> 
-      m_elevatorMotor.set(0)
-    ));
+    m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-
 
     // FIX: ATTEMPTS AT TOPOSE METHOD W/ CANCELLATION
     // i think this might work, but not entirely sure
     // m_toPose.onTrue(Commands.runEnd(
-    //     () -> {
-    //       m_drivetrain.driveToPose(test).execute();
-    //       angleCorrection.schedule();
-    //     },
-    //     () -> {
-    //       /* does nothing on end, maybe we schedule the normal drive command? */
-    //     },
-    //     m_drivetrain));
+    // () -> {
+    // m_drivetrain.driveToPose(test).execute();
+    // angleCorrection.schedule();
+    // },
+    // () -> {
+    // /* does nothing on end, maybe we schedule the normal drive command? */
+    // },
+    // m_drivetrain));
 
     // m_toPose.whileTrue(
     // Commands.runOnce(
@@ -251,10 +251,12 @@ public class RobotContainer {
     return num;
   }
 
-  public void limits(){
-    if((m_Arm.m_ElevatorMotor.getPosition().getValueAsDouble() <= Constants.UPPER_LIMIT && m_Arm.m_ElevatorMotor.getVelocity().getValueAsDouble() < 0.0) || 
-       (m_Arm.m_ElevatorMotor.getPosition().getValueAsDouble() >= -10 && m_Arm.m_ElevatorMotor.getVelocity().getValueAsDouble() > 0.0)) {
-        m_Arm.m_ElevatorMotor.set(0);
+  public void limits() {
+    if ((m_Arm.m_ElevatorMotor.getPosition().getValueAsDouble() <= Constants.UPPER_LIMIT
+        && m_Arm.m_ElevatorMotor.getVelocity().getValueAsDouble() < 0.0) ||
+        (m_Arm.m_ElevatorMotor.getPosition().getValueAsDouble() >= -10
+            && m_Arm.m_ElevatorMotor.getVelocity().getValueAsDouble() > 0.0)) {
+      m_Arm.m_ElevatorMotor.set(0);
     }
-}
+  }
 }

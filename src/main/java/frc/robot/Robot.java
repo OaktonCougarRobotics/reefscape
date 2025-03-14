@@ -6,9 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
-// import com.ctre.phoenix6.controls.DutyCycleOut;
-// import com.ctre.phoenix6.swerve.SwerveModule;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,7 +49,7 @@ public class Robot extends TimedRobot {
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
-    //m_robotContainer.limits();  
+    // m_robotContainer.limits();
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
   }

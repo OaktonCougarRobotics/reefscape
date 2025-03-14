@@ -229,7 +229,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_drivetrain.getAutonomousCommand("Blue rightest StartPos");
+    return m_drivetrain.getAutonomousCommand("Blue middlest StartPos");
   }
 
   public static double deadzone(double num, double deadband) {

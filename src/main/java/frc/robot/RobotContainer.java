@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
 
@@ -56,16 +57,16 @@ public class RobotContainer {
   // Joystick object
   public final Joystick m_joystick = new Joystick(1);
   // Triggers on the joystick
-  private Trigger m_inputSpin = new Trigger(() -> m_joystick.getRawButton(6));
+  private Trigger m_elevatorUp = new Trigger(() -> m_joystick.getRawButton(6));
+  private Trigger m_elevatorDown = new Trigger(() -> m_joystick.getRawButton(4));
   private Trigger m_navxReset = new Trigger(() -> m_joystick.getRawButton(3));
   private Trigger m_toPose = new Trigger(() -> m_joystick.getRawButton(2)); // Work in Progress - Horatio
   private Trigger m_setTargetPose = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
   private Trigger m_ArmUp = new Trigger(() -> m_joystick.getRawButton(Constants.ARM_UP));
   private Trigger m_ArmDown = new Trigger(() -> m_joystick.getRawButton(Constants.ARM_DOWN));
 
-  // feeder motor
+  // feeder motor (anatoli)
   private TalonSRX m_feederMotor = new TalonSRX(22);
-
   // elevator, wrist, and flywheel
 
 
@@ -76,7 +77,12 @@ public class RobotContainer {
       () -> m_joystick.getRawAxis(1) * -1,
       () -> m_joystick.getRawAxis(0) * -1,
       () -> m_joystick.getRawAxis(2) * -1);
-  AngleCorrection angleCorrection = new AngleCorrection(m_drivetrain, () -> {return test;});
+  AngleCorrection angleCorrection = new AngleCorrection(m_drivetrain, () -> {
+    return test;
+  });
+  ElevatorManual elevatorUp = new ElevatorManual(m_elevatorMotor, 0.3);
+  ElevatorManual elevatorDown = new ElevatorManual(m_elevatorMotor, -0.3);
+
   public RobotContainer() {
     NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
       SmartDashboard.putNumber("testingNamedCommands", 6232025);
@@ -86,7 +92,7 @@ public class RobotContainer {
     m_drivetrain.setupPathPlanner();
     configureBindings();
   }
-  
+
   /**
    * Use this method to define your trigger->command mapping s. Triggers can be
    * created via the
@@ -119,24 +125,79 @@ public class RobotContainer {
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 
-    m_toPose.onTrue(Commands.runOnce(
-        () -> m_drivetrain.driveToPose(test)).andThen(angleCorrection)
-        // .andThen(Commands.runOnce(() -> {
-        //   PIDController thetaController = new PIDController(.5, 0, .00001);
-        //   // thetaController.enableContinuousInput(-Math.PI, Math.PI); //NOT SURE WHAT
-        //   // THIS DOES, FIX OR REMOVE
-        //   double thetaSpeed = thetaController.calculate(m_drivetrain.getRotation().getRadians(),
-        //       test.getRotation().getRadians());
-        //   while (Math.abs(thetaSpeed) > 0.1
-        //       && m_drivetrain.getPose().getRotation().getDegrees() - test.getRotation().getDegrees() > 7) {
-        //     m_drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(0, 0, thetaSpeed));
-        //     thetaSpeed = thetaController.calculate(m_drivetrain.getRotation().getRadians(),
-        //         test.getRotation().getRadians());
-        //   }
-        // }))
-        );
+    // FIX: ARM RELATED COMMANDS
+    m_elevatorUp.whileTrue(elevatorUp);
+    m_elevatorDown.whileTrue(elevatorDown);
 
-    m_inputSpin.whileTrue(spinFeederCommand);
+    // FIX: ATTEMPTS AT TOPOSE METHOD W/ CANCELLATION
+    // i think this might work, but not entirely sure
+    m_toPose.onTrue(Commands.runEnd(
+        () -> {
+          m_drivetrain.driveToPose(test).execute();
+          angleCorrection.schedule();
+        },
+        () -> {
+          /* does nothing on end, maybe we schedule the normal drive command? */
+        },
+        m_drivetrain));
+
+    // m_toPose.whileTrue(
+    // Commands.runOnce(
+    // ()->{
+    // if(m_drivetrain.within(m_drivetrain.getPose(), test))
+    // angleCorrection.schedule();
+    // else
+    // m_drivetrain.driveToPose(test);
+    // }
+    // )
+    // // angleCorrection
+    // // () -> {
+    // // if (!m_drivetrain.within(test, m_drivetrain.getPose())) {
+    // // m_drivetrain.driveToPose(test);
+    // // } else {
+    // // angleCorrection.schedule();
+    // // }
+    // // }
+    // // )
+    // );
+
+    // m_toPose.onTrue(
+    // Commands.runOnce(
+    // () -> {
+    // Command drive = m_drivetrain.driveToPose(test);
+    // drive.execute();
+    // if (m_drivetrain.within(m_drivetrain.getPose(), test)) {
+    // angleCorrection.schedule();
+    // } else if (m_joystick.getRawAxis(1) > OperatorConstants.X_DEADBAND
+    // || m_joystick.getRawAxis(0) > OperatorConstants.X_DEADBAND
+    // || m_joystick.getRawAxis(2) > OperatorConstants.X_DEADBAND) {
+    // // CommandScheduler.getInstance().cancel(angleCorrection);
+    // // CommandScheduler.getInstance().cancel(drive);
+    // CommandScheduler.getInstance().cancelAll();
+    // // angleCorrection.cancel();
+    // // drive.cancel();
+    // } // else {
+    // // drive.schedule();
+    // // }
+    // }));
+
+    // () -> m_drivetrain.driveToPose(test)).andThen(angleCorrection)
+    // .andThen(Commands.runOnce(() -> {
+    // PIDController thetaController = new PIDController(.5, 0, .00001);
+    // thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    // double thetaSpeed =
+    // thetaController.calculate(m_drivetrain.getRotation().getRadians(),
+    // test.getRotation().getRadians());
+    // while (Math.abs(thetaSpeed) > 0.1
+    // && m_drivetrain.getPose().getRotation().getDegrees() -
+    // test.getRotation().getDegrees() > 7) {
+    // m_drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(0, 0,
+    // thetaSpeed));
+    // thetaSpeed =
+    // thetaController.calculate(m_drivetrain.getRotation().getRadians(),
+    // test.getRotation().getRadians());
+    // }
+    // }))
   }
 
   public Drivetrain getDrivetrain() {

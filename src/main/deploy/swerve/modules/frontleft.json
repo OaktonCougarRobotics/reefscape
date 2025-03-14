@@ -6,7 +6,7 @@
   "absoluteEncoderOffset": 224.24,
   "drive": {
     "type": "falcon",
-    "id": 41,
+    "id": 35,
     "canbus": null
   },
   "inverted": {
@@ -15,7 +15,7 @@
   },
   "angle": {
     "type": "falcon",
-    "id": 36,
+    "id": 32,
     "canbus": null
   },
   "encoder": {

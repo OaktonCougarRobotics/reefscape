@@ -54,6 +54,29 @@ public class RobotContainer {
       "swerve"));
   public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor);     
 
+  // need actual hardware location of button board
+  int x = -1;
+  public final Joystick m_buttonBoard = new Joystick(x);
+  // button board buttons
+  // four extra buttons not declared
+  public final Trigger m_climbLeft = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  public final Trigger m_climbRight = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // manual control button
+  public final Trigger m_manualWrist = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  public final Trigger m_manualElevatorLift = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // algae button
+  public final Trigger m_algae = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  public final Trigger m_intakeSwitch = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // different levels
+  public final Trigger m_startingArmPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  public final Trigger m_coralStationPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // vision button
+  public final Trigger m_horatioMagic = new Trigger(() -> m_buttonBoard.getRawButton(x));
+
   // Joystick object
   public final Joystick m_joystick = new Joystick(1);
   // Triggers on the joystick

@@ -445,6 +445,8 @@ public class Drivetrain extends SubsystemBase {
         aprilTagID = at.getId();
     }
   }
+  return aprilTagID;
+}
 
   public void toClosestAprilTag() {
     toPose(Constants.aprilPose[closestAprilTag(Constants.aprilPose)].getOffestPose());

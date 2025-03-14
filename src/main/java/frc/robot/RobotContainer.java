@@ -9,11 +9,19 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import java.io.File;
-
+import java.lang.Object;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -22,9 +30,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Arm;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix6.hardware.TalonFX;
+
 import com.pathplanner.lib.auto.NamedCommands;
 
 /**
@@ -37,9 +45,13 @@ import com.pathplanner.lib.auto.NamedCommands;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  public TalonFX m_elevatorMotor = new TalonFX(Constants.ELEVATOR_MOTOR);
+  public SparkMax m_wristMotor = new SparkMax(Constants.CORALPIVOT_MOTOR, MotorType.kBrushless);
+  public TalonSRX m_flywheelMotor = new TalonSRX(Constants.CORALFLYWHEEL_MOTOR);
   // The robot's subsystems and commands are defined here...
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
+  public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor);     
 
   // Joystick object
   public final Joystick m_joystick = new Joystick(1);
@@ -48,14 +60,14 @@ public class RobotContainer {
   private Trigger m_navxReset = new Trigger(() -> m_joystick.getRawButton(3));
   private Trigger m_toPose = new Trigger(() -> m_joystick.getRawButton(2)); // Work in Progress - Horatio
   private Trigger m_setTargetPose = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
+  private Trigger m_ArmUp = new Trigger(() -> m_joystick.getRawButton(Constants.ARM_UP));
+  private Trigger m_ArmDown = new Trigger(() -> m_joystick.getRawButton(Constants.ARM_DOWN));
 
   // feeder motor
   private TalonSRX m_feederMotor = new TalonSRX(22);
 
   // elevator, wrist, and flywheel
-  public TalonFX m_elevatorMotor = new TalonFX(Constants.ELEVATOR_MOTOR);
-  // public TalonFX m_wristMotor = new NEO SparkMAX(); ???
-  public TalonSRX m_flywheelMotor = new TalonSRX(Constants.FLYWHEEL_MOTOR);
+
 
   SpinFeeder spinFeederCommand = new SpinFeeder(m_feederMotor);
   Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180)));
@@ -96,6 +108,14 @@ public class RobotContainer {
     m_setTargetPose.onTrue(Commands.runOnce(() -> {
       test = m_drivetrain.getPose();
     }));
+
+    m_ArmUp.onTrue(Commands.runOnce(() -> 
+      m_elevatorMotor.set(0.2)
+    ));
+
+    m_ArmDown.onTrue(Commands.runOnce(() -> 
+    m_elevatorMotor.set(-0.2)
+  ));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 

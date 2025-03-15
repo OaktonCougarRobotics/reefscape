@@ -98,7 +98,7 @@ public class RobotContainer {
 
   // triggers on the button board
   private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_UP));
-  // private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVAATOR_DOWN));
+  private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_DOWN));
   private Trigger m_WristForward = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_FORWARD));
   private Trigger m_WristReverse = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_REVERSE));
   private Trigger m_FlywheelIn = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_IN));
@@ -178,19 +178,19 @@ public class RobotContainer {
     m_ArmUp.whileTrue(new ElevatorManual(m_Arm, -0.2));
     m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
-    // m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
-    // m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+    m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
+    m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
-    m_WristForward.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0.2)));
-    m_WristForward.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
+    // m_WristForward.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
+    // m_WristForward.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
 
-    m_WristReverse.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, -0.2)));
-    m_WristReverse.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
+    // m_WristReverse.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, -0)));
+    // m_WristReverse.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
 
-    m_FlywheelIn.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.2)));
+    m_FlywheelIn.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.125)));
     m_FlywheelIn.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
-    m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
+    m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.125)));
     m_FlywheelOut.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
     // FIX

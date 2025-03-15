@@ -71,12 +71,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.getDrivetrain().zeroGyro();
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.schedule();
-    // }
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -87,6 +87,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    CommandScheduler.getInstance().cancelAll();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -95,12 +96,12 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.m_drivetrain.swerveDrive.setGyro(new Rotation3d(new Rotation2d(180)));
+    
+    // m_robotContainer.m_drivetrain.swerveDrive.setGyro(m_robotContainer.m_drivetrain.swerveDrive.getGyro().getRotation3d().plus(new Rotation3d(new Rotation2d(180.0))));
 
-    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      // getgyro to get urrent gyro and setgyro to set the gyro just tset the gyro to
-      // getgyro-180
+    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
       // m_robotContainer.m_drivetrain.changeYawAutoRed();
+      m_robotContainer.m_drivetrain.swerveDrive.setGyro(new Rotation3d(new Rotation2d(Math.PI * 0)));
     }
   }
 

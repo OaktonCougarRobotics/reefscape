@@ -14,7 +14,7 @@ public class DriveCommand extends Command {
     private DoubleSupplier xTranslationSupplier;
     private DoubleSupplier yTranslationSupplier;
     private DoubleSupplier thetaTranslationSupplier;
-    private double rotateMod = 0.75;
+    private double rotateMod = 0;
     private double translationMod = 0.3;
 
     /**

@@ -40,6 +40,9 @@ import com.pathplanner.lib.auto.NamedCommands;
  */
 public class RobotContainer {
   public TalonFX m_elevatorMotor = new TalonFX(Constants.ELEVATOR_MOTOR);
+  public TalonFX m_leftClimb = new TalonFX(Constants.LEFT_CLIMB_MOTOR);
+  public TalonFX m_rightClimb = new TalonFX(Constants.RIGHT_CLIMB_MOTOR);
+
   public TalonSRX m_wristMotor = new TalonSRX(Constants.WRIST_MOTOR);
   public TalonSRX m_intakeMotor = new TalonSRX(Constants.INTAKE_MOTOR);
   // The robot's subsystems and commands are defined here...
@@ -49,6 +52,8 @@ public class RobotContainer {
 
   // buttonboard object
   public final GenericHID m_buttonBoard = new GenericHID(0);
+  public final GenericHID m_buttonBoard2 = new GenericHID(2);
+
 
   // public final Joystick m_buttonBoard = new Joystick(x);
   // // button board buttons
@@ -99,6 +104,12 @@ public class RobotContainer {
   private Trigger m_FlywheelIn = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_IN));
   private Trigger m_FlywheelOut = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_OUT));
 
+  private Trigger m_ClimbLeftUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_UP));
+  private Trigger m_ClimbLeftDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_DOWN));
+  private Trigger m_ClimbRightUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_UP));
+  private Trigger m_ClimbRightDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_DOWN));
+
+
   // feeder motor (anatoli)
   private TalonSRX m_feederMotor = new TalonSRX(22);
   // elevator, wrist, and flywheel
@@ -123,6 +134,8 @@ public class RobotContainer {
       SmartDashboard.putNumber("testingNamedCommands", 6232025);
     }));
     NamedCommands.registerCommand("spin", spinFeederCommand);
+
+    NamedCommands.registerCommand("Outtake", Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.125)));
 
     m_drivetrain.setupPathPlanner();
     configureBindings();
@@ -152,16 +165,56 @@ public class RobotContainer {
     m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
     m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
-    // m_WristForward.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
-    // m_WristForward.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
+    // m_WristForward.whileTrue(Commands.run(() -> {
+    //   m_leftClimb.set(-0.1);
+    //   m_rightClimb.set(-0.1);
+    // }));
+    // m_WristForward.onFalse(Commands.run(() -> {
+    //   m_leftClimb.set(0);
+    //   m_rightClimb.set(0);
+    // }));
 
-    // m_WristReverse.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, -0)));
-    // m_WristReverse.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
+    // m_WristReverse.whileTrue(Commands.run(() -> {
+    //   m_leftClimb.set(0.1);
+    //   m_rightClimb.set(0.1);
+    // }));
+    // m_WristReverse.onFalse(Commands.run(() -> {
+    //   m_leftClimb.set(0);
+    //   m_rightClimb.set(0);
+    // }));
 
-    m_FlywheelIn.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.125)));
+    m_ClimbLeftUp.whileTrue(Commands.run(() -> {
+      m_leftClimb.set(-0.1);
+    }));
+    m_ClimbLeftUp.onFalse(Commands.run(() -> {
+      m_leftClimb.set(0);
+    }));
+
+    m_ClimbLeftDown.whileTrue(Commands.run(() -> {
+      m_leftClimb.set(0.4);
+    }));
+    m_ClimbLeftDown.onFalse(Commands.run(() -> {
+      m_leftClimb.set(0);
+    }));
+
+    m_ClimbRightUp.whileTrue(Commands.run(() -> {
+      m_rightClimb.set(-0.1);
+    }));
+    m_ClimbRightUp.onFalse(Commands.run(() -> {
+      m_rightClimb.set(0);
+    }));
+
+    m_ClimbRightDown.whileTrue(Commands.run(() -> {
+      m_rightClimb.set(0.4);
+    }));
+    m_ClimbRightDown.onFalse(Commands.run(() -> {
+      m_rightClimb.set(0);
+    }));
+
+    m_FlywheelIn.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.2)));
     m_FlywheelIn.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
-    m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.125)));
+    m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
     m_FlywheelOut.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
     // FIX

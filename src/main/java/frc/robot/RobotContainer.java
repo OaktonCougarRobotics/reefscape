@@ -7,10 +7,8 @@ package frc.robot;
 import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorManual;
-import frc.robot.commands.ElevatorSetpoint;
 import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
-import edu.wpi.first.wpilibj.Counter;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -19,6 +17,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import java.io.File;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -102,6 +101,8 @@ public class RobotContainer {
   // private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVAATOR_DOWN));
   private Trigger m_WristForward = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_FORWARD));
   private Trigger m_WristReverse = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_REVERSE));
+  private Trigger m_FlywheelIn = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_IN));
+  private Trigger m_FlywheelOut = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_OUT));
 
   // feeder motor (anatoli)
   private TalonSRX m_feederMotor = new TalonSRX(22);
@@ -185,6 +186,12 @@ public class RobotContainer {
 
     m_WristReverse.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, -0.2)));
     m_WristReverse.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
+
+    m_FlywheelIn.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.2)));
+    m_FlywheelIn.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
+
+    m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
+    m_FlywheelOut.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
     // FIX
     // m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.LOW_TARGET),

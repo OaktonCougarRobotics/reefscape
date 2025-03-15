@@ -150,8 +150,8 @@ public final class Constants {
 
   // ARM_SUBSYSTEM Configuration
   // All -1 as filler values, define all the motor id's
-  public static final int INTAKE_MOTOR = -1;
-  public static final int WRIST_MOTOR = -1;
+  public static final int INTAKE_MOTOR = 14;
+  public static final int WRIST_MOTOR = 15;
   public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
   public static double BOTTOM_TURNS = -0.5;
@@ -215,11 +215,11 @@ public final class Constants {
   public static final int NUKE_SWITCH_3 = 14;
   public static final int NUKE_SWITCH_2 = 15;
   public static final int NUKE_SWITCH_1 = 16;
-  public static final int SHOOTER_DOWN = 17;
-  public static final int SHOOTER_UP = 18;
 
 
   //CRISPY
+  public static final int INTAKE_OUT = 17;
+  public static final int INTAKE_IN = 18;
   public static final int ELEVATOR_UP = 19;
   public static final int ELEVATOR_DOWN = 20;
   public static final int WRIST_FORWARD = 22;

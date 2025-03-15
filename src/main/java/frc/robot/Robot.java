@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -93,10 +95,12 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    m_robotContainer.m_drivetrain.swerveDrive.setGyro(new Rotation3d(new Rotation2d(180)));
+
     if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
       // getgyro to get urrent gyro and setgyro to set the gyro just tset the gyro to
       // getgyro-180
-      m_robotContainer.m_drivetrain.changeYawAutoRed();
+      // m_robotContainer.m_drivetrain.changeYawAutoRed();
     }
   }
 

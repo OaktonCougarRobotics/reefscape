@@ -17,7 +17,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import java.io.File;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -47,10 +46,6 @@ public class RobotContainer {
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
   public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor, m_intakeMotor);
-  public Counter AmMag;
-  // This counter counts the index pulses (revolutions)
-  public Counter AmIndex;
-  double angleRAD;
 
   // buttonboard object
   public final GenericHID m_buttonBoard = new GenericHID(0);
@@ -131,10 +126,6 @@ public class RobotContainer {
 
     m_drivetrain.setupPathPlanner();
     configureBindings();
-    AmMag = new Counter(0);
-    AmIndex = new Counter(1);
-    // Set Semi-Period Mode in order to Measure the Pulse Width
-    AmMag.setSemiPeriodMode(true);
   }
 
   /**
@@ -154,26 +145,6 @@ public class RobotContainer {
 
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(driveCommand);
-
-    // m_ArmUp.whileTrue(Commands.run(() -> {
-    // if (m_elevatorMotor.getPosition().getValueAsDouble() > Constants.UPPER_LIMIT)
-    // {
-    // m_elevatorMotor.set(-0.15);
-    // } else {
-    // m_elevatorMotor.set(0);
-    // }
-    // }));
-    // m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
-
-    // m_ArmDown.whileTrue(Commands.run(() -> {
-    // if (m_elevatorMotor.getPosition().getValueAsDouble() < Constants.LOWER_LIMIT)
-    // {
-    // m_elevatorMotor.set(0.15);
-    // } else {
-    // m_elevatorMotor.set(0);
-    // }
-    // }));
-    // m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
     m_ArmUp.whileTrue(new ElevatorManual(m_Arm, -0.2));
     m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
@@ -298,29 +269,6 @@ public class RobotContainer {
     if (Math.abs(num) < deadband)
       return 0.0;
     return num;
-  }
-
-  public void limits() {
-    if ((m_Arm.m_ElevatorMotor.getPosition().getValueAsDouble() <= Constants.ARM_HIGH
-        && m_Arm.m_ElevatorMotor.getVelocity().getValueAsDouble() < 0.0) ||
-        (m_Arm.m_ElevatorMotor.getPosition().getValueAsDouble() >= -10
-            && m_Arm.m_ElevatorMotor.getVelocity().getValueAsDouble() > 0.0)) {
-      m_Arm.m_ElevatorMotor.set(0);
-    }
-  }
-
-  public double calcAngle() {
-    double value = AmMag.getPeriod();
-    // SmartDashboard.putNumber("Rotations", AmIndex.get());
-    // SmartDashboard.putNumber("Intermediate", value);
-    // The 9.73e-4 is the total period of the PWM output on the am-3749
-    // The value will then be divided by the period to get duty cycle.
-    // This is converted to degrees and Radians
-    // double angleDEG = (value/9.739499999999999E-4)*361 -1;
-    angleRAD = (value / 9.739499999999999E-4) * 2 * (Math.PI);
-    // SmartDashboard.putNumber("Angle in Degrees", angleDEG);
-    // SmartDashboard.putNumber("Angle in Radians", angleRAD);
-    return angleRAD;
   }
 
   public void execute(double targetAngle) {

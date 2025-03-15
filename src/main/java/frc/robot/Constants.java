@@ -214,10 +214,13 @@ public final class Constants {
   public static final int NUKE_SWITCH_1 = 16;
   public static final int SHOOTER_DOWN = 17;
   public static final int SHOOTER_UP = 18;
-  public static final int CLIMB_UP = 19;
-  public static final int CLIMB_DOWN = 20;
-  public static final int DUSTPAN_UP = 21;
-  public static final int DUSTPAN_DOWN = 22;
+
+
+  //CRISPY
+  public static final int ELEVATOR_UP = 19;
+  public static final int ELEVAATOR_DOWN = 20;
+  public static final int WRIST_FORWARD = 22;
+  public static final int WRIST_REVERSE = 21;
   
 
 

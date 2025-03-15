@@ -6,12 +6,13 @@ package frc.robot;
 
 import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
-// import frc.robot.commands.ElevatorManual;
+import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorSetpoint;
 import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.Counter;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -51,8 +52,6 @@ public class RobotContainer {
   // buttonboard object
   public final GenericHID m_buttonBoard = new GenericHID(0);
 
-  // need actual hardware location of button board
-  int x = -1;
   // public final Joystick m_buttonBoard = new Joystick(x);
   // // button board buttons
   // // four extra buttons not declared
@@ -95,15 +94,10 @@ public class RobotContainer {
   // // Work in Progress - Horatio
 
   // triggers on the button board
-  private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(22));
-  private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(21));
-  //private Trigger m_PickupPos = new Trigger(() -> m_buttonBoard.getRawButton(-1));
-  private Trigger m_LowSco = new Trigger(() -> m_buttonBoard.getRawButton(5));
-  //private Trigger m_MidSco = new Trigger(() -> m_buttonBoard.getRawButton(-1));
-  private Trigger m_HighSco = new Trigger(() -> m_buttonBoard.getRawButton(6));
-  
-  
-    
+  private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_UP));
+  private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVAATOR_DOWN));
+  private Trigger m_WristForward = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_FORWARD));
+  private Trigger m_WristReverse = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_REVERSE));
 
   // feeder motor (anatoli)
   private TalonSRX m_feederMotor = new TalonSRX(22);
@@ -154,42 +148,44 @@ public class RobotContainer {
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(driveCommand);
 
-    m_ArmUp.whileTrue(Commands.run(() -> {
-      if(m_elevatorMotor.getPosition().getValueAsDouble() > Constants.ARM_HIGH) {
-        m_elevatorMotor.set(-0.1);
-      } else {
-        m_elevatorMotor.set(0);
-      }
-    }));
+    // m_ArmUp.whileTrue(Commands.run(() -> {
+    // if (m_elevatorMotor.getPosition().getValueAsDouble() > Constants.UPPER_LIMIT)
+    // {
+    // m_elevatorMotor.set(-0.15);
+    // } else {
+    // m_elevatorMotor.set(0);
+    // }
+    // }));
+    // m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+
+    // m_ArmDown.whileTrue(Commands.run(() -> {
+    // if (m_elevatorMotor.getPosition().getValueAsDouble() < Constants.LOWER_LIMIT)
+    // {
+    // m_elevatorMotor.set(0.15);
+    // } else {
+    // m_elevatorMotor.set(0);
+    // }
+    // }));
+    // m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+
+    m_ArmUp.whileTrue(new ElevatorManual(m_Arm, -0.2));
     m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
-    m_ArmDown.whileTrue(Commands.run(() -> {
-    if(m_elevatorMotor.getPosition().getValueAsDouble() < Constants.ARM_LOW) {
-      m_elevatorMotor.set(0.1);
-    } else {
-      m_elevatorMotor.set(0);
-    }
-    }));
+    m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
     m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
+    m_WristForward.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0.2)));
+    m_WristForward.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
 
-    // m_PickupPos.onTrue(new ElevatorSetpoint(m_Arm, -2.75));
+    m_WristReverse.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, -0.2)));
+    m_WristReverse.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
 
-    // m_LowSco.onTrue(new ElevatorSetpoint(m_Arm, -30));
-// 
-    // m_HighSco.onTrue(new ElevatorSetpoint(m_Arm, -40));
-    m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.LOW_TARGET));
+    // m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.LOW_TARGET));
     // m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.MID_TARGET));
     // m_l3.whileTrue(Commands.run(() -> {
     //   .m_ElevatorMotor.setControl(m_request.withPosition(Constants.MID_TARGET));
     // }));
-    m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.HIGH_TARGET));
-
-
-
-    m_LowSco.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
-
-    m_HighSco.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+    // m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.HIGH_TARGET));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 

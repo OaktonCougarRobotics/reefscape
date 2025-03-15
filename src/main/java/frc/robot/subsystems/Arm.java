@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -13,11 +13,12 @@ public class Arm extends SubsystemBase {
     public TalonSRX m_WristMotor;
     public TalonSRX m_IntakeMotor;
 
+
     public Arm(TalonFX elev, TalonSRX wrist, TalonSRX intake) {
         this.m_ElevatorMotor = elev;
         this.m_WristMotor = wrist;
         this.m_IntakeMotor = intake;
-        // this.m_CoralPivotMotor = m_PivotMotor;
+
         // var slot0Configs = new Slot0Configs();
         // slot0Configs.kP = -1; // An error of 1 rotation results in 2.4 V output
         // slot0Configs.kI = -1; // no output for integrated error
@@ -41,6 +42,7 @@ public class Arm extends SubsystemBase {
         // m_ElevatorMotor.set(new VelocityDutyCycle(0.5));
         m_ElevatorMotor.setPosition(Constants.BOTTOM_TURNS + targetTurns);
     }
+
 
     public void intake(TalonSRX m_Motor) {
         m_Motor.set(ControlMode.PercentOutput, 0.4);

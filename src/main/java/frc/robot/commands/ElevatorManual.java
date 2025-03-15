@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
+//import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 
 public class ElevatorManual extends Command {
@@ -16,11 +16,11 @@ public class ElevatorManual extends Command {
   public ElevatorManual(Arm arm, double speed) {
     this.speed = speed;
     this.arm = arm;
-    addRequirements(arm);
   }
 
   @Override
   public void initialize() {
+    addRequirements(arm);
   }
 
   @Override
@@ -33,9 +33,9 @@ public class ElevatorManual extends Command {
     arm.m_ElevatorMotor.set(0.0);
   }
 
-  @Override
-  public boolean isFinished() {
-    return arm.m_ElevatorMotor.getPosition().getValueAsDouble() < Constants.UPPER_LIMIT ||
-    arm.m_ElevatorMotor.getPosition().getValueAsDouble() > Constants.LOWER_LIMIT;
-  }
+  // @Override
+  // public boolean isFinished() {
+  //   // return arm.m_ElevatorMotor.getPosition().getValueAsDouble() < Constants.UPPER_LIMIT ||
+  //   // arm.m_ElevatorMotor.getPosition().getValueAsDouble() > Constants.LOWER_LIMIT;
+  // }
 }

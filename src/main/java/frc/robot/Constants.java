@@ -149,16 +149,16 @@ public final class Constants {
   public static final String COB_KEY_MATCHTIME = "/COB/matchTime";
 
   // ARM_SUBSYSTEM Configuration
-  // All -1 as filler values, define all the motor id's and DIO id later
+  // All -1 as filler values, define all the motor id's
   public static final int INTAKE_MOTOR = -1;
   public static final int WRIST_MOTOR = -1;
   public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
-  public static double BOTTOM_TURNS = -1;
-  public static final double LOW_TARGET = -1;
-  public static final double MID_TARGET = -1;
-  public static final double HIGH_TARGET = -1;
-  public static final double PICKUP_TARGET = -1;
+  public static double BOTTOM_TURNS = -0.5;
+  public static final double LOW_TARGET = -1.5;
+  public static final double MID_TARGET = -30;
+  public static final double HIGH_TARGET = -83.3;
+  public static final double PICKUP_TARGET = -0.5;
 
   public static final double PIVOT_CAN_DIFFERENCE_BETWEEN_STARTING_AND_LEVEL = -1;
   public static final double PIVOT_GEAR_RATIO = 160.0;
@@ -223,8 +223,8 @@ public final class Constants {
 
   public static final int ARM_UP = 6;
   public static final int ARM_DOWN = 4;
-  public static double UPPER_LIMIT = -70.87; //-84.87
-  public static double LOWER_LIMIT = -15; //0
+  public static double ARM_HIGH = -83; //-84.87
+  public static double ARM_LOW = -0.5; //0
 
   public static final double LIMELIGHT_HEIGHT = 0.238125; // m from the bottom
   public static final double LIMELIGHT_YTHETA = 60; // off the horizontal

@@ -6,11 +6,14 @@ package frc.robot;
 
 import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ElevatorManual;
+// import frc.robot.commands.ElevatorManual;
+import frc.robot.commands.ElevatorSetpoint;
 import frc.robot.commands.SpinFeeder;
 import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.wpilibj.Counter;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import java.io.File;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -45,6 +48,9 @@ public class RobotContainer {
       "swerve"));
   public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor, m_intakeMotor);
 
+  // buttonboard object
+  public final GenericHID m_buttonBoard = new GenericHID(0);
+
   // need actual hardware location of button board
   int x = -1;
   // public final Joystick m_buttonBoard = new Joystick(x);
@@ -69,19 +75,17 @@ public class RobotContainer {
   // m_buttonBoard.getRawButton(x));
   // public final Trigger m_coralStationPos = new Trigger(() ->
   // m_buttonBoard.getRawButton(x));
-  // public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  public final Trigger resetArmPose = new Trigger(() -> m_buttonBoard.getRawButton(2));
+  public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(4));
+  public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(5));
+  public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(6));
+  public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(7));
   // // vision button
   // public final Trigger m_horatioMagic = new Trigger(() ->
   // m_buttonBoard.getRawButton(x));
 
   // Joystick object
   public final Joystick m_joystick = new Joystick(1);
-
-  // buttonboard object
-  public final GenericHID m_buttonBoard = new GenericHID(0);
 
   // Triggers on the joystick
   private Trigger m_navxReset = new Trigger(() -> m_joystick.getRawButton(3));
@@ -93,12 +97,21 @@ public class RobotContainer {
   // triggers on the button board
   private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(22));
   private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(21));
+  //private Trigger m_PickupPos = new Trigger(() -> m_buttonBoard.getRawButton(-1));
+  private Trigger m_LowSco = new Trigger(() -> m_buttonBoard.getRawButton(5));
+  //private Trigger m_MidSco = new Trigger(() -> m_buttonBoard.getRawButton(-1));
+  private Trigger m_HighSco = new Trigger(() -> m_buttonBoard.getRawButton(6));
+  
+  
+    
 
   // feeder motor (anatoli)
   private TalonSRX m_feederMotor = new TalonSRX(22);
   // elevator, wrist, and flywheel
 
   SpinFeeder spinFeederCommand = new SpinFeeder(m_feederMotor);
+
+  final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
   Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180)));
   DriveCommand driveCommand = new DriveCommand(
       m_drivetrain,
@@ -110,6 +123,8 @@ public class RobotContainer {
   });
   // ElevatorManual elevatorUp = new ElevatorManual(m_elevatorMotor, 0.3);
   // ElevatorManual elevatorDown = new ElevatorManual(m_elevatorMotor, -0.3);
+
+
 
   public RobotContainer() {
     NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
@@ -137,39 +152,48 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
-    // m_drivetrain.setDefaultCommand(driveCommand);
+    m_drivetrain.setDefaultCommand(driveCommand);
 
-    // m_ArmUp.whileTrue(Commands.run(() -> {
-    //   if (m_elevatorMotor.getPosition().getValueAsDouble() > Constants.UPPER_LIMIT) {
-    //     m_elevatorMotor.set(-0.15);
-    //   } else {
-    //     m_elevatorMotor.set(0);
-    //   }
-    // }));
-    // m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
-
-    // m_ArmDown.whileTrue(Commands.run(() -> {
-    //   if (m_elevatorMotor.getPosition().getValueAsDouble() < Constants.LOWER_LIMIT) {
-    //     m_elevatorMotor.set(0.15);
-    //   } else {
-    //     m_elevatorMotor.set(0);
-    //   }
-    // }));
-    // m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
-
-
-
-
-    m_ArmUp.whileTrue(new ElevatorManual(m_Arm, -0.15));
+    m_ArmUp.whileTrue(Commands.run(() -> {
+      if(m_elevatorMotor.getPosition().getValueAsDouble() > Constants.ARM_HIGH) {
+        m_elevatorMotor.set(-0.1);
+      } else {
+        m_elevatorMotor.set(0);
+      }
+    }));
     m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
-    m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.15));
+    m_ArmDown.whileTrue(Commands.run(() -> {
+    if(m_elevatorMotor.getPosition().getValueAsDouble() < Constants.ARM_LOW) {
+      m_elevatorMotor.set(0.1);
+    } else {
+      m_elevatorMotor.set(0);
+    }
+    }));
     m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
 
+    // m_PickupPos.onTrue(new ElevatorSetpoint(m_Arm, -2.75));
 
+    // m_LowSco.onTrue(new ElevatorSetpoint(m_Arm, -30));
+// 
+    // m_HighSco.onTrue(new ElevatorSetpoint(m_Arm, -40));
+    m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.LOW_TARGET));
+    // m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.MID_TARGET));
+    // m_l3.whileTrue(Commands.run(() -> {
+    //   .m_ElevatorMotor.setControl(m_request.withPosition(Constants.MID_TARGET));
+    // }));
+    m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.HIGH_TARGET));
+
+
+
+    m_LowSco.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+
+    m_HighSco.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
+
+    resetArmPose.onTrue(Commands.run(() -> m_elevatorMotor.setPosition(0.0)));
 
     // FIX: ATTEMPTS AT TOPOSE METHOD W/ CANCELLATION
     // i think this might work, but not entirely sure
@@ -264,7 +288,7 @@ public class RobotContainer {
   }
 
   public void limits() {
-    if ((m_Arm.m_ElevatorMotor.getPosition().getValueAsDouble() <= Constants.UPPER_LIMIT
+    if ((m_Arm.m_ElevatorMotor.getPosition().getValueAsDouble() <= Constants.ARM_HIGH
         && m_Arm.m_ElevatorMotor.getVelocity().getValueAsDouble() < 0.0) ||
         (m_Arm.m_ElevatorMotor.getPosition().getValueAsDouble() >= -10
             && m_Arm.m_ElevatorMotor.getVelocity().getValueAsDouble() > 0.0)) {

@@ -1,12 +1,14 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import frc.robot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class WristManual extends Command {
   private TalonFX wrist;
   private double speed;
+  private Arm arm;
 
   /**
    * Constructs a wrist movement command.
@@ -21,6 +23,7 @@ public class WristManual extends Command {
 
   @Override
   public void initialize() {
+    addRequirements(arm);
   }
 
   @Override

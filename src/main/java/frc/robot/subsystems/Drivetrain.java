@@ -457,11 +457,11 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-    updateTelemetry();
-    SmartDashboard.putNumber("Front left volt", swerveDrive.getModuleMap().get("frontleft").getAngleMotor().getVoltage());
-    for (String key: swerveDrive.getModuleMap().keySet()) {
-      SmartDashboard.putNumber(key + "rawabsolute",swerveDrive.getModuleMap().get(key).getRawAbsolutePosition());
-    }
+    // updateTelemetry();
+    // SmartDashboard.putNumber("Front left volt", swerveDrive.getModuleMap().get("frontleft").getAngleMotor().getVoltage());
+    // for (String key: swerveDrive.getModuleMap().keySet()) {
+    //   SmartDashboard.putNumber(key + "rawabsolute",swerveDrive.getModuleMap().get(key).getRawAbsolutePosition());
+    // }
   }
 
   public void updateTelemetry() {

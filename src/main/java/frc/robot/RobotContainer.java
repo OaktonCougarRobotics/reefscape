@@ -48,6 +48,10 @@ public class RobotContainer {
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
   public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor, m_intakeMotor);
+  public Counter AmMag;
+  // This counter counts the index pulses (revolutions)
+  public Counter AmIndex;
+  double angleRAD;
 
   // buttonboard object
   public final GenericHID m_buttonBoard = new GenericHID(0);
@@ -95,7 +99,7 @@ public class RobotContainer {
 
   // triggers on the button board
   private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_UP));
-  private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVAATOR_DOWN));
+  // private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVAATOR_DOWN));
   private Trigger m_WristForward = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_FORWARD));
   private Trigger m_WristReverse = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_REVERSE));
 
@@ -118,8 +122,6 @@ public class RobotContainer {
   // ElevatorManual elevatorUp = new ElevatorManual(m_elevatorMotor, 0.3);
   // ElevatorManual elevatorDown = new ElevatorManual(m_elevatorMotor, -0.3);
 
-
-
   public RobotContainer() {
     NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
       SmartDashboard.putNumber("testingNamedCommands", 6232025);
@@ -128,6 +130,10 @@ public class RobotContainer {
 
     m_drivetrain.setupPathPlanner();
     configureBindings();
+    AmMag = new Counter(0);
+    AmIndex = new Counter(1);
+    // Set Semi-Period Mode in order to Measure the Pulse Width
+    AmMag.setSemiPeriodMode(true);
   }
 
   /**
@@ -171,8 +177,8 @@ public class RobotContainer {
     m_ArmUp.whileTrue(new ElevatorManual(m_Arm, -0.2));
     m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
-    m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
-    m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+    // m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
+    // m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
     m_WristForward.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0.2)));
     m_WristForward.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
@@ -180,12 +186,16 @@ public class RobotContainer {
     m_WristReverse.whileTrue(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, -0.2)));
     m_WristReverse.onFalse(Commands.run(() -> m_wristMotor.set(ControlMode.PercentOutput, 0)));
 
-    // m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.LOW_TARGET));
-    // m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.MID_TARGET));
-    // m_l3.whileTrue(Commands.run(() -> {
-    //   .m_ElevatorMotor.setControl(m_request.withPosition(Constants.MID_TARGET));
-    // }));
-    // m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.HIGH_TARGET));
+    // FIX
+    // m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.LOW_TARGET),
+    // Commands.run(() -> execute(Constants.LOW_TARGET_WRIST)));
+    // m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.MID_TARGET),
+    // Commands.run(() -> execute(Constants.MID_TARGET_WRIST)));
+    // // m_l3.whileTrue(Commands.run(() -> {
+    // // .m_ElevatorMotor.setControl(m_request.withPosition(Constants.MID_TARGET));
+    // // }));
+    // m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.HIGH_TARGET),
+    // Commands.run(() -> execute(Constants.HIGH_TARGET_WRIST)));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 
@@ -290,5 +300,23 @@ public class RobotContainer {
             && m_Arm.m_ElevatorMotor.getVelocity().getValueAsDouble() > 0.0)) {
       m_Arm.m_ElevatorMotor.set(0);
     }
+  }
+
+  public double calcAngle() {
+    double value = AmMag.getPeriod();
+    // SmartDashboard.putNumber("Rotations", AmIndex.get());
+    // SmartDashboard.putNumber("Intermediate", value);
+    // The 9.73e-4 is the total period of the PWM output on the am-3749
+    // The value will then be divided by the period to get duty cycle.
+    // This is converted to degrees and Radians
+    // double angleDEG = (value/9.739499999999999E-4)*361 -1;
+    angleRAD = (value / 9.739499999999999E-4) * 2 * (Math.PI);
+    // SmartDashboard.putNumber("Angle in Degrees", angleDEG);
+    // SmartDashboard.putNumber("Angle in Radians", angleRAD);
+    return angleRAD;
+  }
+
+  public void execute(double targetAngle) {
+    m_Arm.m_WristMotor.set(ControlMode.Position, targetAngle);
   }
 }

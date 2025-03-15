@@ -159,6 +159,9 @@ public final class Constants {
   public static final double MID_TARGET = -30;
   public static final double HIGH_TARGET = -83.3;
   public static final double PICKUP_TARGET = -0.5;
+  public static final int LOW_TARGET_WRIST = -1;
+  public static final int MID_TARGET_WRIST = -1;
+  public static final int HIGH_TARGET_WRIST = -1;
 
   public static final double PIVOT_CAN_DIFFERENCE_BETWEEN_STARTING_AND_LEVEL = -1;
   public static final double PIVOT_GEAR_RATIO = 160.0;
@@ -218,7 +221,7 @@ public final class Constants {
 
   //CRISPY
   public static final int ELEVATOR_UP = 19;
-  public static final int ELEVAATOR_DOWN = 20;
+  public static final int ELEVATOR_DOWN = 20;
   public static final int WRIST_FORWARD = 22;
   public static final int WRIST_REVERSE = 21;
   

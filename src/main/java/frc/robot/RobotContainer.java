@@ -38,13 +38,12 @@ import com.pathplanner.lib.auto.NamedCommands;
  */
 public class RobotContainer {
   public TalonFX m_elevatorMotor = new TalonFX(Constants.ELEVATOR_MOTOR);
-  // public SparkMax m_wristMotor = new SparkMax(Constants.CORALPIVOT_MOTOR,
-  // MotorType.kBrushless);
-  public TalonSRX m_flywheelMotor = new TalonSRX(Constants.CORALFLYWHEEL_MOTOR);
+  public TalonSRX m_wristMotor = new TalonSRX(Constants.WRIST_MOTOR);
+  public TalonSRX m_intakeMotor = new TalonSRX(Constants.INTAKE_MOTOR);
   // The robot's subsystems and commands are defined here...
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
-  public final Arm m_Arm = new Arm(m_elevatorMotor);
+  public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor, m_intakeMotor);
 
   // need actual hardware location of button board
   int x = -1;

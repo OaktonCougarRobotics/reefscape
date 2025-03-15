@@ -150,11 +150,8 @@ public final class Constants {
 
   // ARM_SUBSYSTEM Configuration
   // All -1 as filler values, define all the motor id's and DIO id later
-  public static final int CORALFLYWHEEL_MOTOR = -1; // FIX
-  public static final int CORALPIVOT_MOTOR= -1; // FIX
-  public static final int ALGAEDRIVEMOTOR = -1;
-  public static final int ALGAEPIVOTMOTOR = -1;
-  public static final int TELESCOPE_MOTOR = -1;
+  public static final int INTAKE_MOTOR = -1;
+  public static final int WRIST_MOTOR = -1;
   public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
   public static double BOTTOM_TURNS = -1;

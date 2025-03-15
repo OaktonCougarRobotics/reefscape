@@ -10,9 +10,13 @@ import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
     public TalonFX m_ElevatorMotor;
+    public TalonSRX m_WristMotor;
+    public TalonSRX m_IntakeMotor;
 
-    public Arm(TalonFX elev) {
+    public Arm(TalonFX elev, TalonSRX wrist, TalonSRX intake) {
         this.m_ElevatorMotor = elev;
+        this.m_WristMotor = wrist;
+        this.m_IntakeMotor = intake;
         // this.m_CoralPivotMotor = m_PivotMotor;
         // var slot0Configs = new Slot0Configs();
         // slot0Configs.kP = -1; // An error of 1 rotation results in 2.4 V output

@@ -7,12 +7,11 @@ package frc.robot;
 import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorManual;
-import frc.robot.commands.SpinFeeder;
+import frc.robot.commands.ElevatorSetpoint;
 import frc.robot.subsystems.Drivetrain;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import java.io.File;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -77,7 +76,6 @@ public class RobotContainer {
   // m_buttonBoard.getRawButton(x));
   // public final Trigger m_coralStationPos = new Trigger(() ->
   // m_buttonBoard.getRawButton(x));
-  public final Trigger resetArmPose = new Trigger(() -> m_buttonBoard.getRawButton(2));
   public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(4));
   public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(5));
   public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(6));
@@ -110,13 +108,7 @@ public class RobotContainer {
   private Trigger m_ClimbRightDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_DOWN));
 
 
-  // feeder motor (anatoli)
-  private TalonSRX m_feederMotor = new TalonSRX(22);
-  // elevator, wrist, and flywheel
 
-  SpinFeeder spinFeederCommand = new SpinFeeder(m_feederMotor);
-
-  final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
   Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180)));
   DriveCommand driveCommand = new DriveCommand(
       m_drivetrain,
@@ -133,7 +125,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
       SmartDashboard.putNumber("testingNamedCommands", 6232025);
     }));
-    NamedCommands.registerCommand("spin", spinFeederCommand);
 
     NamedCommands.registerCommand("Outtake", Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.125)));
 
@@ -165,47 +156,43 @@ public class RobotContainer {
     m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
     m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
-    // m_WristForward.whileTrue(Commands.run(() -> {
-    //   m_leftClimb.set(-0.1);
-    //   m_rightClimb.set(-0.1);
-    // }));
-    // m_WristForward.onFalse(Commands.run(() -> {
-    //   m_leftClimb.set(0);
-    //   m_rightClimb.set(0);
-    // }));
+    m_WristForward.whileTrue(Commands.run(() -> { 
+      m_wristMotor.set(ControlMode.PercentOutput, 0.2);
+    }));
+    m_WristForward.onFalse(Commands.run(() -> {
+      m_wristMotor.set(ControlMode.PercentOutput, 0);
+    }));
 
-    // m_WristReverse.whileTrue(Commands.run(() -> {
-    //   m_leftClimb.set(0.1);
-    //   m_rightClimb.set(0.1);
-    // }));
-    // m_WristReverse.onFalse(Commands.run(() -> {
-    //   m_leftClimb.set(0);
-    //   m_rightClimb.set(0);
-    // }));
+    m_WristReverse.whileTrue(Commands.run(() -> {
+      m_wristMotor.set(ControlMode.PercentOutput, -0.2);
+    }));
+    m_WristReverse.onFalse(Commands.run(() -> {
+      m_wristMotor.set(ControlMode.PercentOutput, 0);
+    }));
 
     m_ClimbLeftUp.whileTrue(Commands.run(() -> {
-      m_leftClimb.set(-0.1);
+      m_leftClimb.set(-0.3);
     }));
     m_ClimbLeftUp.onFalse(Commands.run(() -> {
       m_leftClimb.set(0);
     }));
 
     m_ClimbLeftDown.whileTrue(Commands.run(() -> {
-      m_leftClimb.set(0.4);
+      m_leftClimb.set(0.75);
     }));
     m_ClimbLeftDown.onFalse(Commands.run(() -> {
       m_leftClimb.set(0);
     }));
 
     m_ClimbRightUp.whileTrue(Commands.run(() -> {
-      m_rightClimb.set(-0.1);
+      m_rightClimb.set(-0.3);
     }));
     m_ClimbRightUp.onFalse(Commands.run(() -> {
       m_rightClimb.set(0);
     }));
 
     m_ClimbRightDown.whileTrue(Commands.run(() -> {
-      m_rightClimb.set(0.4);
+      m_rightClimb.set(0.75);
     }));
     m_ClimbRightDown.onFalse(Commands.run(() -> {
       m_rightClimb.set(0);
@@ -217,20 +204,11 @@ public class RobotContainer {
     m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
     m_FlywheelOut.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
-    // FIX
-    // m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.LOW_TARGET),
-    // Commands.run(() -> execute(Constants.LOW_TARGET_WRIST)));
-    // m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.MID_TARGET),
-    // Commands.run(() -> execute(Constants.MID_TARGET_WRIST)));
-    // // m_l3.whileTrue(Commands.run(() -> {
-    // // .m_ElevatorMotor.setControl(m_request.withPosition(Constants.MID_TARGET));
-    // // }));
-    // m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.HIGH_TARGET),
-    // Commands.run(() -> execute(Constants.HIGH_TARGET_WRIST)));
+    m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.LOW_TARGET));
+    m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.MID_TARGET));
+    m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.HIGH_TARGET));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
-
-    resetArmPose.onTrue(Commands.run(() -> m_elevatorMotor.setPosition(0.0)));
 
     // FIX: ATTEMPTS AT TOPOSE METHOD W/ CANCELLATION
     // i think this might work, but not entirely sure

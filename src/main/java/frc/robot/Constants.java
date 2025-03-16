@@ -157,7 +157,7 @@ public final class Constants {
   public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
   public static double BOTTOM_TURNS = -0.5;
-  public static final double LOW_TARGET = -1.5;
+  public static final double LOW_TARGET = -0.25;
   public static final double MID_TARGET = -30;
   public static final double HIGH_TARGET = -83.3;
   public static final double PICKUP_TARGET = -0.5;

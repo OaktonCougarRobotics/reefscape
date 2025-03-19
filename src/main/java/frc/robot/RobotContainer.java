@@ -8,6 +8,7 @@ import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorSetpoint;
+import frc.robot.commands.WristSetpoint;
 import frc.robot.subsystems.Drivetrain;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -57,10 +58,6 @@ public class RobotContainer {
 
   // Triggers on the joystick
   private Trigger m_navxReset = new Trigger(() -> m_joystick.getRawButton(3));
-  // private Trigger m_setTop = new Trigger(() -> m_joystick.getRawButton(2)); //
-  // Work in Progress - Horatio
-  // private Trigger m_setBottom = new Trigger(() -> m_joystick.getRawButton(1));
-  // // Work in Progress - Horatio
 
   // triggers on the button board
   private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_UP));
@@ -89,15 +86,36 @@ public class RobotContainer {
   AngleCorrection angleCorrection = new AngleCorrection(m_drivetrain, () -> {
     return test;
   });
-  // ElevatorManual elevatorUp = new ElevatorManual(m_elevatorMotor, 0.3);
-  // ElevatorManual elevatorDown = new ElevatorManual(m_elevatorMotor, -0.3);
 
   public RobotContainer() {
     NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
       SmartDashboard.putNumber("testingNamedCommands", 6232025);
     }));
 
-    NamedCommands.registerCommand("Outtake", Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.125)));
+    // ALL THE NAMED COMMANDS; UNCOMMENT WHEN THE METHODS THEY USE ARE ACTUALLY
+    // TESTED
+    // NamedCommands.registerCommand("Elevators; L4", new ElevatorSetpoint(m_Arm,
+    // Constants.ELEVATORS_L4));
+    // NamedCommands.registerCommand("Elevators; L3", new ElevatorSetpoint(m_Arm,
+    // Constants.ELEVATORS_L3));
+    // NamedCommands.registerCommand("Elevators; L2", new ElevatorSetpoint(m_Arm,
+    // Constants.ELEVATORS_L2));
+    // NamedCommands.registerCommand("Wrist; Place L4", new WristSetpoint(m_Arm,
+    // Constants.WRIST_L4));
+    // NamedCommands.registerCommand("Wrist; Place L3", new WristSetpoint(m_Arm,
+    // Constants.WRIST_L3));
+    // NamedCommands.registerCommand("Wrist; Place L2", new WristSetpoint(m_Arm,
+    // Constants.WRIST_L2));
+
+    // NamedCommands.registerCommand("Elevators; Pickup", new
+    // ElevatorSetpoint(m_Arm, Constants.ELEVATORS_PICKUP));
+    // NamedCommands.registerCommand("Wrist; Pickup", new WristSetpoint(m_Arm,
+    // Constants.WRIST_PICKUP));
+
+    // NamedCommands.registerCommand("Intake", Commands.run(() ->
+    // m_intakeMotor.set(ControlMode.PercentOutput, 0.2)));
+    // NamedCommands.registerCommand("Outtake", Commands.run(() ->
+    // m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
 
     m_drivetrain.setupPathPlanner();
     configureBindings();
@@ -175,9 +193,12 @@ public class RobotContainer {
     m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
     m_FlywheelOut.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
-    m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.BOTTOM_TURNS + Constants.LOW_TARGET));
-    m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.BOTTOM_TURNS + Constants.MID_TARGET));
-    m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.BOTTOM_TURNS + Constants.HIGH_TARGET));
+    // m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.BOTTOM_TURNS +
+    // Constants.ELEVATORS_L2));
+    // m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.BOTTOM_TURNS +
+    // Constants.ELEVATORS_L3));
+    // m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.BOTTOM_TURNS +
+    // Constants.ELEVATORS_L4));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 

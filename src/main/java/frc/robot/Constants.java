@@ -158,13 +158,14 @@ public final class Constants {
   public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
   public static double BOTTOM_TURNS = -0.5;
-  public static final double LOW_TARGET = -0.25;
-  public static final double MID_TARGET = -30;
-  public static final double HIGH_TARGET = -83.3;
-  public static final double PICKUP_TARGET = -0.5;
-  public static final int LOW_TARGET_WRIST = -1;
-  public static final int MID_TARGET_WRIST = -1;
-  public static final int HIGH_TARGET_WRIST = -1;
+  public static final double ELEVATORS_L2 = -0.25;
+  public static final double ELEVATORS_L3 = -30;
+  public static final double ELEVATORS_L4 = -83.3;
+  public static final double ELEVATORS_PICKUP = -0.5;
+  public static final double WRIST_L2 = -1;
+  public static final double WRIST_L3 = -1;
+  public static final double WRIST_L4 = -1;
+  public static final double WRIST_PICKUP = -1;
 
   public static final double PIVOT_CAN_DIFFERENCE_BETWEEN_STARTING_AND_LEVEL = -1;
   public static final double PIVOT_GEAR_RATIO = 160.0;

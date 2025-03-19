@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveCommand extends Command {
@@ -13,6 +14,8 @@ public class DriveCommand extends Command {
     private DoubleSupplier xTranslationSupplier;
     private DoubleSupplier yTranslationSupplier;
     private DoubleSupplier thetaTranslationSupplier;
+    private double rotateMod = 0;
+    private double translationMod = 0.3;
 
     /**
      * Constructs a DriveCommand command
@@ -45,12 +48,12 @@ public class DriveCommand extends Command {
     @Override
     public void execute() {
         drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(
-                Math.pow(deadzone(xTranslationSupplier.getAsDouble(), 0.05)
-                        * drivetrain.swerveDrive.getMaximumChassisVelocity(), 3),
-                Math.pow(deadzone(yTranslationSupplier.getAsDouble(), 0.05)
-                        * drivetrain.swerveDrive.getMaximumChassisVelocity(), 3),
-                deadzone(thetaTranslationSupplier.getAsDouble(), 0.05)
-                        * drivetrain.swerveDrive.getMaximumChassisAngularVelocity()),
+                cubicMod(deadzone(xTranslationSupplier.getAsDouble(), Constants.OperatorConstants.X_DEADBAND)
+                        * drivetrain.swerveDrive.getMaximumChassisVelocity(), translationMod),
+                cubicMod(deadzone(yTranslationSupplier.getAsDouble(), Constants.OperatorConstants.Y_DEADBAND)
+                        * drivetrain.swerveDrive.getMaximumChassisVelocity(), translationMod),
+                cubicMod(deadzone(thetaTranslationSupplier.getAsDouble(), Constants.OperatorConstants.Z_DEADBAND)
+                        * drivetrain.swerveDrive.getMaximumChassisAngularVelocity(), rotateMod)),
                 new Translation2d());
     }
 
@@ -71,5 +74,9 @@ public class DriveCommand extends Command {
         if (Math.abs(num) < deadband)
             return 0.0;
         return num;
+    }
+
+    public static double cubicMod(double in, double cm) {
+        return cm * Math.pow(in, 3) + (1 - cm) * in;
     }
 }

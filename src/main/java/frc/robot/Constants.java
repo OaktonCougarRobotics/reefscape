@@ -150,19 +150,21 @@ public final class Constants {
   public static final String COB_KEY_MATCHTIME = "/COB/matchTime";
 
   // ARM_SUBSYSTEM Configuration
-  // All -1 as filler values, define all the motor id's and DIO id later
-  public static final int CORALFLYWHEEL_MOTOR = -1; // FIX
-  public static final int CORALPIVOT_MOTOR= -1; // FIX
-  public static final int ALGAEDRIVEMOTOR = -1;
-  public static final int ALGAEPIVOTMOTOR = -1;
-  public static final int TELESCOPE_MOTOR = -1;
-  public static final int ELEVATOR_MOTOR = -1;
+  // All -1 as filler values, define all the motor id's
+  public static final int LEFT_CLIMB_MOTOR = 39;
+  public static final int RIGHT_CLIMB_MOTOR = 31;
+  public static final int INTAKE_MOTOR = 14;
+  public static final int WRIST_MOTOR = 15;
+  public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
-  public static double BOTTOM_TURNS = -1;
-  public static final double LOW_TARGET = -1;
-  public static final double MID_TARGET = -1;
-  public static final double HIGH_TARGET = -1;
-  public static final double PICKUP_TARGET = -1;
+  public static double BOTTOM_TURNS = -0.5;
+  public static final double LOW_TARGET = -0.25;
+  public static final double MID_TARGET = -30;
+  public static final double HIGH_TARGET = -83.3;
+  public static final double PICKUP_TARGET = -0.5;
+  public static final int LOW_TARGET_WRIST = -1;
+  public static final int MID_TARGET_WRIST = -1;
+  public static final int HIGH_TARGET_WRIST = -1;
 
   public static final double PIVOT_CAN_DIFFERENCE_BETWEEN_STARTING_AND_LEVEL = -1;
   public static final double PIVOT_GEAR_RATIO = 160.0;
@@ -201,32 +203,42 @@ public final class Constants {
   public static final double ANATOLI_CHASSIS_WIDTH = 0.3; // meters
 
   // Button IDs
-  public static final int DUSTPANUP_LIMIT = 0;
-  public static final int SHOOTER_SPEED = 1;
-  public static final int FLYWHEEL_SWITCH = 1;
-  public static final int INTAKE_SWITCH = 2;
-  public static final int AIM_BUTTON = 3;
-  public static final int TEST_BIG_YELLOW_BUTTON = 4;
-  public static final int SERVO_SHOOT = 5;
-  public static final int SHOOTER_LOCK_POWER = 6;
-  public static final int CLOSE_SHOOT_BUTTON = 7;
-  public static final int PICKUP_BUTTON = 8;
-  public static final int PROTECTED_BLOCK_SHOOT = 12;
-  public static final int NUKE_SWITCH_4 = 13;
-  public static final int NUKE_SWITCH_3 = 14;
-  public static final int NUKE_SWITCH_2 = 15;
-  public static final int NUKE_SWITCH_1 = 16;
-  public static final int SHOOTER_DOWN = 17;
-  public static final int SHOOTER_UP = 18;
-  public static final int CLIMB_UP = 19;
-  public static final int CLIMB_DOWN = 20;
-  public static final int DUSTPAN_UP = 21;
-  public static final int DUSTPAN_DOWN = 22;
+  // public static final int DUSTPANUP_LIMIT = 0;
+  // public static final int SHOOTER_SPEED = 1;
+  // public static final int FLYWHEEL_SWITCH = 1;
+  // public static final int INTAKE_SWITCH = 2;
+  // public static final int AIM_BUTTON = 3;
+  // public static final int TEST_BIG_YELLOW_BUTTON = 4;
+  // public static final int SERVO_SHOOT = 5;
+  // public static final int SHOOTER_LOCK_POWER = 6;
+  // public static final int CLOSE_SHOOT_BUTTON = 7;
+  // public static final int PICKUP_BUTTON = 8;
+  // public static final int PROTECTED_BLOCK_SHOOT = 12;
+  // public static final int NUKE_SWITCH_4 = 13;
+  // public static final int NUKE_SWITCH_3 = 14;
+  // public static final int NUKE_SWITCH_2 = 15;
+  // public static final int NUKE_SWITCH_1 = 16;
+
+
+  //CRISPY
+  public static final int CLIMB_LEFT_UP = 15;
+  public static final int CLIMB_LEFT_DOWN = 16;
+  public static final int CLIMB_RIGHT_UP = 13;
+  public static final int CLIMB_RIGHT_DOWN = 14;
+
+  public static final int INTAKE_OUT = 17;
+  public static final int INTAKE_IN = 18;
+  public static final int ELEVATOR_UP = 19;
+  public static final int ELEVATOR_DOWN = 20;
+  public static final int WRIST_FORWARD = 22;
+  public static final int WRIST_REVERSE = 21;
   
 
 
-  public static final int ARM_UP = -1;
-  public static final int ARM_DOWN = -1;
+  public static final int ARM_UP = 6;
+  public static final int ARM_DOWN = 4;
+  public static double ARM_HIGH = -83; //-84.87
+  public static double ARM_LOW = -0.5; //0
 
   public static final double LIMELIGHT_HEIGHT = 0.238125; // m from the bottom
   public static final double LIMELIGHT_YTHETA = 60; // off the horizontal
@@ -253,9 +265,9 @@ public final class Constants {
     public static final double LEFT_X_DEADBAND = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double X_DEADBAND = 0.075;
-    public static final double Y_DEADBAND = 0.075;
-    public static final double Z_DEADBAND = 0.03;
+    public static final double X_DEADBAND = 0.03; //0.075
+    public static final double Y_DEADBAND = 0.03;
+    public static final double Z_DEADBAND = 0.03; //0.03
     public static final double TURN_CONSTANT = 6;
   }
 }

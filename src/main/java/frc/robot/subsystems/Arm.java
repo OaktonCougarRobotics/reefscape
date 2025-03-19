@@ -1,41 +1,35 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Arm {
-    private TalonFX m_ElevatorMotor;
-    private SparkMax m_CoralPivotMotor;
+public class Arm extends SubsystemBase {
+    public TalonFX m_ElevatorMotor;
+    public TalonFX m_WristMotor;
+    public TalonSRX m_IntakeMotor;
+    public Counter AmMag;
+    public Counter AmIndex;
+    public double angleRad;
 
-    public Arm(TalonFX elev, SparkMax m_PivotMotor) {
+    public Arm(TalonFX elev, TalonFX wrist, TalonSRX intake) {
         this.m_ElevatorMotor = elev;
-        this.m_CoralPivotMotor = m_PivotMotor;
-        // m_CoralPivotMotor = new SparkMax(1, MotorType.kBrushless);
-        // SparkMaxConfig config = new SparkMaxConfig();
-        // config.closedLoop.pid(1.0, 0.0, 0.0);
-        // m_CoralPivotMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        this.m_WristMotor = wrist;
+        this.m_IntakeMotor = intake;
+        m_ElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+        m_WristMotor.setNeutralMode(NeutralModeValue.Brake);
+        m_IntakeMotor.setNeutralMode(NeutralMode.Brake);
+
+        Constants.BOTTOM_TURNS = m_ElevatorMotor.getPosition().getValueAsDouble();
     }
 
-    public void GoToSetPoint(double targetTurns) {
-        // m_ElevatorMotor.set(new VelocityDutyCycle(0.5));
-        // m_ElevatorMotor.setPosition(Constants.BOTTOM_TURNS + targetTurns);
+    public void intake(TalonSRX m_Motor) {
+        m_Motor.set(ControlMode.PercentOutput, 0.4);
     }
-
-    public void intake(TalonSRX m_Motor){
-        // m_Motor.set(ControlMode.PercentOutput, 0.4);
-    }
-
-    
-        
-
-
 }

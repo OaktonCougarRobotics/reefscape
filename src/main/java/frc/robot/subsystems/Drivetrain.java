@@ -40,7 +40,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.AT;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.parser.SwerveParser;
@@ -128,6 +127,10 @@ public class Drivetrain extends SubsystemBase {
 
     m_gyro = swerveDrive.getGyro();
 
+    for (String key : swerveDrive.getModuleMap().keySet())
+      System.out.println(key + ": " + swerveDrive.getModuleMap().get(key).getAbsolutePosition());
+    // swerveDrive.getModuleMap().get("frontleft").setAngle(90);
+
     m_poseEstimator = new SwerveDrivePoseEstimator(
         m_kinematics,
         m_gyro.getRotation3d().toRotation2d(),
@@ -192,49 +195,47 @@ public class Drivetrain extends SubsystemBase {
             m_backLeft.getPosition(),
             m_backRight.getPosition()
         });
-
-    boolean rejectVision = false;
-
-    LimelightHelpers.SetRobotOrientation("limelight",
-        getPose().getRotation().getDegrees(),
-        0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our
-    // angular velocity is greater than 720
-    // degrees per second, ignore vision updates
-    {
-      rejectVision = true;
-    }
-    if (mt2 == null) {
-      SmartDashboard.putBoolean("mt2Null?", true);
-      rejectVision = true;
-    } else {
-      SmartDashboard.putBoolean("mt2Null?", false);
-    }
-    if (mt2 == null || mt2.tagCount == 0) { // || mt2.pose == null) {
-      rejectVision = true;
-    }
-    if (!rejectVision) {
-      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-      m_poseEstimator.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
-
-      swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-      swerveDrive.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
-    } else if (rejectVision) {
-      m_poseEstimator.update(
-          m_gyro.getRotation3d().toRotation2d(),
-          new SwerveModulePosition[] {
-              m_frontLeft.getPosition(),
-              m_frontRight.getPosition(),
-              m_backLeft.getPosition(),
-              m_backRight.getPosition()
-          });
-    }
   }
+
+  boolean rejectVision = false;
+
+  // LimelightHelpers.SetRobotOrientation("limelight",
+  // m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+  // 0, 0, 0, 0, 0);
+  // LimelightHelpers.PoseEstimate mt2 =
+  // LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+  // if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our
+  // // angular velocity is greater than 720
+  // // degrees per second, ignore vision updates
+  // {
+  // rejectVision = true;
+  // }
+  // if (mt2.tagCount == 0) {
+  // SmartDashboard.putBoolean("mt2Null?", true);
+  // rejectVision = true;
+  // } else {
+  // SmartDashboard.putBoolean("mt2Null?", false);
+  // }
+  // if (mt2.tagCount == 0) { // || mt2.pose == null) {
+  // rejectVision = true;
+  // }
+  // if (!rejectVision) {
+  // m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7,
+  // 9999999));
+  // m_poseEstimator.addVisionMeasurement(
+  // mt2.pose,
+  // mt2.timestampSeconds);
+  // } else if (rejectVision) {
+  // m_poseEstimator.update(
+  // m_gyro.getRotation3d().toRotation2d(),
+  // new SwerveModulePosition[] {
+  // m_frontLeft.getPosition(),
+  // m_frontRight.getPosition(),
+  // m_backLeft.getPosition(),
+  // m_backRight.getPosition()
+  // });
+  // }
+  // }
 
   public Pose2d getPose() {
     return swerveDrive.getPose();
@@ -406,7 +407,6 @@ public class Drivetrain extends SubsystemBase {
     double ax = reef.getX() + radiusOfRotation * Math.cos(theta);
     double ay = reef.getY() + radiusOfRotation * Math.sin(theta);
     Pose2d a = new Pose2d(ax, ay, new Rotation2d(theta + Math.PI));
-
     return a;
   }
 
@@ -422,39 +422,40 @@ public class Drivetrain extends SubsystemBase {
   }
 
   // public int closestAprilTag() {
-  //   double min = Math
-  //       .sqrt(Math.pow(getPose().getX() - Constants.aprilPose[1].getPose().getX(), 2)
-  //           + Math.pow(getPose().getY() - Constants.aprilPose[1].getPose().getY(), 2));
-  //   int index = 0;
-  //   for (int i = 1; i <= 22; i++) {
-  //     if (Math.sqrt(
-  //         Math.pow(getPose().getX() - Constants.aprilPose[i].getPose().getX(), 2) + Math
-  //             .pow(getPose().getY() - Constants.aprilPose[i].getPose().getY(), 2)) < min) {
-  //       min = Math
-  //           .sqrt(Math.pow(getPose().getX() - Constants.aprilPose[i].getPose().getX(), 2)
-  //               + Math.pow(getPose().getY() - Constants.aprilPose[i].getPose().getY(), 2));
-  //       index = i;
-  //     }
-  //   }
-  //   System.out.println(index);
-  //   return index;
+  // double min = Math
+  // .sqrt(Math.pow(getPose().getX() - Constants.aprilPose[1].getPose().getX(), 2)
+  // + Math.pow(getPose().getY() - Constants.aprilPose[1].getPose().getY(), 2));
+  // int index = 0;
+  // for (int i = 1; i <= 22; i++) {
+  // if (Math.sqrt(
+  // Math.pow(getPose().getX() - Constants.aprilPose[i].getPose().getX(), 2) +
+  // Math
+  // .pow(getPose().getY() - Constants.aprilPose[i].getPose().getY(), 2)) < min) {
+  // min = Math
+  // .sqrt(Math.pow(getPose().getX() - Constants.aprilPose[i].getPose().getX(), 2)
+  // + Math.pow(getPose().getY() - Constants.aprilPose[i].getPose().getY(), 2));
+  // index = i;
+  // }
+  // }
+  // System.out.println(index);
+  // return index;
   // }
 
   public int closestAprilTag(AT[] aprilTags) {
     double min = Math.sqrt(Math.pow(getPose().getX() - aprilTags[0].getPose().getX(), 2)
-                         + Math.pow(getPose().getY() - aprilTags[0].getPose().getY(), 2));
+        + Math.pow(getPose().getY() - aprilTags[0].getPose().getY(), 2));
     int aprilTagID = aprilTags[0].getId();
-    for(AT at: aprilTags)
-    {
-      if (Math.sqrt(Math.pow(getPose().getX() - at.getPose().getX(), 2) + Math.pow(getPose().getY() - at.getPose().getY(), 2)) < min) {
+    for (AT at : aprilTags) {
+      if (Math.sqrt(Math.pow(getPose().getX() - at.getPose().getX(), 2)
+          + Math.pow(getPose().getY() - at.getPose().getY(), 2)) < min) {
         min = Math
             .sqrt(Math.pow(getPose().getX() - at.getPose().getX(), 2)
                 + Math.pow(getPose().getY() - at.getPose().getY(), 2));
         aprilTagID = at.getId();
+      }
     }
+    return aprilTagID;
   }
-  return aprilTagID;
-}
 
   public void toClosestAprilTag() {
     toPose(Constants.aprilPose[closestAprilTag(Constants.aprilPose)].getOffestPose());
@@ -475,7 +476,14 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-    updateTelemetry();
+    // updateTelemetry();
+    // SmartDashboard.putNumber("Front left volt",
+    // swerveDrive.getModuleMap().get("frontleft").getAngleMotor().getVoltage());
+    for (String key : swerveDrive.getModuleMap().keySet()) {
+      SmartDashboard.putNumber(key + "rawabsolute", swerveDrive.getModuleMap().get(key).getRawAbsolutePosition());
+      SmartDashboard.putNumber(key + "absolute", swerveDrive.getModuleMap().get(key).getAbsolutePosition());
+
+    }
   }
 
   public void updateTelemetry() {

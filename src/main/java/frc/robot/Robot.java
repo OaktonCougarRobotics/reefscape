@@ -4,10 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
-
-// import com.ctre.phoenix6.controls.DutyCycleOut;
-// import com.ctre.phoenix6.swerve.SwerveModule;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -71,7 +70,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_robotContainer.getDrivetrain().zeroWheels();
     m_robotContainer.getDrivetrain().zeroGyro();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -89,6 +87,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    CommandScheduler.getInstance().cancelAll();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -97,10 +96,12 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      // getgyro to get urrent gyro and setgyro to set the gyro just tset the gyro to
-      // getgyro-180
-      m_robotContainer.m_drivetrain.changeYawAutoRed();
+    
+    // m_robotContainer.m_drivetrain.swerveDrive.setGyro(m_robotContainer.m_drivetrain.swerveDrive.getGyro().getRotation3d().plus(new Rotation3d(new Rotation2d(180.0))));
+
+    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+      // m_robotContainer.m_drivetrain.changeYawAutoRed();
+      m_robotContainer.m_drivetrain.swerveDrive.setGyro(new Rotation3d(new Rotation2d(Math.PI * 0)));
     }
   }
 

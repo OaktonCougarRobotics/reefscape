@@ -1,40 +1,41 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.wpilibj2.command.Command;
+//import frc.robot.Constants;
+import frc.robot.subsystems.Arm;
 
 public class ElevatorManual extends Command {
-  private TalonFX elevator;
+  private Arm arm;
   private double speed;
-
   /**
    * Constructs an elevator movement command.
    *
    * @param elevator the elevator motor object
    * @param speed    the speed we aim to run the elevator motor at
    */
-  public ElevatorManual(TalonFX elevator, double speed) {
-    this.elevator = elevator;
+  public ElevatorManual(Arm arm, double speed) {
     this.speed = speed;
+    this.arm = arm;
   }
 
   @Override
   public void initialize() {
+    addRequirements(arm);
   }
 
   @Override
   public void execute() {
-    elevator.set(speed);
+    arm.m_ElevatorMotor.set(speed);
   }
 
   @Override
   public void end(boolean interrupted) {
-    elevator.set(0.0);
+    arm.m_ElevatorMotor.set(0.0);
   }
 
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+  // @Override
+  // public boolean isFinished() {
+  //   // return arm.m_ElevatorMotor.getPosition().getValueAsDouble() < Constants.UPPER_LIMIT ||
+  //   // arm.m_ElevatorMotor.getPosition().getValueAsDouble() > Constants.LOWER_LIMIT;
+  // }
 }

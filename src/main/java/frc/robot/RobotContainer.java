@@ -7,24 +7,17 @@ package frc.robot;
 import frc.robot.commands.AngleCorrection;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorManual;
-import frc.robot.commands.SpinFeeder;
+import frc.robot.commands.ElevatorSetpoint;
 import frc.robot.subsystems.Drivetrain;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import java.io.File;
-import java.lang.Object;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,52 +39,47 @@ import com.pathplanner.lib.auto.NamedCommands;
  */
 public class RobotContainer {
   public TalonFX m_elevatorMotor = new TalonFX(Constants.ELEVATOR_MOTOR);
-  //public SparkMax m_wristMotor = new SparkMax(Constants.CORALPIVOT_MOTOR, MotorType.kBrushless);
-  public TalonSRX m_flywheelMotor = new TalonSRX(Constants.CORALFLYWHEEL_MOTOR);
+  public TalonFX m_wristMotor = new TalonFX(Constants.WRIST_MOTOR);
+  public TalonSRX m_intakeMotor = new TalonSRX(Constants.INTAKE_MOTOR);
+  public TalonFX m_leftClimb = new TalonFX(Constants.LEFT_CLIMB_MOTOR);
+  public TalonFX m_rightClimb = new TalonFX(Constants.RIGHT_CLIMB_MOTOR);
   // The robot's subsystems and commands are defined here...
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
       "swerve"));
- //public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor);
+  public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor, m_intakeMotor);
 
-  // need actual hardware location of button board
-  int x = -1;
-  public final Joystick m_buttonBoard = new Joystick(x);
-  // button board buttons
-  // four extra buttons not declared
-  public final Trigger m_climbLeft = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_climbRight = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // manual control button
-  public final Trigger m_manualWrist = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_manualElevatorLift = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // algae button
-  public final Trigger m_algae = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_intakeSwitch = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // different levels
-  public final Trigger m_startingArmPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_coralStationPos = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(x));
-  // vision button
-  public final Trigger m_horatioMagic = new Trigger(() -> m_buttonBoard.getRawButton(x));
+  // buttonboard object
+  public final GenericHID m_buttonBoard = new GenericHID(0);
+  public final GenericHID m_buttonBoard2 = new GenericHID(2);
 
   // Joystick object
   public final Joystick m_joystick = new Joystick(1);
+
   // Triggers on the joystick
-  private Trigger m_elevatorUp = new Trigger(() -> m_joystick.getRawButton(6));
-  private Trigger m_elevatorDown = new Trigger(() -> m_joystick.getRawButton(4));
   private Trigger m_navxReset = new Trigger(() -> m_joystick.getRawButton(3));
-  private Trigger m_toPose = new Trigger(() -> m_joystick.getRawButton(2)); // Work in Progress - Horatio
-  private Trigger m_setTargetPose = new Trigger(() -> m_joystick.getRawButton(1)); // Work in Progress - Horatio
-  private Trigger m_ArmUp = new Trigger(() -> m_joystick.getRawButton(Constants.ARM_UP));
-  private Trigger m_ArmDown = new Trigger(() -> m_joystick.getRawButton(Constants.ARM_DOWN));
+  // private Trigger m_setTop = new Trigger(() -> m_joystick.getRawButton(2)); //
+  // Work in Progress - Horatio
+  // private Trigger m_setBottom = new Trigger(() -> m_joystick.getRawButton(1));
+  // // Work in Progress - Horatio
 
-  // feeder motor (anatoli)
-  private TalonSRX m_feederMotor = new TalonSRX(22);
-  // elevator, wrist, and flywheel
+  // triggers on the button board
+  private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_UP));
+  private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_DOWN));
+  private Trigger m_WristForward = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_FORWARD));
+  private Trigger m_WristReverse = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_REVERSE));
+  private Trigger m_FlywheelIn = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_IN));
+  private Trigger m_FlywheelOut = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_OUT));
 
-  SpinFeeder spinFeederCommand = new SpinFeeder(m_feederMotor);
+  private Trigger m_ClimbLeftUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_UP));
+  private Trigger m_ClimbLeftDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_DOWN));
+  private Trigger m_ClimbRightUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_UP));
+  private Trigger m_ClimbRightDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_DOWN));
+
+  public Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(4));
+  public Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(5));
+  public Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(6));
+  public Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(7));
+
   Pose2d test = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180)));
   DriveCommand driveCommand = new DriveCommand(
       m_drivetrain,
@@ -101,14 +89,15 @@ public class RobotContainer {
   AngleCorrection angleCorrection = new AngleCorrection(m_drivetrain, () -> {
     return test;
   });
-  ElevatorManual elevatorUp = new ElevatorManual(m_elevatorMotor, 0.3);
-  ElevatorManual elevatorDown = new ElevatorManual(m_elevatorMotor, -0.3);
+  // ElevatorManual elevatorUp = new ElevatorManual(m_elevatorMotor, 0.3);
+  // ElevatorManual elevatorDown = new ElevatorManual(m_elevatorMotor, -0.3);
 
   public RobotContainer() {
     NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
       SmartDashboard.putNumber("testingNamedCommands", 6232025);
     }));
-    NamedCommands.registerCommand("spin", spinFeederCommand);
+
+    NamedCommands.registerCommand("Outtake", Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.125)));
 
     m_drivetrain.setupPathPlanner();
     configureBindings();
@@ -132,31 +121,77 @@ public class RobotContainer {
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(driveCommand);
 
-    m_setTargetPose.onTrue(Commands.runOnce(() -> {
-      test = m_drivetrain.getPose();
+    m_ArmUp.whileTrue(new ElevatorManual(m_Arm, -0.2));
+    m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+
+    m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
+    m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+
+    m_WristForward.whileTrue(Commands.run(() -> {
+      m_wristMotor.set(0.2);
+    }));
+    m_WristForward.onFalse(Commands.run(() -> {
+      m_wristMotor.set(0);
     }));
 
-    m_ArmUp.onTrue(Commands.runOnce(() -> m_elevatorMotor.set(0.2)));
+    m_WristReverse.whileTrue(Commands.run(() -> {
+      m_wristMotor.set(-0.2);
+    }));
+    m_WristReverse.onFalse(Commands.run(() -> {
+      m_wristMotor.set(0);
+    }));
 
-    m_ArmDown.onTrue(Commands.runOnce(() -> m_elevatorMotor.set(-0.2)));
+    m_ClimbLeftUp.whileTrue(Commands.run(() -> {
+      m_leftClimb.set(-0.3);
+    }));
+    m_ClimbLeftUp.onFalse(Commands.run(() -> {
+      m_leftClimb.set(0);
+    }));
+
+    m_ClimbLeftDown.whileTrue(Commands.run(() -> {
+      m_leftClimb.set(0.75);
+    }));
+    m_ClimbLeftDown.onFalse(Commands.run(() -> {
+      m_leftClimb.set(0);
+    }));
+
+    m_ClimbRightUp.whileTrue(Commands.run(() -> {
+      m_rightClimb.set(-0.3);
+    }));
+    m_ClimbRightUp.onFalse(Commands.run(() -> {
+      m_rightClimb.set(0);
+    }));
+
+    m_ClimbRightDown.whileTrue(Commands.run(() -> {
+      m_rightClimb.set(0.75);
+    }));
+    m_ClimbRightDown.onFalse(Commands.run(() -> {
+      m_rightClimb.set(0);
+    }));
+
+    m_FlywheelIn.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.2)));
+    m_FlywheelIn.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
+
+    m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
+    m_FlywheelOut.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
+
+    m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.BOTTOM_TURNS + Constants.LOW_TARGET));
+    m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.BOTTOM_TURNS + Constants.MID_TARGET));
+    m_l4.onTrue(new ElevatorSetpoint(m_Arm, Constants.BOTTOM_TURNS + Constants.HIGH_TARGET));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 
-    // FIX: ARM RELATED COMMANDS
-    m_elevatorUp.whileTrue(elevatorUp);
-    m_elevatorDown.whileTrue(elevatorDown);
-
     // FIX: ATTEMPTS AT TOPOSE METHOD W/ CANCELLATION
     // i think this might work, but not entirely sure
-    m_toPose.onTrue(Commands.runEnd(
-        () -> {
-          m_drivetrain.driveToPose(test).execute();
-          angleCorrection.schedule();
-        },
-        () -> {
-          /* does nothing on end, maybe we schedule the normal drive command? */
-        },
-        m_drivetrain));
+    // m_toPose.onTrue(Commands.runEnd(
+    // () -> {
+    // m_drivetrain.driveToPose(test).execute();
+    // angleCorrection.schedule();
+    // },
+    // () -> {
+    // /* does nothing on end, maybe we schedule the normal drive command? */
+    // },
+    // m_drivetrain));
 
     // m_toPose.whileTrue(
     // Commands.runOnce(
@@ -229,12 +264,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_drivetrain.getAutonomousCommand("Blue middlest StartPos");
-  }
-
-  public static double deadzone(double num, double deadband) {
-    if (Math.abs(num) < deadband)
-      return 0.0;
-    return num;
+    return m_drivetrain.getAutonomousCommand("Leave");
   }
 }

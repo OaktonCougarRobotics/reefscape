@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.004222972972974,
-        "y": 6.159459459459458
+        "x": 1.2128273139565677,
+        "y": 7.092047636387711
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.0693263321414825,
-        "y": 6.2791750837603555
+        "x": 2.139658616444935,
+        "y": 5.599452809283223
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Blue Coral Station"
     },
     {
       "anchor": {
-        "x": 3.6660000000000004,
-        "y": 5.428999999999999
+        "x": 4.982076353945974,
+        "y": 5.197885493908898
       },
       "prevControl": {
-        "x": 4.861010931007398,
-        "y": 5.892702956296932
+        "x": 4.414038388536874,
+        "y": 6.160921526601821
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef"
+      "linkedName": "Reef 2R"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.45242825109296
+    "rotation": -119.75565798072132
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.73350992394157
+    "rotation": 126.59108826739924
   },
   "useDefaultConstraints": true
 }

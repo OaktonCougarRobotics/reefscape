@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix6.controls.PositionVoltage;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Arm;
 
@@ -8,6 +10,7 @@ public class ElevatorSetpoint extends Command {
   private double target;
   private double difference;
   private double targetSpeed;
+  final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
   /**
    * Constructs a SpinFeeder command.
@@ -15,9 +18,9 @@ public class ElevatorSetpoint extends Command {
    * @param elevator the elevator motor object
    * @param target   the target amount of turns that the elevator aims to reach
    */
-  public ElevatorSetpoint(Arm arm, double targetRotations) {
+  public ElevatorSetpoint(Arm arm, double targetAngle) {
     this.arm = arm;
-    target = targetRotations;
+    target = targetAngle;
     difference = arm.calcAngle() - target;
   }
 
@@ -28,12 +31,12 @@ public class ElevatorSetpoint extends Command {
 
   @Override
   public void execute() {
-    difference = target - arm.m_ElevatorMotor.getPosition().getValueAsDouble();
-    double kp = 0.001;
+    difference = arm.m_ElevatorMotor.getPosition().getValueAsDouble() - target;
+    double kp = 0.15;
 	targetSpeed = kp * difference;
 	arm.m_ElevatorMotor.set(targetSpeed);
 
-    System.out.println("difference in elevator positions:" + difference);
+    System.out.println("target elevator position:" + target);
     System.out.println("current elevator position:" + arm.m_ElevatorMotor.getPosition().getValueAsDouble());
   }
 

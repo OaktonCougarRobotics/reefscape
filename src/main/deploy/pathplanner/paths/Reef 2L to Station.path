@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.259248377913135,
+        "y": 5.045816091763771
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.673096116922669,
+        "y": 5.799143025026483
+      },
+      "isLocked": false,
+      "linkedName": "Reef 2L"
+    },
+    {
+      "anchor": {
+        "x": 1.2128273139565677,
+        "y": 7.092047636387711
+      },
+      "prevControl": {
+        "x": 1.9631092447888896,
+        "y": 6.540711848269693
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Blue Coral Station"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Prepare for intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 1.5,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 540.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": 126.591
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -119.75565798072132
+  },
+  "useDefaultConstraints": true
+}

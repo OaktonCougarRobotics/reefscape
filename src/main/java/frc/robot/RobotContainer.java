@@ -51,8 +51,8 @@ public class RobotContainer {
   public final Arm m_Arm = new Arm(m_elevatorMotor, m_wristMotor, m_intakeMotor);
 
   // buttonboard object
-  public final GenericHID m_buttonBoard = new GenericHID(0);
-  public final GenericHID m_buttonBoard2 = new GenericHID(2);
+  // public final GenericHID m_buttonBoard = new GenericHID(0);
+  // public final GenericHID m_buttonBoard2 = new GenericHID(2);
 
 
   // public final Joystick m_buttonBoard = new Joystick(x);
@@ -77,11 +77,11 @@ public class RobotContainer {
   // m_buttonBoard.getRawButton(x));
   // public final Trigger m_coralStationPos = new Trigger(() ->
   // m_buttonBoard.getRawButton(x));
-  public final Trigger resetArmPose = new Trigger(() -> m_buttonBoard.getRawButton(2));
-  public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(4));
-  public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(5));
-  public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(6));
-  public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(7));
+  // public final Trigger resetArmPose = new Trigger(() -> m_buttonBoard.getRawButton(2));
+  // public final Trigger m_l4 = new Trigger(() -> m_buttonBoard.getRawButton(4));
+  // public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(5));
+  // public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(6));
+  // public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(7));
   // // vision button
   // public final Trigger m_horatioMagic = new Trigger(() ->
   // m_buttonBoard.getRawButton(x));
@@ -97,17 +97,19 @@ public class RobotContainer {
   // // Work in Progress - Horatio
 
   // triggers on the button board
-  private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_UP));
-  private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_DOWN));
-  private Trigger m_WristForward = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_FORWARD));
-  private Trigger m_WristReverse = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_REVERSE));
-  private Trigger m_FlywheelIn = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_IN));
-  private Trigger m_FlywheelOut = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_OUT));
+  // private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_UP));
+  // private Trigger m_ArmDown = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_DOWN));
+  // private Trigger m_WristForward = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_FORWARD));
+  // private Trigger m_WristReverse = new Trigger(() -> m_buttonBoard.getRawButton(Constants.WRIST_REVERSE));
+  // private Trigger m_FlywheelIn = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_IN));
+  // private Trigger m_FlywheelOut = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_OUT));
 
-  private Trigger m_ClimbLeftUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_UP));
-  private Trigger m_ClimbLeftDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_DOWN));
-  private Trigger m_ClimbRightUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_UP));
-  private Trigger m_ClimbRightDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_DOWN));
+  // private Trigger m_ClimbLeftUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_UP));
+  // private Trigger m_ClimbLeftDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_DOWN));
+  // private Trigger m_ClimbRightUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_UP));
+  // private Trigger m_ClimbRightDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_DOWN));
+
+  private Trigger m_toPose = new Trigger(() -> m_joystick.getRawButton(2));
 
 
   // feeder motor (anatoli)
@@ -137,6 +139,12 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Outtake", Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.125)));
 
+    NamedCommands.registerCommand("Elevators; L4", Commands.print("elevators l4"));
+    NamedCommands.registerCommand("Outtake", Commands.print("Outtake"));
+    NamedCommands.registerCommand("Wrist; Place L4", Commands.print("Wrist; Place L4"));
+    NamedCommands.registerCommand("Elevators; Pickup", Commands.print("elevators pickup"));
+    NamedCommands.registerCommand("Intake", Commands.print("intake    "));
+
     m_drivetrain.setupPathPlanner();
     configureBindings();
   }
@@ -159,11 +167,11 @@ public class RobotContainer {
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(driveCommand);
 
-    m_ArmUp.whileTrue(new ElevatorManual(m_Arm, -0.2));
-    m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+    // m_ArmUp.whileTrue(new ElevatorManual(m_Arm, -0.2));
+    // m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
-    m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
-    m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+    // m_ArmDown.whileTrue(new ElevatorManual(m_Arm, 0.2));
+    // m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
     // m_WristForward.whileTrue(Commands.run(() -> {
     //   m_leftClimb.set(-0.1);
@@ -183,41 +191,41 @@ public class RobotContainer {
     //   m_rightClimb.set(0);
     // }));
 
-    m_ClimbLeftUp.whileTrue(Commands.run(() -> {
-      m_leftClimb.set(-0.1);
-    }));
-    m_ClimbLeftUp.onFalse(Commands.run(() -> {
-      m_leftClimb.set(0);
-    }));
+    // m_ClimbLeftUp.whileTrue(Commands.run(() -> {
+    //   m_leftClimb.set(-0.1);
+    // }));
+    // m_ClimbLeftUp.onFalse(Commands.run(() -> {
+    //   m_leftClimb.set(0);
+    // }));
 
-    m_ClimbLeftDown.whileTrue(Commands.run(() -> {
-      m_leftClimb.set(0.4);
-    }));
-    m_ClimbLeftDown.onFalse(Commands.run(() -> {
-      m_leftClimb.set(0);
-    }));
+    // m_ClimbLeftDown.whileTrue(Commands.run(() -> {
+    //   m_leftClimb.set(0.4);
+    // }));
+    // m_ClimbLeftDown.onFalse(Commands.run(() -> {
+    //   m_leftClimb.set(0);
+    // }));
 
-    m_ClimbRightUp.whileTrue(Commands.run(() -> {
-      m_rightClimb.set(-0.1);
-    }));
-    m_ClimbRightUp.onFalse(Commands.run(() -> {
-      m_rightClimb.set(0);
-    }));
+    // m_ClimbRightUp.whileTrue(Commands.run(() -> {
+    //   m_rightClimb.set(-0.1);
+    // }));
+    // m_ClimbRightUp.onFalse(Commands.run(() -> {
+    //   m_rightClimb.set(0);
+    // }));
 
-    m_ClimbRightDown.whileTrue(Commands.run(() -> {
-      m_rightClimb.set(0.4);
-    }));
-    m_ClimbRightDown.onFalse(Commands.run(() -> {
-      m_rightClimb.set(0);
-    }));
+    // m_ClimbRightDown.whileTrue(Commands.run(() -> {
+    //   m_rightClimb.set(0.4);
+    // }));
+    // m_ClimbRightDown.onFalse(Commands.run(() -> {
+    //   m_rightClimb.set(0);
+    // }));
 
-    m_FlywheelIn.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.2)));
-    m_FlywheelIn.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
+    // m_FlywheelIn.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.2)));
+    // m_FlywheelIn.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
-    m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
-    m_FlywheelOut.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
+    // m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
+    // m_FlywheelOut.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
-    // FIX
+    // // FIX
     // m_l2.onTrue(new ElevatorSetpoint(m_Arm, Constants.LOW_TARGET),
     // Commands.run(() -> execute(Constants.LOW_TARGET_WRIST)));
     // m_l3.onTrue(new ElevatorSetpoint(m_Arm, Constants.MID_TARGET),
@@ -230,7 +238,7 @@ public class RobotContainer {
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
 
-    resetArmPose.onTrue(Commands.run(() -> m_elevatorMotor.setPosition(0.0)));
+    // resetArmPose.onTrue(Commands.run(() -> m_elevatorMotor.setPosition(0.0)));
 
     // FIX: ATTEMPTS AT TOPOSE METHOD W/ CANCELLATION
     // i think this might work, but not entirely sure
@@ -244,25 +252,29 @@ public class RobotContainer {
     // },
     // m_drivetrain));
 
-    // m_toPose.whileTrue(
-    // Commands.runOnce(
-    // ()->{
-    // if(m_drivetrain.within(m_drivetrain.getPose(), test))
-    // angleCorrection.schedule();
-    // else
+    m_toPose.onTrue(
+      Commands.runOnce(
+        ()-> {
+          if(m_drivetrain.within(m_drivetrain.getPose(), test)) {
+            angleCorrection.schedule();
+          } else {
+            m_drivetrain.driveToPose(Constants.aprilPose[m_drivetrain.closestAprilTag()].getOffestPose()).schedule();
+          }
+        }
+      ).andThen(Commands.print(Constants.aprilPose[m_drivetrain.closestAprilTag()].getOffestPose().toString()))
+    // angleCorrection
+    // () -> {
+    // if (!m_drivetrain.within(test, m_drivetrain.getPose())) {
     // m_drivetrain.driveToPose(test);
+    // } else {
+    // angleCorrection.schedule();
+    // }
     // }
     // )
-    // // angleCorrection
-    // // () -> {
-    // // if (!m_drivetrain.within(test, m_drivetrain.getPose())) {
-    // // m_drivetrain.driveToPose(test);
-    // // } else {
-    // // angleCorrection.schedule();
-    // // }
-    // // }
-    // // )
-    // );
+    );
+
+    // m_toPose.onTrue(Commands.runOnce(() -> {m_drivetrain.driveToPose(test);}, m_drivetrain));
+    // m_toPose.onTrue(Commands.runOnce(() -> {m_drivetrain.driveToPose(test).schedule();}, m_drivetrain));
 
     // m_toPose.onTrue(
     // Commands.runOnce(
@@ -270,15 +282,15 @@ public class RobotContainer {
     // Command drive = m_drivetrain.driveToPose(test);
     // drive.execute();
     // if (m_drivetrain.within(m_drivetrain.getPose(), test)) {
-    // angleCorrection.schedule();
+    //  angleCorrection.schedule();
     // } else if (m_joystick.getRawAxis(1) > OperatorConstants.X_DEADBAND
-    // || m_joystick.getRawAxis(0) > OperatorConstants.X_DEADBAND
-    // || m_joystick.getRawAxis(2) > OperatorConstants.X_DEADBAND) {
-    // // CommandScheduler.getInstance().cancel(angleCorrection);
-    // // CommandScheduler.getInstance().cancel(drive);
-    // CommandScheduler.getInstance().cancelAll();
-    // // angleCorrection.cancel();
-    // // drive.cancel();
+    //   || m_joystick.getRawAxis(0) > OperatorConstants.X_DEADBAND
+    //   || m_joystick.getRawAxis(2) > OperatorConstants.X_DEADBAND) {
+    //   // CommandScheduler.getInstance().cancel(angleCorrection);
+    //   // CommandScheduler.getInstance().cancel(drive);
+    //   CommandScheduler.getInstance().cancelAll();
+    //   // angleCorrection.cancel();
+    //   // drive.cancel();
     // } // else {
     // // drive.schedule();
     // // }
@@ -315,7 +327,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_drivetrain.getAutonomousCommand("Leave");
+    return m_drivetrain.getAutonomousCommand("Blue Right");
   }
 
   public static double deadzone(double num, double deadband) {

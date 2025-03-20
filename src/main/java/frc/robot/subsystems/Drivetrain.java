@@ -50,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public final SwerveDrive swerveDrive;
   /**
-   * Initialize {@link SwerveDrive} with the directory provided.
+   * Initialize {@link swerveDrive} with the directory provided.
    *
    * @param directory Directory of swerve drive config files.
    */
@@ -98,12 +98,12 @@ public class Drivetrain extends SubsystemBase {
 
       // Alternative method if you don't want to supply the conversion factor via JSON
       // files.
-      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed,
+      // swerveDrive = new SwerveParser(directory).createswerveDrive(maximumSpeed,
       // angleConversionFactor, driveConversionFactor);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    // SwerveDrive.invertOdometry();
+    // swerveDrive.invertOdometry();
     swerveDrive.setMotorIdleMode(true);
     swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via
                                             //
@@ -199,7 +199,7 @@ public class Drivetrain extends SubsystemBase {
     boolean rejectVision = false;
 
     //LimelightHelpers.SetRobotOrientation("limelight",
-        //m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+        //swerveDrive.getPose().getRotation().getDegrees(),
         //0, 0, 0, 0, 0);
     //LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
     // if (Math.abs(m_gyro.getYawAngularVelocity().magnitude()) > 720) // if our
@@ -334,7 +334,7 @@ public class Drivetrain extends SubsystemBase {
     double xSpeed = xController.calculate(getX(), targetPose.getX());
     double ySpeed = yController.calculate(getY(), targetPose.getY());
     double thetaSpeed = thetaController.calculate(getRotation().getRadians(), targetPose.getRotation().getRadians());
-    while (!m_poseEstimator.getEstimatedPosition().equals(targetPose)
+    while (!swerveDrive.getPose().equals(targetPose)
         && (Math.abs(xSpeed) > 0.1 || Math.abs(ySpeed) > 0.1 || Math.abs(thetaSpeed) > 0.05)) {
       swerveDrive.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed));
       updateOdometry();
@@ -352,11 +352,11 @@ public class Drivetrain extends SubsystemBase {
   // holonomic rotation.
   public Command driveToPose(Pose2d pose) {
     // if (!within(pose, getPose())) {
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_poseEstimator.getEstimatedPosition(), pose);
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(swerveDrive.getPose(), pose);
 
-    System.out.println("x: " + m_poseEstimator.getEstimatedPosition().getX() + " y: "
-        + m_poseEstimator.getEstimatedPosition().getY() + " rotation: "
-        + m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    System.out.println("x: " + swerveDrive.getPose().getX() + " y: "
+        + swerveDrive.getPose().getY() + " rotation: "
+        + swerveDrive.getPose().getRotation().getDegrees());
 
     // the constraints for this path
     PathConstraints constraints = new PathConstraints(3, 1, 4 * Math.PI, 3 * Math.PI);
@@ -385,8 +385,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double findAngleRad(Pose2d reef, Pose2d endPosition) {
-    Vector2 reefToBot = new Vector2(m_poseEstimator.getEstimatedPosition().getX() - reef.getX(),
-        m_poseEstimator.getEstimatedPosition().getY() - reef.getY());
+    Vector2 reefToBot = new Vector2(swerveDrive.getPose().getX() - reef.getX(),
+        swerveDrive.getPose().getY() - reef.getY());
     Vector2 reefToEndPosition = new Vector2(endPosition.getX() - reef.getX(), endPosition.getY() - reef.getY());
     double dotProduct = reefToBot.dot(reefToEndPosition);
     double reefToBotMag = reefToBot.getMagnitude();
@@ -398,8 +398,8 @@ public class Drivetrain extends SubsystemBase {
   // rotation
   // around the reef
   public Pose2d findPoseA(Pose2d reef, AT aprilTag) {
-    double dx = m_poseEstimator.getEstimatedPosition().getX() - reef.getX();
-    double dy = m_poseEstimator.getEstimatedPosition().getY() - reef.getY();
+    double dx = swerveDrive.getPose().getX() - reef.getX();
+    double dy = swerveDrive.getPose().getY() - reef.getY();
     double theta = Math.atan(dy / dx);
     double ax = reef.getX() + radiusOfRotation * Math.cos(theta);
     double ay = reef.getY() + radiusOfRotation * Math.sin(theta);
@@ -421,16 +421,26 @@ public class Drivetrain extends SubsystemBase {
 
   public int closestAprilTag() {
     double min = Math
-        .sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[1].getPose().getX(), 2)
-            + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[1].getPose().getY(), 2));
+        .sqrt(Math.pow(swerveDrive.getPose().getX() - Constants.aprilPose[1].getPose().getX(), 2)
+            + Math.pow(swerveDrive.getPose().getY()
+            //  - Constants.aprilPose[1].getPose().getY()
+            , 2));
     int index = 0;
     for (int i = 1; i <= 22; i++) {
       if (Math.sqrt(
-          Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(), 2) + Math
-              .pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(), 2)) < min) {
+          Math.pow(swerveDrive.getPose().getX() 
+          - Constants.aprilPose[i].getPose().getX()
+          , 2) + Math
+              .pow(swerveDrive.getPose().getY() 
+              - Constants.aprilPose[i].getPose().getY()
+              , 2)) < min) {
         min = Math
-            .sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[i].getPose().getX(), 2)
-                + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[i].getPose().getY(), 2));
+            .sqrt(Math.pow(swerveDrive.getPose().getX()
+             - Constants.aprilPose[i].getPose().getX()
+             , 2)
+                + Math.pow(swerveDrive.getPose().getY()
+                 - Constants.aprilPose[i].getPose().getY()
+                 , 2));
         index = i;
       }
     }
@@ -443,15 +453,15 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getX() {
-    return m_poseEstimator.getEstimatedPosition().getX();
+    return swerveDrive.getPose().getX();
   }
 
   public double getY() {
-    return m_poseEstimator.getEstimatedPosition().getY();
+    return swerveDrive.getPose().getY();
   }
 
   public Rotation2d getRotation() {
-    return m_poseEstimator.getEstimatedPosition().getRotation();
+    return swerveDrive.getPose().getRotation();
   }
 
   @Override

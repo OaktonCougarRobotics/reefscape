@@ -1,0 +1,131 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Starting Point to Reef 2L"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "l4 arm"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "l4 wrist"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drop Coral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Reef 2L to Station"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake arm"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake wrist"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "waitForInputCoral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Station to Reef 2R"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "l4 arm"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "l4 wrist"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drop Coral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2R to Station"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake arm"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake wrist"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

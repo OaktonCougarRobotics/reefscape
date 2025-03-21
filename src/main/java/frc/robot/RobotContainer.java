@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
@@ -69,6 +70,7 @@ public class RobotContainer {
   // Triggers on the joystick
   private Trigger m_navxReset = new Trigger(() -> m_joystick.getRawButton(3));
   private Trigger m_swerveLock = new Trigger(() -> m_joystick.getRawButton(6));
+  private Trigger m_toPose = new Trigger(() -> m_joystick.getRawButton(2));
 
   // triggers on the button board
   private Trigger m_ArmUp = new Trigger(() -> m_buttonBoard.getRawButton(Constants.ELEVATOR_UP));
@@ -271,6 +273,30 @@ public class RobotContainer {
     // // drive.schedule();
     // // }
     // }));
+    Command driveProxy = new ProxyCommand(() -> new Command() {
+      @Override
+      public boolean isFinished() {
+        return m_joystick.getRawButtonReleased(2);
+      }
+
+      @Override
+      public void execute() {
+      }
+
+      @Override
+      public void initialize(){
+        m_drivetrain.driveToPose(test).schedule();
+      }
+
+      @Override
+      public void end(boolean interrupted) {
+        m_drivetrain.driveToPose(test).cancel();
+      }
+    });
+    
+    m_toPose.whileTrue(
+      driveProxy
+    );
 
     // () -> m_drivetrain.driveToPose(test)).andThen(angleCorrection)
     // .andThen(Commands.runOnce(() -> {
@@ -311,4 +337,6 @@ public class RobotContainer {
       return 0.0;
     return num;
   }
+
+
 }

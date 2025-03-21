@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -23,35 +25,36 @@ import frc.AT;
  */
 public final class Constants {
 
-  public static AT april1 = new AT(657.37, 25.80, 126, 1);// static Pose2d april1 = new Pose2d(657.37, 25.80, new
-                                                          // Rotation2d(0.0));
-  public static AT april2 = new AT(657.37, 291.20, 234, 1);// static Pose2d april2 = new Pose2d(657.37, 291.20, new
-                                                           // Rotation2d(0.0));
-  public static AT april3 = new AT(455.15, 317.15, 270, 1);// static Pose2d april3 = new Pose2d(455.15, 317.15, new
-                                                           // Rotation2d(0.0));
-  public static AT april4 = new AT(365.20, 241.64, 0, 1);
-  public static AT april5 = new AT(365.20, 75.39, 0, 1);
-  public static AT april6 = new AT(530.49, 130.17, 300, 1);
-  public static AT april7 = new AT(546.87, 158.5, 0, 1);
-  public static AT april8 = new AT(530.49, 186.83, 60, 1);
-  public static AT april9 = new AT(497.77, 186.83, 120, 1);
-  public static AT april10 = new AT(481.39, 158.5, 180, 1);
-  public static AT april11 = new AT(497.77, 130.17, 240, 1);
-  public static AT april12 = new AT(33.51, 25.80, 54, 1);
-  public static AT april13 = new AT(33.51, 291.20, 306, 1);
-  public static AT april14 = new AT(325.68, 241.64, 180, 1);
-  public static AT april15 = new AT(325.68, 75.39, 180, 1);
-  public static AT april16 = new AT(235.73, -0.15, 90, 1);
-  public static AT april17 = new AT(160.39, 130.17, 240, 1);
-  public static AT april18 = new AT(144.00, 158.50, 180, 1);
-  public static AT april19 = new AT(160.39, 186.83, 120, 1);
-  public static AT april20 = new AT(193.10, 186.83, 60, 1);
-  public static AT april21 = new AT(209.49, 158.50, 0, 1);
-  public static AT april22 = new AT(193.10, 130.17, 300, 1);
+ public static AT april1 = new AT(657.37, 25.80, 126, 1);//static Pose2d april1 = new Pose2d(657.37, 25.80, new Rotation2d(0.0));
+  public static AT april2 = new AT(657.37, 291.20, 234, 2);//static Pose2d april2 = new Pose2d(657.37, 291.20, new Rotation2d(0.0));
+  public static AT april3 = new AT(455.15, 317.15,270, 3);//static Pose2d april3 = new Pose2d(455.15, 317.15, new Rotation2d(0.0));
+  public static AT april4 = new AT(365.20, 241.64,0 ,4);
+  public static AT april5 = new AT(365.20, 75.39, 0, 5);
+  public static AT april6 = new AT(530.49, 130.17, 300, 6);
+  public static AT april7 = new AT(546.87, 158.5, 0, 7);
+  public static AT april8 = new AT(530.49, 186.83, 60, 8);
+  public static AT april9 = new AT(497.77, 186.83, 120, 9);
+  public static AT april10 = new AT(481.39, 158.5, 180, 10);
+  public static AT april11 = new AT(497.77, 130.17, 240, 11);
+  public static AT april12 = new AT(33.51, 25.80, 54, 12);
+  public static AT april13 = new AT(33.51, 291.20, 306, 13);
+  public static AT april14 = new AT(325.68, 241.64, 180, 14);
+  public static AT april15 = new AT(325.68, 75.39, 180, 15);
+  public static AT april16 = new AT(235.73, -0.15, 90, 16);
+  public static AT april17 = new AT(160.39, 130.17, 240, 17);
+  public static AT april18 = new AT(144.00, 158.50, 180, 18);
+  public static AT april19 = new AT(160.39, 186.83, 120, 19);
+  public static AT april20 = new AT(193.10, 186.83, 60, 20);
+  public static AT april21 = new AT(209.49, 158.50, 0, 21);
+  public static AT april22 = new AT(193.10, 130.17, 300, 22);
 
-  public static AT[] aprilPose = new AT[] { null, april1, april2, april3, april4, april5, april6, april7, april8,
-      april9, april10, april11, april12, april13, april14, april15, april16, april17, april18, april19, april20,
-      april21, april22 };
+  public static Pose2d REEF_POSE_BLUE = new Pose2d(4.5, 4, new Rotation2d());//may be slightly off
+  public static Pose2d REEF_POSE_RED  = new Pose2d( 13, 4, new Rotation2d());//may be slightly off
+
+  public static AT[] aprilPose = new AT[]{new AT(-999,-999,0,0), april1, april2, april3, april4, april5, april6, april7, april8, april9, april10, april11, april12, april13, april14, april15, april16, april17, april18, april19, april20, april21, april22};
+  public static AT[] scoringAprilPose = new AT[]{april6, april7, april8, april9, april10, april11, april17, april18, april19, april20, april21, april22};
+  public static AT[] pickupAprilPose = new AT[]{april1, april2, april12, april13};
+
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);

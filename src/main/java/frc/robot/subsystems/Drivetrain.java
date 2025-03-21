@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.text.DecimalFormat;
 
+
 import org.dyn4j.geometry.Vector2;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -36,6 +37,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.AT;
 import frc.robot.Constants;
@@ -383,7 +385,9 @@ public class Drivetrain extends SubsystemBase {
     return Math.abs(pose.getX() - pose2.getX()) < positionThreshold &&
         Math.abs(pose.getY() - pose2.getY()) < positionThreshold;
   }
-
+  // If auto doesnt work, finds the starting point of the robot's circular
+  // rotation
+  // around the reef
   public double findAngleRad(Pose2d reef, Pose2d endPosition) {
     Vector2 reefToBot = new Vector2(m_poseEstimator.getEstimatedPosition().getX() - reef.getX(),
         m_poseEstimator.getEstimatedPosition().getY() - reef.getY());
@@ -394,10 +398,9 @@ public class Drivetrain extends SubsystemBase {
     return Math.acos(dotProduct / (reefToBotMag * reefToEndPositionMag));
   }
 
-  // If auto doesnt work, finds the starting point of the robot's circular
-  // rotation
-  // around the reef
-  public Pose2d findPoseA(Pose2d reef, AT aprilTag) {
+  public Pose2d findPoseA(Pose2d reef, AT aprilTag)// If auto doesnt work, finds the starting point of the robots
+                                                   // circular rotation around the reef
+  {
     double dx = m_poseEstimator.getEstimatedPosition().getX() - reef.getX();
     double dy = m_poseEstimator.getEstimatedPosition().getY() - reef.getY();
     double theta = Math.atan(dy / dx);
@@ -408,7 +411,7 @@ public class Drivetrain extends SubsystemBase {
     return a;
   }
 
-  public Pose2d findB(AT aprilTag) {
+  public Pose2d findPoseB(AT aprilTag) {
     return new Pose2d(
         (aprilTag.getPose().getX() + radiusOfRotation * Math.cos(aprilTag.getPose().getRotation().getRadians())),
         (aprilTag.getPose().getY() + radiusOfRotation * Math.sin(aprilTag.getPose().getRotation().getRadians())),
@@ -419,8 +422,20 @@ public class Drivetrain extends SubsystemBase {
     swerveDrive.setMotorIdleMode(brake);
   }
 
-  public int closestAprilTag() {
-    double min = Math
+  public int closestAprilTag(AT[] aprilTags) {
+    double min = Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - aprilTags[0].getPose().getX(), 2)
+                         + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - aprilTags[0].getPose().getY(), 2));
+    int aprilTagID = aprilTags[0].getId();
+    for(AT at: aprilTags)
+    {
+      if (Math.sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - at.getPose().getX(), 2) + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - at.getPose().getY(), 2)) < min) {
+        min = Math
+            .sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - at.getPose().getX(), 2)
+                + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - at.getPose().getY(), 2));
+        aprilTagID = at.getId();
+    }
+  }
+    /*double min = Math
         .sqrt(Math.pow(m_poseEstimator.getEstimatedPosition().getX() - Constants.aprilPose[1].getPose().getX(), 2)
             + Math.pow(m_poseEstimator.getEstimatedPosition().getY() - Constants.aprilPose[1].getPose().getY(), 2));
     int index = 0;
@@ -434,12 +449,47 @@ public class Drivetrain extends SubsystemBase {
         index = i;
       }
     }
-    System.out.println(index);
-    return index;
+    return index;*/
+    return aprilTagID;
   }
 
-  public void toClosestAprilTag() {
-    toPose(Constants.aprilPose[closestAprilTag()].getOffestPose());
+  public void toClosestScoringAprilTag(boolean right)/*right or left scoring*/ {
+    //System.out.println("//////////" + "\n" + "Closest April Tag: " + closestAprilTag() + "\n" + "//////////");
+    System.out.println("//////////" + "\n" + closestAprilTag(Constants.scoringAprilPose)  + "Closest April Tag" + "\n" + "//////////");
+    Pose2d temp = Constants.aprilPose[closestAprilTag(Constants.scoringAprilPose)].getOffestPose();
+    Pose2d scoringPosition = new Pose2d();
+    if(right)
+      scoringPosition = new Pose2d(temp.getX() + Math.cos(Math.PI/16), temp.getY() + Math.sin(Math.PI/16), temp.getRotation());
+    else
+      scoringPosition = new Pose2d(temp.getX() - Math.cos(Math.PI/16), temp.getY() - Math.sin(Math.PI/16), temp.getRotation());
+    //toPose(Constants.aprilPose[closestAprilTag(Constants.scoringAprilPose)].getOffestPose());
+    toPose(scoringPosition);
+  }
+
+  public void toClosestPickupAprilTag(){
+    System.out.println("//////////" + "\n" + closestAprilTag(Constants.pickupAprilPose)  + "Closest April Tag" + "\n" + "//////////");
+    toPose(Constants.aprilPose[closestAprilTag(Constants.pickupAprilPose)].getOffestPose());
+    System.out.println(getX() + ", " + getY());
+    System.out.println(Constants.aprilPose[closestAprilTag(Constants.pickupAprilPose)].getPose().getX() + ", " + Constants.aprilPose[closestAprilTag(Constants.pickupAprilPose)].getPose().getY());
+    System.out.println(Constants.aprilPose[closestAprilTag(Constants.pickupAprilPose)].getOffestPose().getX() + ", " + Constants.aprilPose[closestAprilTag(Constants.pickupAprilPose)].getOffestPose().getY());
+  }
+
+  public void toScoringAprilTag(int id, Pose2d reef) {
+    AT targetAT = Constants.aprilPose[id];
+    if(closestAprilTag(Constants.scoringAprilPose) == id)
+      toPose(targetAT.getOffestPose());
+    else
+    {
+        toPose(findPoseA(reef, targetAT));
+        double theta = findAngleRad(reef, findPoseB(targetAT));
+        while(theta > 0)
+        {
+          toPose(new Pose2d(getX(), getY(), targetAT.getOffestPose().getRotation().minus(new Rotation2d(theta))));
+          theta -= 5;
+        }
+        toPose(findPoseB(targetAT));
+        toPose(targetAT.getOffestPose());
+    }
   }
 
   public double getX() {

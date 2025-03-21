@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Arm;
 
@@ -19,7 +17,7 @@ public class WristSetpoint extends Command {
   public WristSetpoint(Arm arm, double targetAngle) {
     this.arm = arm;
     target = targetAngle;
-    difference = arm.calcAngle() - target;
+    difference = arm.getWristPosition() - target;
   }
 
   @Override
@@ -29,18 +27,18 @@ public class WristSetpoint extends Command {
 
   @Override
   public void execute() {
-    difference = arm.calcAngle() - target;
+    difference = arm.getWristPosition() - target;
     double kp = 0.15;
-	  double targetSpeed = kp * difference;
-	  arm.m_WristMotor.set(ControlMode.PercentOutput, targetSpeed);
+    double targetSpeed = kp * difference;
+    arm.m_WristMotor.set(targetSpeed);
 
     System.out.println("target wrist angle:" + target);
-    System.out.println("current wrist angle:" + arm.calcAngle());
+    System.out.println("current wrist angle:" + arm.getWristPosition());
   }
 
   @Override
   public void end(boolean interrupted) {
-	  arm.m_WristMotor.set(ControlMode.PercentOutput, 0);
+    arm.m_WristMotor.set(0);
   }
 
   @Override

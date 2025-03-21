@@ -157,13 +157,14 @@ public final class Constants {
   public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
   public static double BOTTOM_TURNS = -0.5;
-  public static final double LOW_TARGET = -1.5;
-  public static final double MID_TARGET = -30;
-  public static final double HIGH_TARGET = -83.3;
-  public static final double PICKUP_TARGET = -0.5;
-  public static final int LOW_TARGET_WRIST = -1;
-  public static final int MID_TARGET_WRIST = -1;
-  public static final int HIGH_TARGET_WRIST = -1;
+  public static final double ELEVATORS_L2 = -0.25;
+  public static final double ELEVATORS_L3 = -30;
+  public static final double ELEVATORS_L4 = -83.3;
+  public static final double ELEVATORS_PICKUP = -0.5;
+  public static final double WRIST_L2 = -1;
+  public static final double WRIST_L3 = -1;
+  public static final double WRIST_L4 = -1;
+  public static final double WRIST_PICKUP = -1;
 
   public static final double PIVOT_CAN_DIFFERENCE_BETWEEN_STARTING_AND_LEVEL = -1;
   public static final double PIVOT_GEAR_RATIO = 160.0;
@@ -218,8 +219,7 @@ public final class Constants {
   // public static final int NUKE_SWITCH_2 = 15;
   // public static final int NUKE_SWITCH_1 = 16;
 
-
-  //CRISPY
+  // CRISPY
   public static final int CLIMB_LEFT_UP = 15;
   public static final int CLIMB_LEFT_DOWN = 16;
   public static final int CLIMB_RIGHT_UP = 13;
@@ -231,13 +231,11 @@ public final class Constants {
   public static final int ELEVATOR_DOWN = 20;
   public static final int WRIST_FORWARD = 22;
   public static final int WRIST_REVERSE = 21;
-  
-
 
   public static final int ARM_UP = 6;
   public static final int ARM_DOWN = 4;
-  public static double ARM_HIGH = -83; //-84.87
-  public static double ARM_LOW = -0.5; //0
+  public static double ARM_HIGH = -83; // -84.87
+  public static double ARM_LOW = -0.5; // 0
 
   public static final double LIMELIGHT_HEIGHT = 0.238125; // m from the bottom
   public static final double LIMELIGHT_YTHETA = 60; // off the horizontal
@@ -264,9 +262,9 @@ public final class Constants {
     public static final double LEFT_X_DEADBAND = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double X_DEADBAND = 0.03; //0.075
+    public static final double X_DEADBAND = 0.03; // 0.075
     public static final double Y_DEADBAND = 0.03;
-    public static final double Z_DEADBAND = 0.03; //0.03
+    public static final double Z_DEADBAND = 0.03; // 0.03
     public static final double TURN_CONSTANT = 6;
   }
 }

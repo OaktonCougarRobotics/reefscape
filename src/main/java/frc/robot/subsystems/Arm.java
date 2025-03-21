@@ -1,49 +1,31 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
     public TalonFX m_ElevatorMotor;
-    public TalonSRX m_WristMotor;
+    public TalonFX m_WristMotor;
     public TalonSRX m_IntakeMotor;
-    public Counter AmMag;
-    public Counter AmIndex;
-    public double angleRad;
 
-
-    public Arm(TalonFX elev, TalonSRX wrist, TalonSRX intake) {
+    public Arm(TalonFX elev, TalonFX wrist, TalonSRX intake) {
         this.m_ElevatorMotor = elev;
         this.m_WristMotor = wrist;
         this.m_IntakeMotor = intake;
         m_ElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        m_WristMotor.setNeutralMode(NeutralMode.Brake);
-
-        AmMag = new Counter(0);
-        AmIndex = new Counter(1);
-        // Set Semi-Period Mode in order to Measure the Pulse Width
-        AmMag.setSemiPeriodMode(true);
-        
-        //resetting counters
-        AmMag.reset();
-		AmIndex.reset();
+        m_WristMotor.setNeutralMode(NeutralModeValue.Brake);
+        m_IntakeMotor.setNeutralMode(NeutralMode.Brake);
+    }
+    
+    public double getElevatorPosition() {
+        return m_ElevatorMotor.getPosition().getValueAsDouble();
     }
 
-    public double calcAngle() {
-        double value = AmMag.getPeriod();
-        angleRad = (value / 9.739499999999999E-4) * 2 * (Math.PI);
-        return angleRad;
-      }
-
-
-    public void intake(TalonSRX m_Motor) {
-        m_Motor.set(ControlMode.PercentOutput, 0.4);
+    public double getWristPosition() {
+        return m_WristMotor.getPosition().getValueAsDouble();
     }
-
 }

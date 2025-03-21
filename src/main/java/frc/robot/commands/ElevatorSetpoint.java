@@ -21,7 +21,7 @@ public class ElevatorSetpoint extends Command {
   public ElevatorSetpoint(Arm arm, double targetAngle) {
     this.arm = arm;
     target = targetAngle;
-    difference = arm.calcAngle() - target;
+    difference = arm.getElevatorPosition() - target;
   }
 
   @Override
@@ -31,18 +31,18 @@ public class ElevatorSetpoint extends Command {
 
   @Override
   public void execute() {
-    difference = arm.m_ElevatorMotor.getPosition().getValueAsDouble() - target;
+    difference = arm.getElevatorPosition() - target;
     double kp = 0.15;
-	targetSpeed = kp * difference;
-	arm.m_ElevatorMotor.set(targetSpeed);
+    targetSpeed = kp * difference;
+    arm.m_ElevatorMotor.set(targetSpeed);
 
     System.out.println("target elevator position:" + target);
-    System.out.println("current elevator position:" + arm.m_ElevatorMotor.getPosition().getValueAsDouble());
+    System.out.println("current elevator position:" + arm.getElevatorPosition());
   }
 
   @Override
   public void end(boolean interrupted) {
-	  arm.m_ElevatorMotor.set(0);
+    arm.m_ElevatorMotor.set(0);
   }
 
   @Override

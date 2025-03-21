@@ -25,8 +25,7 @@ public class AT{
         return aprilTagPose;
     }
 
-    public Pose2d getOffestPose()
-    {
+    public Pose2d getOffestPose() {
         return offsetPose;
     }
 

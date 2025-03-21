@@ -60,9 +60,6 @@ public class RobotContainer {
   public final Trigger m_l3 = new Trigger(() -> m_buttonBoard.getRawButton(5));
   public final Trigger m_l2 = new Trigger(() -> m_buttonBoard.getRawButton(6));
   public final Trigger m_l1 = new Trigger(() -> m_buttonBoard.getRawButton(7));
-  // // vision button
-  // public final Trigger m_horatioMagic = new Trigger(() ->
-  // m_buttonBoard.getRawButton(x));
 
   // Joystick object
   public final Joystick m_joystick = new Joystick(1);
@@ -84,6 +81,8 @@ public class RobotContainer {
   private Trigger m_ClimbLeftDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_DOWN));
   private Trigger m_ClimbRightUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_UP));
   private Trigger m_ClimbRightDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_DOWN));
+
+  private Trigger m_toPose = new Trigger(() -> m_joystick.getRawButton(2));
 
   // feeder motor (anatoli)
   private TalonSRX m_feederMotor = new TalonSRX(22);
@@ -162,14 +161,14 @@ public class RobotContainer {
     m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
 
     m_WristForward.whileTrue(Commands.run(() -> {
-      m_wristMotor.set(0.2);
+      m_wristMotor.set(0.1);
     }));
     m_WristForward.onFalse(Commands.run(() -> {
       m_wristMotor.set(0);
     }));
 
     m_WristReverse.whileTrue(Commands.run(() -> {
-      m_wristMotor.set(-0.2);
+      m_wristMotor.set(-0.1);
     }));
     m_WristReverse.onFalse(Commands.run(() -> {
       m_wristMotor.set(0);
@@ -220,7 +219,7 @@ public class RobotContainer {
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
     m_swerveLock.whileTrue(Commands.run(() -> m_drivetrain.swerveDrive.lockPose()));
 
-    resetArmPose.onTrue(Commands.run(() -> m_elevatorMotor.setPosition(0.0)));
+    // resetArmPose.onTrue(Commands.run(() -> m_elevatorMotor.setPosition(0.0)));
 
     // FIX: ATTEMPTS AT TOPOSE METHOD W/ CANCELLATION
     // i think this might work, but not entirely sure
@@ -234,25 +233,29 @@ public class RobotContainer {
     // },
     // m_drivetrain));
 
-    // m_toPose.whileTrue(
-    // Commands.runOnce(
-    // ()->{
-    // if(m_drivetrain.within(m_drivetrain.getPose(), test))
-    // angleCorrection.schedule();
-    // else
+    m_toPose.onTrue(
+      Commands.runOnce(
+        ()-> {
+          if(m_drivetrain.within(m_drivetrain.getPose(), test)) {
+            angleCorrection.schedule();
+          } else {
+            m_drivetrain.driveToPose(Constants.aprilPose[m_drivetrain.closestAprilTag()].getOffestPose()).schedule();
+          }
+        }
+      ).andThen(Commands.print(Constants.aprilPose[m_drivetrain.closestAprilTag()].getOffestPose().toString()))
+    // angleCorrection
+    // () -> {
+    // if (!m_drivetrain.within(test, m_drivetrain.getPose())) {
     // m_drivetrain.driveToPose(test);
+    // } else {
+    // angleCorrection.schedule();
+    // }
     // }
     // )
-    // // angleCorrection
-    // // () -> {
-    // // if (!m_drivetrain.within(test, m_drivetrain.getPose())) {
-    // // m_drivetrain.driveToPose(test);
-    // // } else {
-    // // angleCorrection.schedule();
-    // // }
-    // // }
-    // // )
-    // );
+    );
+
+    // m_toPose.onTrue(Commands.runOnce(() -> {m_drivetrain.driveToPose(test);}, m_drivetrain));
+    // m_toPose.onTrue(Commands.runOnce(() -> {m_drivetrain.driveToPose(test).schedule();}, m_drivetrain));
 
     // m_toPose.onTrue(
     // Commands.runOnce(
@@ -260,15 +263,15 @@ public class RobotContainer {
     // Command drive = m_drivetrain.driveToPose(test);
     // drive.execute();
     // if (m_drivetrain.within(m_drivetrain.getPose(), test)) {
-    // angleCorrection.schedule();
+    //  angleCorrection.schedule();
     // } else if (m_joystick.getRawAxis(1) > OperatorConstants.X_DEADBAND
-    // || m_joystick.getRawAxis(0) > OperatorConstants.X_DEADBAND
-    // || m_joystick.getRawAxis(2) > OperatorConstants.X_DEADBAND) {
-    // // CommandScheduler.getInstance().cancel(angleCorrection);
-    // // CommandScheduler.getInstance().cancel(drive);
-    // CommandScheduler.getInstance().cancelAll();
-    // // angleCorrection.cancel();
-    // // drive.cancel();
+    //   || m_joystick.getRawAxis(0) > OperatorConstants.X_DEADBAND
+    //   || m_joystick.getRawAxis(2) > OperatorConstants.X_DEADBAND) {
+    //   // CommandScheduler.getInstance().cancel(angleCorrection);
+    //   // CommandScheduler.getInstance().cancel(drive);
+    //   CommandScheduler.getInstance().cancelAll();
+    //   // angleCorrection.cancel();
+    //   // drive.cancel();
     // } // else {
     // // drive.schedule();
     // // }
@@ -329,7 +332,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_drivetrain.getAutonomousCommand("Leave");
+    return m_drivetrain.getAutonomousCommand("Blue Right");
   }
 
   public static double deadzone(double num, double deadband) {

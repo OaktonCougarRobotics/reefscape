@@ -26,6 +26,7 @@ public class WristSetpoint extends Command {
 
   @Override
   public void initialize() {
+    System.out.println("within wrist setpoint, override: " + override.getAsBoolean());
     if(!override.getAsBoolean()) {
       arm.m_WristMotor.setControl(m_MotionMagicVoltage.withPosition(target));
     }

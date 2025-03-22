@@ -159,11 +159,11 @@ public final class Constants {
   public static final int WRIST_MOTOR = 30;
   public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
-  public static final double ELEVATOR_BOTTOM = 0;
+  public static final double ELEVATOR_BOTTOM = 0.15;
   public static final double ELEVATOR_L2 = -0.25;
-  public static final double ELEVATOR_L3 = -30;
+  public static final double ELEVATOR_L3 = -38.053;
   public static final double ELEVATOR_L4 = -83.3;
-  public static final double ELEVATOR_PICKUP = 0;
+  public static final double ELEVATOR_PICKUP = 0.15;
   public static final double WRIST_PLACE = -0.519;
   public static final double WRIST_PICKUP = -0.33;
   public static final double WRIST_STOW = -0.165;

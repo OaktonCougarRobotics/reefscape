@@ -19,14 +19,28 @@ public class Arm extends SubsystemBase {
         this.m_WristMotor = wrist;
         this.m_IntakeMotor = intake;
 
-        TalonFXConfiguration m_configs = new TalonFXConfiguration();
-        m_configs.Slot0.kP = 18;
-        m_configs.Slot0.kI = 12;
-        m_configs.Slot0.kD = 0;
-        m_configs.Slot0.kG = 0.05;
-        m_configs.Feedback.SensorToMechanismRatio = 7;
+        TalonFXConfiguration m_configsWrist = new TalonFXConfiguration();
+        m_configsWrist.Slot0.kP = 18;
+        m_configsWrist.Slot0.kI = 12;
+        m_configsWrist.Slot0.kD = 0;
+        m_configsWrist.Slot0.kG = 0.05;
+        m_configsWrist.Feedback.SensorToMechanismRatio = 7;
 
-        m_WristMotor.getConfigurator().apply(m_configs);
+        m_configsWrist.MotionMagic.MotionMagicCruiseVelocity = 20;
+        m_configsWrist.MotionMagic.MotionMagicAcceleration = 40;
+        m_configsWrist.MotionMagic.MotionMagicJerk = 400;
+
+        m_WristMotor.getConfigurator().apply(m_configsWrist);
+
+        TalonFXConfiguration m_configsElevator = new TalonFXConfiguration();
+        m_configsElevator.Slot0.kP = 0.05;
+        m_configsElevator.Slot0.kI = 0;
+        m_configsElevator.Slot0.kD = 0;
+        m_configsElevator.Slot0.kG = 0.05;
+
+        m_configsElevator.MotionMagic.MotionMagicCruiseVelocity = 20;
+        m_configsElevator.MotionMagic.MotionMagicAcceleration = 40;
+        m_configsElevator.MotionMagic.MotionMagicJerk = 400;
 
         m_ElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
         m_WristMotor.setNeutralMode(NeutralModeValue.Brake);

@@ -180,24 +180,30 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(driveCommand);
 
     m_ArmUp.whileTrue(Commands.run(() -> m_elevatorMotor.set(-0.1)));
-    m_ArmUp.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
+    m_ArmUp.onFalse(Commands.run(() -> {
+      m_elevatorMotor.set(0);
+      System.out.println("on false");
+    }));
 
     m_ArmDown.whileTrue(Commands.run(() -> m_elevatorMotor.set(0.2)));
-    m_ArmDown.onFalse(Commands.run(() -> m_elevatorMotor.set(0)));
-
-    m_WristForward.whileTrue(Commands.run(() -> {
-      m_wristMotor.set(0.1);
-    }));
-    m_WristForward.onFalse(Commands.run(() -> {
-      m_wristMotor.set(0);
+    m_ArmDown.onFalse(Commands.run(() -> {
+      m_elevatorMotor.set(0);
+      System.out.println("on false");
     }));
 
-    m_WristReverse.whileTrue(Commands.run(() -> {
-      m_wristMotor.set(-0.1);
-    }));
-    m_WristReverse.onFalse(Commands.run(() -> {
-      m_wristMotor.set(0);
-    }));
+    // m_WristForward.whileTrue(Commands.run(() -> {
+    //   m_wristMotor.set(0.1);
+    // }));
+    // m_WristForward.onFalse(Commands.run(() -> {
+    //   m_wristMotor.set(0);
+    // }));
+
+    // m_WristReverse.whileTrue(Commands.run(() -> {
+    //   m_wristMotor.set(-0.1);
+    // }));
+    // m_WristReverse.onFalse(Commands.run(() -> {
+    //   m_wristMotor.set(0);
+    // }));
 
     m_ClimbLeftUp.whileTrue(Commands.run(() -> {
       m_leftClimb.set(-0.1);

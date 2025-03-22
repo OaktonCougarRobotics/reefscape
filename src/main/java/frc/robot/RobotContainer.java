@@ -181,13 +181,13 @@ public class RobotContainer {
 
     m_ArmUp.whileTrue(Commands.run(() -> m_elevatorMotor.set(-0.1)));
     m_ArmUp.onFalse(Commands.run(() -> {
-      m_elevatorMotor.set(0);
+      m_elevatorMotor.set(0.0);
       System.out.println("on false");
     }));
 
     m_ArmDown.whileTrue(Commands.run(() -> m_elevatorMotor.set(0.2)));
     m_ArmDown.onFalse(Commands.run(() -> {
-      m_elevatorMotor.set(0);
+      m_elevatorMotor.set(0.0);
       System.out.println("on false");
     }));
 

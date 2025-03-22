@@ -137,20 +137,6 @@ public final class Constants {
 
   public static final double ENCODER_VOLTAGE_TO_DEGREE = 360 / 4.809;
 
-  public static final String COB_KEY_IS_RED = "/FMSInfo/IsRedAlliance";
-  public static final String COB_KEY_DISTANCE = "/COB/distance";
-  public static final String COB_KEY_BOT_POSE_FRONT = "/limelight-front/botpose";
-  public static final String COB_KEY_BOT_POSE_BACK = "/limelight-back/botpose";
-  public static final String COB_KEY_BOT_POSE_BLUE_FRONT = "/limelight-front/botpose_wpiblue";
-  public static final String COB_KEY_BOT_POSE_BLUE_BACK = "/limelight-back/botpose_wpiblue";
-  public static final String COB_KEY_TV_FRONT = "/limelight-front/tv";
-  public static final String COB_KEY_TV_BACK = "/limelight-back/tv";
-  public static final String COB_KEY_TX_FRONT = "/limelight-front/tx";
-  public static final String COB_KEY_TX_BACK = "/limelight-back/tx";
-  public static final String COB_KEY_TA_FRONT = "/limelight-front/ta";
-  public static final String COB_KEY_TA_BACK = "/limelight-back/ta";
-  public static final String COB_KEY_MATCHTIME = "/COB/matchTime";
-
   // ARM_SUBSYSTEM Configuration
   // All -1 as filler values, define all the motor id's
   public static final int LEFT_CLIMB_MOTOR = 39;
@@ -163,63 +149,13 @@ public final class Constants {
   public static final double ELEVATOR_L2 = -0.25;
   public static final double ELEVATOR_L3 = -38.053;
   public static final double ELEVATOR_L4 = -83.3;
+  public static final double ELEVATOR_TOP = -84;
   public static final double ELEVATOR_PICKUP = 0.15;
   public static final double WRIST_PLACE = -0.519;
   public static final double WRIST_PICKUP = -0.33;
   public static final double WRIST_STOW = -0.165;
 
-  public static final double PIVOT_CAN_DIFFERENCE_BETWEEN_STARTING_AND_LEVEL = -1;
-  public static final double PIVOT_GEAR_RATIO = 160.0;
-  public static final double PIVOT_TICKS_PER_DEGREE = PIVOT_GEAR_RATIO * 2048.0 / 360.0;
-
-  public static final double WRIST_GEAR_RATIO = 156.522;
-  public static final double WRIST_TICKS_PER_DEGREE = WRIST_GEAR_RATIO * 2048.0 / 360.0;
-
-  public static final double ARM_TOTAL_TICKS = 185684;
-  public static final double ARM_TOTAL_DEGREES = 209.1;
-  // public static final double CANCODER_MIN = 28.5;
-  // public static final double CANCODER_MAX = 237.6;
-  // public static final double CANCODER_ZERO = 126.3;
-
-  public static final double PIVOT_HIGH = -1.28;
-  public static final double PIVOT_TOTAL_ROTATIONS = 3.06;
-  public static final double PIVOT_LOW = 1.78;
-
-  public static final double STRINGPOT_LOW = 348;
-  public static final double STRINGPOT_TOP = 704;
-  public static final double STRINGPOT_TOTAL_RANGE = 356;
-
-  public static final double PIVOT_ROTATIONS_PER_STRINGPOT_UNITS = PIVOT_TOTAL_ROTATIONS / STRINGPOT_TOTAL_RANGE;
-  public static final double ARM_LENGTH = 30.75;
-  public static final double DIFF_BASE_PIVOT_STRINGPOT = 10;
-  public static final double CLOSEUPSHOOTSTRINGPOT = 555;
-  public static final double PICKUPSTRINGPOT = 420;
-  public static final double PROTECTEDBLOCKSHOOT = 356;
-
-  public static final double PIVOT_DFLT_VEL = 8000;
-  public static final double PIVOT_DFLT_ACC = 10000;
-  public static final double WRIST_DFLT_VEL = 14000;
-  public static final double WRIST_DFLT_ACC = 28000;
-  public static final double PIVOT_ACC_DIVISOR = 3.5;
-
   public static final double ANATOLI_CHASSIS_WIDTH = 0.3; // meters
-
-  // Button IDs
-  // public static final int DUSTPANUP_LIMIT = 0;
-  // public static final int SHOOTER_SPEED = 1;
-  // public static final int FLYWHEEL_SWITCH = 1;
-  // public static final int INTAKE_SWITCH = 2;
-  // public static final int AIM_BUTTON = 3;
-  // public static final int TEST_BIG_YELLOW_BUTTON = 4;
-  // public static final int SERVO_SHOOT = 5;
-  // public static final int SHOOTER_LOCK_POWER = 6;
-  // public static final int CLOSE_SHOOT_BUTTON = 7;
-  // public static final int PICKUP_BUTTON = 8;
-  // public static final int PROTECTED_BLOCK_SHOOT = 12;
-  // public static final int NUKE_SWITCH_4 = 13;
-  // public static final int NUKE_SWITCH_3 = 14;
-  // public static final int NUKE_SWITCH_2 = 15;
-  // public static final int NUKE_SWITCH_1 = 16;
 
   // CRISPY
   public static final int CLIMB_LEFT_UP = 15;

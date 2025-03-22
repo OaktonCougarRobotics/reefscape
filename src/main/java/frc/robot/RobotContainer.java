@@ -213,7 +213,7 @@ public class RobotContainer {
     }));
 
     m_ClimbLeftDown.whileTrue(Commands.run(() -> {
-      m_leftClimb.set(0.4);
+      m_leftClimb.set(0.6);
     }));
     m_ClimbLeftDown.onFalse(Commands.run(() -> {
       m_leftClimb.set(0);
@@ -227,7 +227,7 @@ public class RobotContainer {
     }));
 
     m_ClimbRightDown.whileTrue(Commands.run(() -> {
-      m_rightClimb.set(0.4);
+      m_rightClimb.set(0.6);
     }));
     m_ClimbRightDown.onFalse(Commands.run(() -> {
       m_rightClimb.set(0);

@@ -5,9 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "LeaveOne"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeaveOne"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevators; L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Wrist; Place L4"
+                }
+              }
+            ]
           }
         },
         {

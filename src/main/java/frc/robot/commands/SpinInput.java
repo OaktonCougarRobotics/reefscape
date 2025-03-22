@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class SpinInput extends Command{
@@ -11,6 +12,7 @@ public class SpinInput extends Command{
     private double amps;
     private double threshold;
     private boolean isInputing;
+    private Timer timer = new Timer();
     /**
      * Constructs a Spininput command
      * 
@@ -30,6 +32,7 @@ public class SpinInput extends Command{
     //swap the -amps and amps accordingly
     @Override
     public void initialize(){
+        timer.start();
         if(isInputing) {
             inputMotor.set(TalonSRXControlMode.Current, amps);    
         }
@@ -47,6 +50,9 @@ public class SpinInput extends Command{
     }
 
     public boolean isFinished(){
-        return inputMotor.getStatorCurrent()-inputMotor.getSupplyCurrent()>threshold;
-    }
+        if(isInputing)
+            return inputMotor.getStatorCurrent()-inputMotor.getSupplyCurrent()>threshold;
+        else
+            return timer.get() >= 0.5;
+        }
 }

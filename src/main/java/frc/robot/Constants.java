@@ -155,19 +155,19 @@ public final class Constants {
   // All -1 as filler values, define all the motor id's
   public static final int LEFT_CLIMB_MOTOR = 39;
   public static final int RIGHT_CLIMB_MOTOR = 31;
-  public static final int INTAKE_MOTOR = 14;
-  public static final int WRIST_MOTOR = 15;
+  public static final int INTAKE_MOTOR = 15;
+  public static final int WRIST_MOTOR = 30;
   public static final int ELEVATOR_MOTOR = 33;
   // Figure out how to get ticks from the motor
-  public static double BOTTOM_TURNS = -0.5;
-  public static final double ELEVATORS_L2 = -0.25;
-  public static final double ELEVATORS_L3 = -30;
-  public static final double ELEVATORS_L4 = -83.3;
-  public static final double ELEVATORS_PICKUP = -0.5;
-  public static final double WRIST_L2 = -1;
-  public static final double WRIST_L3 = -1;
-  public static final double WRIST_L4 = -1;
-  public static final double WRIST_PICKUP = -1;
+  public static final double ELEVATOR_BOTTOM = 0;
+  public static final double ELEVATOR_L2 = -0.25;
+  public static final double ELEVATOR_L3 = -30;
+  public static final double ELEVATOR_L4 = -83.3;
+  public static final double ELEVATOR_PICKUP = 0;
+  public static final double WRIST_PLACE_L4 = -1;
+  public static final double WRIST_PLACE = -0.519;
+  public static final double WRIST_PICKUP = -0.33;
+  public static final double WRIST_STOW = -0.165;
 
   public static final double PIVOT_CAN_DIFFERENCE_BETWEEN_STARTING_AND_LEVEL = -1;
   public static final double PIVOT_GEAR_RATIO = 160.0;

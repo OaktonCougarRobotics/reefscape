@@ -11,19 +11,19 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Starting Point to Reef 2L"
+                  "pathName": "Starting Point up to Reef 2L"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "l4 arm"
+                  "name": "Elevators; L4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "l4 wrist"
+                  "name": "Wrist; Place L4"
                 }
               }
             ]
@@ -32,7 +32,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Drop Coral"
+            "name": "Outtake"
           }
         },
         {
@@ -48,13 +48,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "intake arm"
+                  "name": "Elevators; Pickup"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "intake wrist"
+                  "name": "Wrist; Pickup"
                 }
               }
             ]
@@ -63,7 +63,7 @@
         {
           "type": "named",
           "data": {
-            "name": "waitForInputCoral"
+            "name": "wait for coral input"
           }
         },
         {
@@ -79,13 +79,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "l4 arm"
+                  "name": "Elevators; L4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "l4 wrist"
+                  "name": "Wrist; Place L4"
                 }
               }
             ]
@@ -110,13 +110,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "intake arm"
+                  "name": "Elevators; Pickup"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "intake wrist"
+                  "name": "Wrist; Pickup"
                 }
               }
             ]

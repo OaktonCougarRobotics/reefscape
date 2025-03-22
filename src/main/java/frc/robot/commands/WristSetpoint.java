@@ -17,7 +17,7 @@ public class WristSetpoint extends Command {
   public WristSetpoint(Arm arm, double targetAngle) {
     this.arm = arm;
     target = targetAngle;
-    difference = arm.getWristPosition() - target;
+    difference = target - arm.getWristPosition();
   }
 
   @Override
@@ -27,8 +27,8 @@ public class WristSetpoint extends Command {
 
   @Override
   public void execute() {
-    difference = arm.getWristPosition() - target;
-    double kp = 0.15;
+    difference = target - arm.getWristPosition();
+    double kp = 0.075;
     double targetSpeed = kp * difference;
     arm.m_WristMotor.set(targetSpeed);
 

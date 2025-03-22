@@ -21,11 +21,12 @@ public class ElevatorManual extends Command {
   @Override
   public void initialize() {
     addRequirements(arm);
+    
   }
 
   @Override
   public void execute() {
-    arm.m_ElevatorMotor.set(speed);
+    
   }
 
   @Override

@@ -19,6 +19,9 @@ public class Arm extends SubsystemBase {
         m_ElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
         m_WristMotor.setNeutralMode(NeutralModeValue.Brake);
         m_IntakeMotor.setNeutralMode(NeutralMode.Brake);
+
+        m_ElevatorMotor.setPosition(0);
+        m_WristMotor.setPosition(0);
     }
     
     public double getElevatorPosition() {

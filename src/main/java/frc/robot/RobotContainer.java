@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -48,7 +47,9 @@ public class RobotContainer {
   public TalonFX m_leftClimb = new TalonFX(Constants.LEFT_CLIMB_MOTOR);
   public TalonFX m_rightClimb = new TalonFX(Constants.RIGHT_CLIMB_MOTOR);
 
-  public PositionVoltage m_PositionVoltage = new PositionVoltage(0);
+  
+  // public DutyCycleOut m_DutyCycleOut = new DutyCycleOut(0);
+
 
   // The robot's subsystems and commands are defined here...
   public final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(),
@@ -59,7 +60,7 @@ public class RobotContainer {
   public final GenericHID m_buttonBoard = new GenericHID(0);
   public final GenericHID m_buttonBoard2 = new GenericHID(2);
 
-  public final Trigger m_ResetArmPose = new Trigger(() -> m_buttonBoard.getRawButton(2));
+  public final Trigger m_Override = new Trigger(() -> m_buttonBoard.getRawButton(2));
   public final Trigger m_Stow = new Trigger(() -> m_buttonBoard.getRawButton(3));
   public final Trigger m_L4 = new Trigger(() -> m_buttonBoard.getRawButton(4));
   public final Trigger m_L3 = new Trigger(() -> m_buttonBoard.getRawButton(5));
@@ -82,6 +83,7 @@ public class RobotContainer {
   private Trigger m_FlywheelIn = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_IN));
   private Trigger m_FlywheelOut = new Trigger(() -> m_buttonBoard.getRawButton(Constants.INTAKE_OUT));
 
+  private Trigger m_ZeroElevators = new Trigger(() -> m_buttonBoard2.getRawButton(1));
   private Trigger m_ClimbLeftUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_UP));
   private Trigger m_ClimbLeftDown = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_LEFT_DOWN));
   private Trigger m_ClimbRightUp = new Trigger(() -> m_buttonBoard2.getRawButton(Constants.CLIMB_RIGHT_UP));
@@ -109,33 +111,51 @@ public class RobotContainer {
   // ElevatorManual elevatorDown = new ElevatorManual(m_elevatorMotor, -0.3);
 
   public RobotContainer() {
-    // ALL THE NAMED COMMANDS; UNCOMMENT WHEN THE METHODS THEY USE ARE ACTUALLY
-    // TESTED
     // placing positions
-    NamedCommands.registerCommand("Elevators; L4", new ElevatorSetpoint(m_Arm,
-    Constants.ELEVATOR_L4));
-    NamedCommands.registerCommand("Elevators; L3", new ElevatorSetpoint(m_Arm,
-    Constants.ELEVATOR_L3));
-    NamedCommands.registerCommand("Elevators; L2", new ElevatorSetpoint(m_Arm,
-    Constants.ELEVATOR_L2));
-    NamedCommands.registerCommand("Wrist; Place L4", new WristSetpoint(m_Arm,
-    Constants.WRIST_PLACE_L4));
-    NamedCommands.registerCommand("Wrist; Place L3", new WristSetpoint(m_Arm,
-    Constants.WRIST_PLACE));
-    NamedCommands.registerCommand("Wrist; Place L2", new WristSetpoint(m_Arm,
-    Constants.WRIST_PLACE));
+    NamedCommands.registerCommand(
+      "Elevators; L4", 
+      new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L4, m_Override)
+    );
+    NamedCommands.registerCommand(
+      "Elevators; L3", 
+      new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L3, m_Override)
+    );
+    NamedCommands.registerCommand(
+      "Elevators; L2", 
+      new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L2, m_Override)
+    );
+    NamedCommands.registerCommand(
+      "Wrist; Place L4", 
+      new WristSetpoint(m_Arm, Constants.WRIST_PLACE, m_Override)
+    );
+    NamedCommands.registerCommand(
+      "Wrist; Place L3", 
+      new WristSetpoint(m_Arm, Constants.WRIST_PLACE, m_Override)
+    );
+    NamedCommands.registerCommand(
+      "Wrist; Place L2", 
+      new WristSetpoint(m_Arm, Constants.WRIST_PLACE, m_Override)
+    );
 
     // pickup positions
-    NamedCommands.registerCommand("Elevators; Pickup", new
-    ElevatorSetpoint(m_Arm, Constants.ELEVATOR_PICKUP));
-    NamedCommands.registerCommand("Wrist; Pickup", new WristSetpoint(m_Arm,
-    Constants.WRIST_PICKUP));
+    NamedCommands.registerCommand(
+      "Elevators; Pickup",
+      new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_PICKUP, m_Override)
+    );
+    NamedCommands.registerCommand(
+      "Wrist; Pickup", 
+      new WristSetpoint(m_Arm, Constants.WRIST_PICKUP, m_Override)
+    );
 
     // intake/outtake
-    NamedCommands.registerCommand("Intake", Commands.run(() ->
-    m_intakeMotor.set(ControlMode.PercentOutput, 0.2)));
-    NamedCommands.registerCommand("Outtake", Commands.run(() ->
-    m_intakeMotor.set(ControlMode.PercentOutput, -0.2)));
+    NamedCommands.registerCommand(
+      "Intake", 
+      Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.2))
+    );
+    NamedCommands.registerCommand(
+      "Outtake", 
+      Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, -0.2))
+    );
 
     m_drivetrain.setupPathPlanner();
     configureBindings();
@@ -213,38 +233,45 @@ public class RobotContainer {
     m_FlywheelOut.whileTrue(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0.2)));
     m_FlywheelOut.onFalse(Commands.run(() -> m_intakeMotor.set(ControlMode.PercentOutput, 0)));
 
-    // FIX
-    m_Pickup.onTrue(new ParallelCommandGroup(
-      // new WristSetpoint(m_Arm, Constants.WRIST_PICKUP)
-      // new ElevatorSetpoint(m_Arm, Constants.ELEVATORS_BOTTOM)
+    m_Stow.onTrue(new SequentialCommandGroup(
+      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_BOTTOM, m_Override),
+      new WristSetpoint(m_Arm, Constants.WRIST_STOW, m_Override)
     ));
-    m_Stow.toggleOnTrue(new SequentialCommandGroup(
-      Commands.runOnce(() -> m_wristMotor.setControl(m_PositionVoltage.withPosition(Constants.WRIST_STOW)))
-      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_PICKUP)
-    ));    
-    m_L4.toggleOnTrue(new SequentialCommandGroup(
-      Commands.runOnce(() -> m_wristMotor.setControl(m_PositionVoltage.withPosition(Constants.WRIST_PLACE)))
-      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L4)
+
+    m_L4.onTrue(new SequentialCommandGroup(
+      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L4, m_Override),
+      new WristSetpoint(m_Arm, Constants.WRIST_PLACE, m_Override)
     ));
-    m_L3.toggleOnTrue(new SequentialCommandGroup(
-      Commands.runOnce(() -> m_wristMotor.setControl(m_PositionVoltage.withPosition(Constants.WRIST_PLACE)))
-      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L3)
+
+    m_L3.onTrue(new SequentialCommandGroup(
+      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L3, m_Override),
+      new WristSetpoint(m_Arm, Constants.WRIST_PLACE, m_Override)
+
     ));
-    m_L2.toggleOnTrue(new SequentialCommandGroup(
-      Commands.runOnce(() -> m_wristMotor.setControl(m_PositionVoltage.withPosition(Constants.WRIST_PLACE)))
-      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L2)
+
+    m_L2.onTrue(new SequentialCommandGroup(
+      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L2, m_Override),
+      new WristSetpoint(m_Arm, Constants.WRIST_PLACE, m_Override)
+      
     ));
-    m_L1.toggleOnTrue(new SequentialCommandGroup(
-      Commands.runOnce(() -> m_wristMotor.setControl(m_PositionVoltage.withPosition(Constants.WRIST_PLACE)))
-      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L2)
+
+    m_L1.onTrue(new SequentialCommandGroup(
+      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_L2, m_Override),
+      new WristSetpoint(m_Arm, Constants.WRIST_PLACE, m_Override)
     ));
-    m_Pickup.toggleOnTrue(new SequentialCommandGroup(
-      Commands.runOnce(() -> m_wristMotor.setControl(m_PositionVoltage.withPosition(Constants.WRIST_PICKUP)))
-      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_BOTTOM)
+
+    m_Pickup.onTrue(new SequentialCommandGroup(
+      // new ElevatorSetpoint(m_Arm, Constants.ELEVATOR_PICKUP, m_Override),
+      new WristSetpoint(m_Arm, Constants.WRIST_PICKUP, m_Override)
     ));
 
     m_navxReset.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
     m_swerveLock.whileTrue(Commands.run(() -> m_drivetrain.swerveDrive.lockPose()));
+    m_ZeroElevators.onTrue(Commands.runOnce(() -> {
+      m_elevatorMotor.setPosition(0);
+      m_wristMotor.setPosition(0);
+    }));
+
 
     // resetArmPose.onTrue(Commands.run(() -> m_elevatorMotor.setPosition(0.0)));
 

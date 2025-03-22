@@ -164,7 +164,6 @@ public final class Constants {
   public static final double ELEVATOR_L3 = -30;
   public static final double ELEVATOR_L4 = -83.3;
   public static final double ELEVATOR_PICKUP = 0;
-  public static final double WRIST_PLACE_L4 = -1;
   public static final double WRIST_PLACE = -0.519;
   public static final double WRIST_PICKUP = -0.33;
   public static final double WRIST_STOW = -0.165;

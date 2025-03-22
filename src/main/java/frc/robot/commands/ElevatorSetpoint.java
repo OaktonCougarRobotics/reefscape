@@ -1,16 +1,17 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 
 public class ElevatorSetpoint extends Command {
   private final Arm arm;
   private double target;
   private double difference;
-  private double targetSpeed;
-  final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+  private Trigger override;
+  public MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0);
 
   /**
    * Constructs a SpinFeeder command.
@@ -18,27 +19,22 @@ public class ElevatorSetpoint extends Command {
    * @param elevator the elevator motor object
    * @param target   the target amount of turns that the elevator aims to reach
    */
-  public ElevatorSetpoint(Arm arm, double targetAngle) {
+  public ElevatorSetpoint(Arm arm, double targetAngle, Trigger override) {
     this.arm = arm;
     target = targetAngle;
-    difference = target - arm.getElevatorPosition();
+    this.override = override;
   }
 
   @Override
   public void initialize() {
+    if(!override.getAsBoolean()) {
+      arm.m_ElevatorMotor.setControl(m_MotionMagicVoltage.withPosition(target));
+    }
     addRequirements(arm);
   }
 
   @Override
-  public void execute() {
-    difference = target - arm.getElevatorPosition();
-    double kp = 0.005;
-    targetSpeed = kp * difference;
-    arm.m_ElevatorMotor.set(targetSpeed);
-
-    System.out.println("target elevator position:" + target);
-    System.out.println("current elevator position:" + arm.getElevatorPosition());
-  }
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {
@@ -47,6 +43,6 @@ public class ElevatorSetpoint extends Command {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(difference) < 0.5;
+    return Math.abs(difference) < 0.5 || override.getAsBoolean();
   }
 }

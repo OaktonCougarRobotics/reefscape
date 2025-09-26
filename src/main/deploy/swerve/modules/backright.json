@@ -3,10 +3,10 @@
     "front": -11.75,
     "left": -11.75
   },
-  "absoluteEncoderOffset": 180.12,
+  "absoluteEncoderOffset": 62.304,
   "drive": {
     "type": "falcon",
-    "id": 53,
+    "id": 58,
     "canbus": null
   },
   "inverted": {
@@ -15,7 +15,7 @@
   },
   "angle": {
     "type": "falcon",
-    "id": 59,
+    "id": 51,
     "canbus": null
   },
   "encoder": {

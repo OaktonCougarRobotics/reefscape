@@ -10,7 +10,9 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -367,14 +369,22 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateTelemetry();
+    
   }
-
-  public void updateTelemetry() {
-    for(String key:swerveDrive.getModuleMap().keySet()){
-    SmartDashboard.putNumber(key, swerveDrive.getModuleMap().get(key).getAbsolutePosition());  
+  private void printWheelAngles(){
+    Map<String, SwerveModule> modules = swerveDrive.getModuleMap();
+    for(String key : modules.keySet()){
+      SmartDashboard.putNumber(key+" absolute", modules.get(key).getRawAbsolutePosition());
+      SmartDashboard.putNumber(key+" relative", (modules.get(key).getRelativePosition()*360)%360);
     }
-    SmartDashboard.putString("position", "("+ swerveDrive.getPose().getX()+", "+swerveDrive.getPose().getY()+")");
-    SmartDashboard.putNumber("theta", swerveDrive.getOdometryHeading().getDegrees());
+  }
+  public void updateTelemetry() {
+    // for(String key:swerveDrive.getModuleMap().keySet()){
+    // SmartDashboard.putNumber(key, swerveDrive.getModuleMap().get(key).getAbsolutePosition());  
+    // }
+    // SmartDashboard.putString("position", "("+ swerveDrive.getPose().getX()+", "+swerveDrive.getPose().getY()+")");
+    // SmartDashboard.putNumber("theta", swerveDrive.getOdometryHeading().getDegrees());
+    printWheelAngles();
   }
   @Override
   public void simulationPeriodic() {
@@ -384,5 +394,11 @@ public class Drivetrain extends SubsystemBase {
   public void zeroWheels() {
     for(String key:swerveDrive.getModuleMap().keySet())
       swerveDrive.getModuleMap().get(key).setAngle(0);
+  }
+  public void printOffsets(){
+    for(String motor: swerveDrive.getModuleMap().keySet() ){
+      System.out.println(motor+": " + swerveDrive.getModuleMap().get(motor).getAbsolutePosition());
+
+    }
   }
 }

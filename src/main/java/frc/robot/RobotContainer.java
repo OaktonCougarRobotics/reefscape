@@ -27,7 +27,7 @@ public class RobotContainer {
       "swerve"));
 
   // need actual hardware location of button board
-  int x = -1;
+  int x = 1;
   public final Joystick m_buttonBoard = new Joystick(x);
   // button board buttons
   // four extra buttons not declared
@@ -82,6 +82,7 @@ public class RobotContainer {
     // NamedCommands.registerCommand("spin", spinFeederCommand);
 
     configureBindings();
+    m_drivetrain.printOffsets();
   }
 
   public Command getSpinMotorCommand() {
@@ -111,7 +112,7 @@ public class RobotContainer {
     // () -> m_joystick.getRawAxis(0) * -1,
     // () -> m_joystick.getRawAxis(2) * -1)
     );
-
+    
     navxResetButton.onTrue(Commands.runOnce(m_drivetrain::zeroGyro));
     // toPoseButton.onTrue(Commands.runOnce(() -> m_drivetrain.toPose(new Pose2d(3,
     // 1, m_drivetrain.get))));
@@ -148,6 +149,11 @@ public class RobotContainer {
     // return m_drivetrain.getAutonomousCommand();
   }
 
+  public void periodic(){
+    // Trigger offsetButton = new Trigger(() -> m_joystick.getRawButton(5));
+    // offsetButton.onTrue(Commands.runOnce(m_drivetrain::printOffsets));
+    m_drivetrain.printOffsets();
+  }
   public static double deadzone(double num, double deadband) {
     if (Math.abs(num) < deadband)
       return 0.0;

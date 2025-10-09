@@ -36,11 +36,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
-    NamedCommands.registerCommand("Print", Commands.runOnce(() -> System.out.println("THDJAKLHRUAESITYADU ILSYF")));
-    NamedCommands.registerCommand("TestMe", Commands.runOnce(() -> {
-      System.out.println("TestMe command executed!");
-      SmartDashboard.putNumber("fyghjfghjfghjfghnfgbj", 911);
-    }));
     m_robotContainer = new RobotContainer();
   }
 
@@ -65,7 +60,6 @@ public class Robot extends TimedRobot {
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-  
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

@@ -55,7 +55,8 @@ public class RobotContainer {
   );
   private WristConstCommand wristConstCommand = new WristConstCommand(
     m_arm,
-    -.367
+    -.182,
+    0.
   );
   private TalonFX feeder = new TalonFX(0);  
   public RobotContainer() {

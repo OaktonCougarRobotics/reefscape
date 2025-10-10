@@ -11,16 +11,23 @@ import frc.robot.subsystems.Arm;
 
 public class WristConstCommand extends Command{
     private Arm arm;
-    private PIDController pid;
-    private double kP = .7;
-    private double kI = 0.;
-    private double kD = 0.;
-    private double position;
-
-    public WristConstCommand(Arm arm, double position){
+    private PIDController wristPID;
+    private PIDController elevatorPID;
+    private double wrist_kP = 2.3;
+    private double wrist_kI = 0.0;
+    private double wrist_kD = 0.1;
+    // private double elevator_kP = 0;
+    // private double elevator_kI = 0.0;
+    // private double elevator_kD = 0.0;
+    private double wristPosition;
+    private double elevatorPosition;
+    
+    public WristConstCommand(Arm arm, double wristPosition, double elevatorPosition){
         this.arm = arm;
-        pid = new PIDController(kP, kI , kD);
-        this.position = position;
+        wristPID = new PIDController(wrist_kP, wrist_kI , wrist_kD);
+        // elevatorPID = new PIDController(elevator_kP, elevator_kI, elevator_kD);
+        this.wristPosition = wristPosition;
+        this.elevatorPosition = elevatorPosition;
     }
         public HashSet<Subsystem> getRequirements(){
         HashSet<Subsystem> req = new HashSet<>();
@@ -28,6 +35,9 @@ public class WristConstCommand extends Command{
         return req;
     }
     public void execute () {
-        arm.getWrist().setControl(new DutyCycleOut(pid.calculate(arm.getWrist().getPosition().getValueAsDouble(), position)));
+        arm.getWrist().setControl(new DutyCycleOut(wristPID.calculate(arm.getWrist().getPosition().getValueAsDouble(), wristPosition)));
+        // arm.getElevator().setControl(new DutyCycleOut(elevatorPID.calculate(arm.getElevator().getPosition().getValueAsDouble(), elevatorPosition)));
+
     }
 }
+// up -> wrist move -> output

@@ -46,7 +46,7 @@ public class RobotContainer {
   // feeder motor
   // private TalonSRX feederMotor = new TalonSRX(22);
   // Command spinFeederCommand = new SpinFeeder(feederMotor);
-  private Arm m_arm = new Arm(30);
+  private Arm m_arm = new Arm(30,33,15);
   DriveCommand m_driveCommand = new DriveCommand(
     m_drivetrain,
     () -> m_joystick.getRawAxis(1) * -1,
@@ -118,6 +118,8 @@ public class RobotContainer {
    * Use this to run code that must be consistently called (e.g telemetry)
    */
   public void periodic(){
-    SmartDashboard.putNumber("wrist duty cycle out", m_arm.getWrist().getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("wrist position", m_arm.getWrist().getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("elevator position", m_arm.getElevator().getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("intake speed %",m_arm.getIntake().getMotorOutputPercent());
   }
 }

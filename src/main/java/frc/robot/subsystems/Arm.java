@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //     private WristState m_wantedWristState = WristState.START;
 //     private boolean wristInIntermediateState = false;
 
-//     //position variable represents the motor position for specific setpoint
+// //     //position variable represents the motor position for specific setpoint
 //     public enum ElevatorState{
 //         START(REPLACEME),
 //         INTAKE(REPLACEME),
@@ -86,13 +86,39 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // }
 
 public class Arm extends SubsystemBase {
-    private TalonFX wrist;
-    public Arm (int wristID){
-        wrist = new TalonFX(wristID);
-        wrist.setPosition(0);
+    // public static int repaceMe = -1;;
+    // public enum ElevatorState{
+    //     START(0),
+    //     INTAKE(0),
+    //     L1(REPLACEME),
+    //     L2(REPLACEME),
+    //     L3(REPLACEME),
+    //     L4(REPLACEME);
+    //     private double position;
+    //     ElevatorState(double position){
+    //         this.position = position;
+    //     }
+    //     public double getPosition(){
+    //         return position;
+    //     }
+    // }
+    private TalonSRX m_intake;
+    private TalonFX m_wrist;
+    private TalonFX m_elevator;
+    public Arm (int wristID, int elevatorID, int intakeID){
+        m_intake = new TalonSRX(intakeID);
+        m_wrist = new TalonFX(wristID);
+        m_wrist.setPosition(0);
+        m_elevator = new TalonFX(elevatorID);
+        m_elevator.setPosition(0);
     }
     public TalonFX getWrist(){
-        return wrist;
+        return m_wrist;
     }
-
+    public TalonFX getElevator(){
+        return m_elevator;
+    }
+    public TalonSRX getIntake(){
+        return m_intake;
+    }
 }

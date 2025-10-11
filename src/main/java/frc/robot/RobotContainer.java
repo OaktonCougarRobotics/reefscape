@@ -11,6 +11,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 
 import java.io.File;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -40,6 +41,45 @@ public class RobotContainer {
   private Trigger navxResetButton = new Trigger(() -> m_joystick.getRawButton(3));
   private Trigger zeroWheels = new Trigger(() -> m_joystick.getRawButton(2));
 
+  private Trigger defaultTrigger = new Trigger(() -> m_buttonBoard.getRawButton(8));
+  private Trigger l1Trigger = new Trigger(() -> m_buttonBoard.getRawButton(7));
+  private Trigger l2Trigger = new Trigger(() -> m_buttonBoard.getRawButton(6));
+  private Trigger l3Trigger = new Trigger(() -> m_buttonBoard.getRawButton(5));
+  private Trigger l4Trigger = new Trigger(() -> m_buttonBoard.getRawButton(4));
+
+  enum ElevatorState{
+    DEFAULT(0.0),
+    INTAKE(0.0),
+    L1(0.0),
+    L2(-2),
+    L3(-29.36),
+    L4(-82);
+    private double position;
+    ElevatorState(double position){
+        this.position = position;
+    }
+    public double getPosition(){
+        return position;
+    }
+  }
+  enum WristState{
+    DEFAULT(0.163),
+    INTAKE(-.182),
+    L1(0.163),
+    L2(-0.333),
+    L3(-0.333),
+    L4(-.400);
+    private double position;
+    WristState(double position){
+        this.position = position;
+    }
+    public double getPosition(){
+        return position;
+    }
+  }
+  ElevatorState desiredElevatorState = ElevatorState.DEFAULT;
+  WristState desiredWristState = WristState.DEFAULT;
+
 
   private Trigger wristOut =new Trigger(() -> m_joystick.getRawButton(4));
   private Trigger wristIn =new Trigger(() -> m_joystick.getRawButton(6));
@@ -55,8 +95,8 @@ public class RobotContainer {
   );
   private WristConstCommand wristConstCommand = new WristConstCommand(
     m_arm,
-    -.182,
-    0.
+    () -> {return desiredWristState.getPosition();},
+    () -> {return desiredElevatorState.getPosition();}
   );
   private TalonFX feeder = new TalonFX(0);  
   public RobotContainer() {
@@ -95,7 +135,26 @@ public class RobotContainer {
       Commands.runOnce(m_drivetrain::zeroWheels)
     );
 
-
+    defaultTrigger.onTrue(Commands.runOnce(() -> {
+      desiredElevatorState = ElevatorState.DEFAULT;
+      desiredWristState = WristState.DEFAULT;
+    }));
+    l1Trigger.onTrue(Commands.runOnce(() -> {
+      desiredElevatorState = ElevatorState.L1;
+      desiredWristState = WristState.L1;
+    }));
+    l2Trigger.onTrue(Commands.runOnce(() -> {
+      desiredElevatorState = ElevatorState.L2;
+      desiredWristState = WristState.L2;
+    }));
+    l3Trigger.onTrue(Commands.runOnce(() -> {
+      desiredElevatorState = ElevatorState.L3;
+      desiredWristState = WristState.L3;
+    }));
+    l4Trigger.onTrue(Commands.runOnce(() -> {
+      desiredElevatorState = ElevatorState.L4;
+      desiredWristState = WristState.L4;
+    }));
     wristOut.whileTrue(Commands.run(() -> m_arm.getWrist().setControl(new DutyCycleOut(-.1)), m_arm));
     // wristOut.onFalse(Commands.run(() -> m_arm.getWrist().setControl(new DutyCycleOut(0)), m_arm));
     // wristIn.whileTrue(Commands.run(() -> m_arm.getWrist().setControl(new DutyCycleOut(.1)), m_arm));

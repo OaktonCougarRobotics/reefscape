@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.Timer;
 
-public class SpinFeeder extends Command {
+public class Intake extends Command {
     private final Timer timer = new Timer();
     private final double duration = 1.0;
     private TalonSRX feederMotor;
@@ -17,7 +17,7 @@ public class SpinFeeder extends Command {
      * @param feederMotor the motor object so the command can access and set its
      *                    values
      */
-    public SpinFeeder(TalonSRX feederMotor) {
+    public Intake(TalonSRX feederMotor) {
         this.feederMotor = feederMotor;
     }
 

@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -86,27 +85,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // }
 
 public class Arm extends SubsystemBase {
-    // public static int repaceMe = -1;;
-    // public enum ElevatorState{
-    //     START(0),
-    //     INTAKE(0),
-    //     L1(REPLACEME),
-    //     L2(REPLACEME),
-    //     L3(REPLACEME),
-    //     L4(REPLACEME);
-    //     private double position;
-    //     ElevatorState(double position){
-    //         this.position = position;
-    //     }
-    //     public double getPosition(){
-    //         return position;
-    //     }
-    // }
     private TalonSRX m_intake;
     private TalonFX m_wrist;
     private TalonFX m_elevator;
     public Arm (int wristID, int elevatorID, int intakeID){
         m_intake = new TalonSRX(intakeID);
+        m_intake.setNeutralMode(NeutralMode.Brake);
         m_wrist = new TalonFX(wristID);
         m_wrist.setPosition(0);
         m_elevator = new TalonFX(elevatorID);

@@ -150,8 +150,8 @@ public class RobotContainer {
  * This enum represents the main setpoints that the arm elevator will be in 
  */
 enum ElevatorState{
-  DEFAULT(0),
-  INTAKE(0),
+  DEFAULT(1),
+  INTAKE(1),
   L1(0),
   L2(-2),
   L3(-29.36),

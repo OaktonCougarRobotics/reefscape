@@ -18,9 +18,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.hardware.TalonFX;
-
 
 public class RobotContainer {
   // Drivetrain
@@ -54,8 +51,8 @@ public class RobotContainer {
 
 
   // desired arm states: use for commands
-  private ElevatorState desiredElevatorState = ElevatorState.DEFAULT;
-  private WristState desiredWristState = WristState.DEFAULT;
+  private ElevatorState desiredElevatorState = ElevatorState.INTAKE;
+  private WristState desiredWristState = WristState.INTAKE;
   private IntakeState desiredIntakeState = IntakeState.DEFAULT;
 
   // private final Trigger wristOut =new Trigger(() -> m_joystick.getRawButton(4));
@@ -135,7 +132,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_drivetrain.getAutonomousCommand("Scizo");
+    return m_drivetrain.getAutonomousCommand("auto rightest");
   }
     /**
    * Use this to run code that must be consistently called (e.g telemetry)
@@ -150,8 +147,8 @@ public class RobotContainer {
  * This enum represents the main setpoints that the arm elevator will be in 
  */
 enum ElevatorState{
-  DEFAULT(1),
-  INTAKE(1),
+  DEFAULT(1.5),
+  INTAKE(1.5),
   L1(0),
   L2(-2),
   L3(-29.36),
@@ -169,7 +166,7 @@ enum ElevatorState{
  */
 enum WristState{
   DEFAULT(0.163),
-  INTAKE(-.182),
+  INTAKE(-.195),
   L1(0.163),
   L2(-0.333),
   L3(-0.333),

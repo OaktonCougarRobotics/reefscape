@@ -36,12 +36,20 @@ public class DriveCommand extends Command {
     }
     @Override
     public void execute(){
+        // drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(
+        //   Math.pow(deadzone(xTranslationSupplier.getAsDouble(),0.05)
+        //       * drivetrain.swerveDrive.getMaximumChassisVelocity(),3),
+        //       Math.pow(deadzone(yTranslationSupplier.getAsDouble(),0.05)
+        //       * drivetrain.swerveDrive.getMaximumChassisVelocity(),3),
+        //       deadzone(thetaTranslationSupplier.getAsDouble(),0.05)
+        //       * drivetrain.swerveDrive.getMaximumChassisAngularVelocity()),
+        //   new Translation2d());
         drivetrain.swerveDrive.driveFieldOriented(new ChassisSpeeds(
-          Math.pow(deadzone(xTranslationSupplier.getAsDouble(),0.05)
-              * drivetrain.swerveDrive.getMaximumChassisVelocity(),3),
-              Math.pow(deadzone(yTranslationSupplier.getAsDouble(),0.05)
-              * drivetrain.swerveDrive.getMaximumChassisVelocity(),3),
-              deadzone(thetaTranslationSupplier.getAsDouble(),0.05)
+            deadzone(xTranslationSupplier.getAsDouble(),0.05)
+              * drivetrain.swerveDrive.getMaximumChassisVelocity(),
+            deadzone(yTranslationSupplier.getAsDouble(),0.05)
+              * drivetrain.swerveDrive.getMaximumChassisVelocity(),
+            deadzone(thetaTranslationSupplier.getAsDouble(),0.05)
               * drivetrain.swerveDrive.getMaximumChassisAngularVelocity()),
           new Translation2d());
     }

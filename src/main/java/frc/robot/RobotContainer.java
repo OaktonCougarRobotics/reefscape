@@ -132,7 +132,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_drivetrain.getAutonomousCommand("auto rightest");
+    return m_drivetrain.getAutonomousCommand("ahead");
   }
     /**
    * Use this to run code that must be consistently called (e.g telemetry)

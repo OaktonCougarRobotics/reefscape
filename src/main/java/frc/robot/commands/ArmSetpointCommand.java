@@ -58,7 +58,7 @@ public class ArmSetpointCommand extends Command{
         motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
         
         arm.getElevator().getConfigurator().apply(config);
-
+        
         this.elevatorPosition = elevatorPosition;
         this.intakeVelocity = intakeVelocity;
     }
